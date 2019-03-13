@@ -725,7 +725,7 @@ class vviewer(QtGui.QMainWindow):
         ## file related menu items ##
         openFile = QtGui.QAction(
             QtGui.QIcon.fromTheme("document-open"), 'Open Image', self)
-        openFile.setShortcut(QtGui.QKeySequence("Ctrl+O"))
+        openFile.setShortcut(QtGui.QKeySequence("o"))
         openFile.setStatusTip('Open new file')
         openFile.triggered.connect(self.openNewFile)
         self.file_menu.addAction(openFile)
