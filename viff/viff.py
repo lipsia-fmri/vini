@@ -1666,7 +1666,8 @@ class viff(QtGui.QMainWindow):
             for i in range(nmb_images):
                 if i > 0:
                     str_intens += "\n"
-                str_intens += "%s:  %g" %(abc[i],self.images[i].getIntensity())
+                if i<6:
+                    str_intens += "%s:  %g" %(abc[i],self.images[i].getIntensity())
                 # str_intens += " (%s)" %str(self.imagelist.item(i).text()).split(".")[0]
             intensity = (str_intens)
             self.intensity_label.setText(intensity)
@@ -1693,6 +1694,8 @@ class viff(QtGui.QMainWindow):
             self.value_window.cross_names_lbl.setText(names)
             self.value_window.cross_values_lbl.setText(values)
             self.value_window.cross_coords_lbl.setText(coords)
+            
+        self.setAlphaToSlider()
 
 #%% setVoxelCoord function for setting voxel/mm
     def setVoxelCoord(self, state):
@@ -2730,10 +2733,24 @@ class viff(QtGui.QMainWindow):
             self.images[index].setColorMapNeg()
             self.updateSlices()
             self.updateImageItems()
-          
+            
+        log1("setAlphaFromSlider called (alpha_fract {})".format(alpha_fract))
+
+
+    def setAlphaToSlider(self):
+        """
+        Takes the alpha value of the current image and sets that the slider.
+        """
         
-        # self.setFrame()
-        log1("setAlphaFromSlider called (alpha_fract{})".format(alpha_fract))
+        index = self.imagelist.currentRow()
+        alpha=100
+        if index >= 0:
+            alpha_fract = self.images[index].alpha
+            alpha = np.round(alpha_fract*100)
+
+        self.alpha_sld.setValue(alpha)
+        
+        log1("setAlphaFromSlider called (alpha {})".format(alpha))
 
 
     def setFrameFromSlider(self):
