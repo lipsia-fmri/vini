@@ -30,7 +30,7 @@ class MosaicDialog(QtGui.QDialog):
         self.cols = 4
         self.start = 0
         self.incr = 1
-        self.plane = 's'
+        self.plane = 't'
 
         # line regions
         self.lr_1 = None
@@ -42,9 +42,9 @@ class MosaicDialog(QtGui.QDialog):
         self.form = QtGui.QFormLayout()
         self.form_part.setLayout(self.form)
         self.slice_plane = QtGui.QComboBox()
+        self.slice_plane.addItem("axial")
         self.slice_plane.addItem("sagittal")
         self.slice_plane.addItem("coronal")
-        self.slice_plane.addItem("transverse")
         self.slice_plane.currentIndexChanged.connect(self.entriesEdited)
         # self.slice_plane.currentIndexChanged.connect(self.updatePlane)
         self.form.addRow("Choose slice plane:", self.slice_plane)
@@ -170,21 +170,21 @@ class MosaicDialog(QtGui.QDialog):
             self.end = int(self.end_le.text())
         else:
             return 0
-        if self.slice_plane.currentIndex() == 0:
+        if self.slice_plane.currentIndex() == 1:
             self.plane = 's'
             self.range_sld.setRange(0, self.dims[0]-1)
             if self.end >= self.dims[0]:
                 self.end = self.dims[0]-1
                 self.end_le.setText(str(int(self.end)))
             self.range_sld.setUpperPosition(self.end)
-        if self.slice_plane.currentIndex() == 1:
+        if self.slice_plane.currentIndex() == 2:
             self.plane = 'c'
             self.range_sld.setRange(0, self.dims[1]-1)
             if self.end >= self.dims[1]:
                 self.end = self.dims[1]-1
                 self.end_le.setText(str(int(self.end)))
             self.range_sld.setUpperPosition(self.end)
-        if self.slice_plane.currentIndex() == 2:
+        if self.slice_plane.currentIndex() == 0:
             self.plane = 't'
             self.range_sld.setRange(0, self.dims[2]-1)
             if self.end >= self.dims[2]:
