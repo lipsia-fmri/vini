@@ -34,7 +34,7 @@ setapi("QVariant", 2)
 setapi("QString", 2)
 setapi("QUrl", 2)
 
-verbose_level = 1
+verbose_level = 5
 
 
 from pyqtgraph.Qt import QtCore, QtGui
@@ -3054,7 +3054,7 @@ class viff(QtGui.QMainWindow):
         """
         if self.hist is None:
             self.hist = HistogramThresholdWidget.HistogramThresholdWidget()
-            self.hist.sigChanged.connect(self.setThresholdsFromHistogram)
+            # self.hist.sigChanged.connect(self.setThresholdsFromHistogram)
         self.resetHistogram()
         self.hist.show()
 

@@ -210,12 +210,13 @@ def load_vista(fp_input):
     #%% re-parse the header to get the complete header information
     nii_loaded = nib.Nifti1Image(data, affine=np.eye(4))
     mm = get_property_str(header_img, "voxel", "list")
+    if dim == "4D":
+        mm.append(tdim)
     nii_loaded.header.set_zooms(mm)
     nii_loaded.header['pixdim'][4] = tr
     nii_loaded.header.set_xyzt_units(xyz="mm", t="msec")
     
-    if dim == "4D":
-        mm.append(tdim)
+
     
     #get s-form code
     sform_code = get_property_str(header, "sform_code", "int")
