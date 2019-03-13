@@ -419,12 +419,13 @@ class ColorMapItem(TickSliderItem):
 
         self.setMaxDim(self.rectSize + self.tickSize)
 
-        self.rgbAction = QtGui.QAction('RGB', self)
-        self.rgbAction.setCheckable(True)
-        self.rgbAction.triggered.connect(lambda: self.setColorMode('rgb'))
-        self.hsvAction = QtGui.QAction('HSV', self)
-        self.hsvAction.setCheckable(True)
-        self.hsvAction.triggered.connect(lambda: self.setColorMode('hsv'))
+        # self.rgbAction = QtGui.QAction('RGB', self)
+        # self.rgbAction.setCheckable(True)
+        # self.rgbAction.triggered.connect(lambda: self.setColorMode('rgb'))
+        
+        # self.hsvAction = QtGui.QAction('HSV', self)
+        # self.hsvAction.setCheckable(True)
+        # self.hsvAction.triggered.connect(lambda: self.setColorMode('hsv'))
 
         self.menu = QtGui.QMenu()
 
@@ -450,8 +451,8 @@ class ColorMapItem(TickSliderItem):
             self.menu.addAction(act)
         self.length = l
         self.menu.addSeparator()
-        self.menu.addAction(self.rgbAction)
-        self.menu.addAction(self.hsvAction)
+        # self.menu.addAction(self.rgbAction)
+        # self.menu.addAction(self.hsvAction)
 
 
         for t in list(self.ticks.keys()):
@@ -506,14 +507,14 @@ class ColorMapItem(TickSliderItem):
         if cm not in ['rgb', 'hsv']:
             raise Exception("Unknown color mode %s. Options are 'rgb' and 'hsv'." % str(cm))
 
-        try:
-            self.rgbAction.blockSignals(True)
-            self.hsvAction.blockSignals(True)
-            self.rgbAction.setChecked(cm == 'rgb')
-            self.hsvAction.setChecked(cm == 'hsv')
-        finally:
-            self.rgbAction.blockSignals(False)
-            self.hsvAction.blockSignals(False)
+        # try:
+        #     # self.rgbAction.blockSignals(True)
+        #     # self.hsvAction.blockSignals(True)
+        #     self.rgbAction.setChecked(cm == 'rgb')
+        #     self.hsvAction.setChecked(cm == 'hsv')
+        # finally:
+        #     # self.rgbAction.blockSignals(False)
+        #     # self.hsvAction.blockSignals(False)
         self.colorMode = cm
         self.updateGradient()
 
