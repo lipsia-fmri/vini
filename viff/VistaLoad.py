@@ -105,7 +105,10 @@ def load_vista(fp_input):
     
     #find all proper images and parse each of them into dict. store all dicts in list_images
     list_imagedict = []
-    idx_images = [m.start() for m in re.finditer('image: image {', header)]
+    idx_images = [m.start() for m in re.finditer(': image {', header)]
+    
+    #blacklist some images
+    idx_images = [l for l in idx_images if header[l-5:l]!="sform"]
     
     for i in range(len(idx_images)):
         dict_image = {}
