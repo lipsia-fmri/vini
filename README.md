@@ -1,5 +1,5 @@
 ![viff_main](https://github.com/lipsia-fmri/viff/blob/master/docs/viff.png)
-viff is a light-weight viewer for MR data. The strives to be fast and simple, yet powerful. Viff also features many practical keyboard shortcuts.
+**viff** is a light-weight viewer for MR data. The strives to be fast and simple, yet powerful. Viff also features many practical keyboard shortcuts.
 
 
 Currently, the following file formats are supported:
@@ -9,9 +9,7 @@ Currently, the following file formats are supported:
 *.v (lipsia's vista format)
 The viewer is written in python and does not have any external dependencies.
 
-To install viff, see the `installation`_  instructions.
-
-Follow the instructions here: `install`_.
+Follow the instructions here: https://github.com/lipsia-fmri/viff/blob/master/INSTALLATION.md
 
 
 # How-to
@@ -90,5 +88,3 @@ Images usually come with affine transformations (saved in the header), that enco
 * n/b: move to next or previous frame in time series
 * w/s: select the image above or below
 
-.. _installation: INSTALLATION.md
-.. _install: INSTALLATION.rst
