@@ -1,5 +1,5 @@
-viff is a light-weight viewer for MR data. The idea is to keep the viewer fast and simple, yet powerful. The viewer also features many practical keyboard shortcuts.
 ![viff_main](https://github.com/lipsia-fmri/viff/blob/master/docs/viff.png)
+viff is a light-weight viewer for MR data. The strives to be fast and simple, yet powerful. Viff also features many practical keyboard shortcuts.
 
 
 Currently, the following file formats are supported:
@@ -79,12 +79,41 @@ Images usually come with affine transformations (saved in the header), that enco
 
 
 #Keyboard shortcut cheat sheet
-* o: open file
-* cursor left,right,up,down: change crosshair position within selected pane (green one!)
-* page up/down: change voxel position in remaining dimension (orthogonal to the selected plane)
-* h: histogram
-* m: mosaic dialogue
-* v: toggle image visibility
-* space: start/stop playing movie for time series
-* n/b: move to next or previous frame in time series
-* w/s: select the image above or below
++-----------------------+----------------------------------------+
+| x                     | toggle crosshair display               |
++-----------------------+----------------------------------------+
+| r                     | recenter view and reposition crosshair |
++-----------------------+----------------------------------------+
+| Ctrl++                | zoom in                                |
++-----------------------+----------------------------------------+
+| Ctrl+-                | zoom out                               |
++-----------------------+----------------------------------------+
+| v                     | toggle visibility of current image     |
++-----------------------+----------------------------------------+
+| w                     | select image above (in list)           |
++-----------------------+----------------------------------------+
+| s                     | select image below (in list)           |
++-----------------------+----------------------------------------+
+| d                     | deselect all but current images /      |
+|                       | select all images                      |
++-----------------------+----------------------------------------+
+| n                     | next frame (for functional images)     |
++-----------------------+----------------------------------------+
+| b                     | previous frame                         |
++-----------------------+----------------------------------------+
+| space bar             | play sequence (functional images)      |
++-----------------------+----------------------------------------+
+| t                     | show time series data for current voxel|
++-----------------------+----------------------------------------+
+| i                     | open image settings                    |
++-----------------------+----------------------------------------+
+| f                     | open functional image settings         |
++-----------------------+----------------------------------------+
+| p                     | open preference settings               |
++-----------------------+----------------------------------------+
+| m                     | open the mosaic dialog                 |
++-----------------------+----------------------------------------+
+| c                     | copy image properties                  |
++-----------------------+----------------------------------------+
+| h                     | open the histogram tool                |
++-----------------------+----------------------------------------+
