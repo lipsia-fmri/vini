@@ -1,10 +1,12 @@
-Vviewer is a light-weight viewer for MR data. The idea is to keep the viewer fast and simple, yet powerful. The viewer also features many practical keyboard shortcuts.
+viff is a light-weight viewer for MR data. The idea is to keep the viewer fast and simple, yet powerful. The viewer also features many practical keyboard shortcuts.
+![viff_main](https://github.com/lipsia-fmri/viff/blob/master/docs/viff.png)
+
 
 Currently, the following file formats are supported:
-*.nii, 
-*.nii.gz, 
-*.img/.hdr and 
-*.v (lipsia's vista format) 
+*.nii,
+*.nii.gz,
+*.img/.hdr and
+*.v (lipsia's vista format)
 The viewer is written in python and does not have any external dependencies.
 
 
@@ -16,7 +18,7 @@ You can find the installation ... ???
 ## Open an image
 You can open images directly from the terminal, using
 
-        vviewer.py -in data.nii
+        viff.py -in data.nii
 
 Alternatively, you can click in the menu on file / open image or hit "o".
 
@@ -28,7 +30,7 @@ If you want to pan the image left, right, up or down, hold the mouse wheel butto
 The voxel's current location is displayed in the ???, in voxel coordinates. If you want to switch to millimetres/MNI coordinates, click on the button???. The intensity value of the current image at the crosshair's position is shown ???.
 
 ## Multiple images and overlay
-You can overlay multiple images on top of each others. The order of the images can be changed with the two buttons ???. The most top image is drawn on top all other ones. Shift their order with the arrow buttons next???. If you want to turn an image invisible, click on the checkmark ??? next to the image name. Vviewer shows you the values for the crosshair voxel for all images (with "a:" denoting the most top image, "b:" the one below, etc.)
+You can overlay multiple images on top of each others. The order of the images can be changed with the two buttons ???. The most top image is drawn on top all other ones. Shift their order with the arrow buttons next???. If you want to turn an image invisible, click on the checkmark ??? next to the image name. viff shows you the values for the crosshair voxel for all images (with "a:" denoting the most top image, "b:" the one below, etc.)
 
 ## Colormaps
 ### Basics
@@ -41,13 +43,13 @@ You can change the colormap and select another one by clicking on the color map.
 Some situations require that you want to have two color maps for the same image. For instance, if you want to display positive and negative values with different colors. You can activate a second color bar for such situatinos, just press "i" or go to image/image settings. This will bring up the image menu. There, select "color maps" and "two color maps".
 Alternatively, you can open the image directly with the *-z* flag:
 
-        vviewer.py -z data.nii
+        viff.py -z data.nii
 
 
-The second color map is independent of the first one and has its own slider with maximum and minimum handle. They are shown to the right of the first one. 
+The second color map is independent of the first one and has its own slider with maximum and minimum handle. They are shown to the right of the first one.
 
 ### Clipping behaviour
-What happens if the image values are outside the range of the color map assignment? Per default, values *above* the upper limit are shown in the same color as the maximum. Values *below* the lower limit are however not drawn and thus invisible. We call the latter procedure *clipping*, meaning that colors are just clipped away. You can change the default behaviour in the image settings menu (press "i") or image/image settings. There, for each active colorbar you find two checkboxes for clipping. By default, the "clip upper threshold" for the positive colorbar is disabled (meaning that values above are just shown with the maximum color) and "clip lower threshold" is enabled (making them invisible if below). 
+What happens if the image values are outside the range of the color map assignment? Per default, values *above* the upper limit are shown in the same color as the maximum. Values *below* the lower limit are however not drawn and thus invisible. We call the latter procedure *clipping*, meaning that colors are just clipped away. You can change the default behaviour in the image settings menu (press "i") or image/image settings. There, for each active colorbar you find two checkboxes for clipping. By default, the "clip upper threshold" for the positive colorbar is disabled (meaning that values above are just shown with the maximum color) and "clip lower threshold" is enabled (making them invisible if below).
 
 
 ## Histogram
@@ -71,7 +73,7 @@ You can create a mosaic view of the currently selected images and thresholds. Fo
 ## linked views
 
 ## Resampling options
-Images usually come with affine transformations (saved in the header), that encode a translation and rotation. You can disable the resampling and sample to the next closest voxel resolution by clicking on Resampling/Ignore affine and pray. 
+Images usually come with affine transformations (saved in the header), that encode a translation and rotation. You can disable the resampling and sample to the next closest voxel resolution by clicking on Resampling/Ignore affine and pray.
 
 
 
@@ -86,4 +88,3 @@ Images usually come with affine transformations (saved in the header), that enco
 * space: start/stop playing movie for time series
 * n/b: move to next or previous frame in time series
 * w/s: select the image above or below
-
