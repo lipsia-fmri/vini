@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-This module contains the vviewer class for viewing MRI files.
+This module contains the viff class for viewing MRI files.
 
 To better search for relevant functions note that the class is subdivided
 by these sections:
@@ -104,14 +104,14 @@ def get_time():
     return str_time
 
 
-class vviewer(QtGui.QMainWindow):
+class viff(QtGui.QMainWindow):
     """
     Class to view MRI files
     """
 
     def __init__(self, parent=None):
-        """Initialize vviewer object"""
-        super(vviewer, self).__init__(parent)
+        """Initialize viff object"""
+        super(viff, self).__init__(parent)
 
         # 'img_coord' contains the coordinates of the crosshair/slices within
         # the resampled image data.
@@ -269,8 +269,8 @@ class vviewer(QtGui.QMainWindow):
         Sets up all window elements, keyboard shortcuts and signal.
         """
 
-        # vviewer is a QMainWindow
-        self.setObjectName(_fromUtf8("vviewer"))
+        # viff is a QMainWindow
+        self.setObjectName(_fromUtf8("viff"))
         width = self.preferences['window_dims'][0]
         height = self.preferences['window_dims'][1]
         self.setGeometry(0, 0, width, height)
@@ -286,9 +286,9 @@ class vviewer(QtGui.QMainWindow):
         # Layout Initialization: set central widget to window
         self.l = QtGui.QGridLayout()
         # Sets a 2 pixel border around each widget.
-        self.l.setSpacing(2)
+        self.l.setSpacing(0)
         # Sets a 2 pixel border at the border of the window
-        self.l.setContentsMargins(2,2,2,2)
+        self.l.setContentsMargins(1,1,1,1)
         self.centralwidget.setLayout(self.l)
         self.setCentralWidget(self.centralwidget)
 
@@ -446,9 +446,9 @@ class vviewer(QtGui.QMainWindow):
         self.x_box = QtGui.QLineEdit()
         self.y_box = QtGui.QLineEdit()
         self.z_box = QtGui.QLineEdit()
-        self.x_box.setMaxLength(5)
-        self.y_box.setMaxLength(5)
-        self.z_box.setMaxLength(5)
+        self.x_box.setMaxLength(4)
+        self.y_box.setMaxLength(4)
+        self.z_box.setMaxLength(4)
         
         
         self.x_box.editingFinished.connect(self.setCrosshairBoxCoord)
@@ -466,19 +466,39 @@ class vviewer(QtGui.QMainWindow):
         # self.l.addWidget(self.cross_int_label, 6, self.listoffset+2, 1, 2)
 
 
-        # label for actual value
-        self.intensity_label = QtGui.QLabel('nan')
-        self.intensity_label.setAlignment(
-            QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
-        # self.l.addWidget(self.intensity_label, 6, self.listoffset+4, 1, 8)
-        self.l.addWidget(self.intensity_label, 6, self.listoffset+2, 1, 8)
-        
+
         
         #%% injection of label for dim
         self.dim_label = QtGui.QLabel('voxel')
         self.dim_label.setAlignment(
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
         self.l.addWidget(self.dim_label, 5, self.listoffset+8, 1, 8)
+        
+        #%% alpha slider
+        self.alpha_sld = JumpSlider(QtCore.Qt.Horizontal)
+        self.alpha_sld.setMinimum(0)
+        self.alpha_sld.setMaximum(100)
+        self.alpha_sld.setValue(100)
+        # self.alpha_sld.sliderPressed.connect(self.setSliceStateOn)
+        # self.alpha_sld.sliderReleased.connect(self.setSliceStateOff)
+        self.alpha_sld.valueChanged.connect(self.setAlphaFromSlider)
+        self.l.addWidget(self.alpha_sld, 6, self.listoffset+2, 1, 4)
+        
+        # label for actual value
+        self.alpha_label = QtGui.QLabel('100% ')
+        self.alpha_label.setAlignment(
+            QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
+        # self.l.addWidget(self.intensity_label, 6, self.listoffset+4, 1, 8)
+        self.l.addWidget(self.alpha_label, 6, self.listoffset+6, 1, 4)
+        
+        
+                # label for actual value
+        self.intensity_label = QtGui.QLabel('nan')
+        self.intensity_label.setAlignment(
+            QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
+        # self.l.addWidget(self.intensity_label, 6, self.listoffset+4, 1, 8)
+        self.l.addWidget(self.intensity_label, 7, self.listoffset+2, 1, 8)
+        
 
         # Label showing the values for mouse position
         # label 'cursor'
@@ -492,34 +512,28 @@ class vviewer(QtGui.QMainWindow):
         # self.l.addWidget(self.intensity_lbl_cursor, 7, self.listoffset+4, 1, 10)
 
         ## For playing time series movies ##
-        # fast backward button
-        self.fb_button = QtGui.QToolButton(self)
-        self.fb_button.pressed.connect(self.firstFrame)
-        self.fb_button.released.connect(self.setSliceStateOff)
-        icon_fb = QtGui.QIcon(
-            os.path.dirname(full_path)+"/../icons/fastback.svg")
-        self.fb_button.setIcon(icon_fb)
-        self.fb_button.setToolTip("move to start")
-        self.l.addWidget(self.fb_button, 8, self.listoffset+2, 1, 1)
+        # # fast backward button
+        # self.fb_button = QtGui.QToolButton(self)
+        # self.fb_button.pressed.connect(self.firstFrame)
+        # self.fb_button.released.connect(self.setSliceStateOff)
+        # icon_fb = QtGui.QIcon(
+        #     os.path.dirname(full_path)+"/../icons/fastback.svg")
+        # self.fb_button.setIcon(icon_fb)
+        # self.fb_button.setToolTip("move to start")
+        # self.l.addWidget(self.fb_button, 8, self.listoffset+2, 1, 1)
 
-        # forward one frame button
-        self.forward_button = QtGui.QToolButton(self)
-        self.forward_button.pressed.connect(self.nextFrame)
-        self.forward_button.released.connect(self.setSliceStateOff)
-        icon_forward = QtGui.QIcon(
-            os.path.dirname(full_path)+"/../icons/next.svg")
-        self.forward_button.setIcon(icon_forward)
-        self.forward_button.setToolTip("move to previous frame")
-        self.l.addWidget(self.forward_button, 8, self.listoffset+8, 1, 1)
 
-        # Lineedit for frame number
-        self.frame_box = QtGui.QLineEdit('0')
-        self.frame_box.setAlignment(
-            QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight)
-        self.frame_box.returnPressed.connect(self.setFrameFromBox)
-        self.frame_box.editingFinished.connect(self.setFrameFromBox)
-        self.l.addWidget(self.frame_box, 8, self.listoffset+4, 1, 3)
+        # one frame backward button
+        self.backward_button = QtGui.QToolButton(self)
+        self.backward_button.pressed.connect(self.prevFrame)
+        self.backward_button.released.connect(self.setSliceStateOff)
+        icon_backward = QtGui.QIcon(
+            os.path.dirname(full_path)+"/../icons/prev.svg")
+        self.backward_button.setIcon(icon_backward)
+        self.backward_button.setToolTip("move to previous Frame")
+        self.l.addWidget(self.backward_button, 8, self.listoffset+2, 1, 1)
 
+        
         # play button
         self.play_button = QtGui.QToolButton(self)
         self.play_button.pressed.connect(self.playFuncPressed)
@@ -530,27 +544,40 @@ class vviewer(QtGui.QMainWindow):
             os.path.dirname(full_path)+"/../icons/pause.svg")
         self.play_button.setIcon(self.icon_play)
         self.play_button.setToolTip("play")
-        self.l.addWidget(self.play_button, 8, self.listoffset+7, 1, 1)
+        self.l.addWidget(self.play_button, 8, self.listoffset+3, 1, 1)
+        
+        # forward one frame button
+        self.forward_button = QtGui.QToolButton(self)
+        self.forward_button.pressed.connect(self.nextFrame)
+        self.forward_button.released.connect(self.setSliceStateOff)
+        icon_forward = QtGui.QIcon(
+            os.path.dirname(full_path)+"/../icons/next.svg")
+        self.forward_button.setIcon(icon_forward)
+        self.forward_button.setToolTip("move to next frame")
+        # self.l.addWidget(self.forward_button, 8, self.listoffset+8, 1, 1)
+        self.l.addWidget(self.forward_button, 8, self.listoffset+4, 1, 1)
 
-        # one frame backward button
-        self.backward_button = QtGui.QToolButton(self)
-        self.backward_button.pressed.connect(self.prevFrame)
-        self.backward_button.released.connect(self.setSliceStateOff)
-        icon_backward = QtGui.QIcon(
-            os.path.dirname(full_path)+"/../icons/prev.svg")
-        self.backward_button.setIcon(icon_backward)
-        self.backward_button.setToolTip("move to next Frame")
-        self.l.addWidget(self.backward_button, 8, self.listoffset+3, 1, 1)
 
-        # fast forward button
-        self.ff_button = QtGui.QToolButton(self)
-        self.ff_button.pressed.connect(self.lastFrame)
-        self.ff_button.released.connect(self.setSliceStateOff)
-        icon_ff = QtGui.QIcon(
-            os.path.dirname(full_path)+"/../icons/fastfor.svg")
-        self.ff_button.setIcon(icon_ff)
-        self.ff_button.setToolTip("move to end")
-        self.l.addWidget(self.ff_button, 8, self.listoffset+9, 1, 1)
+        # Lineedit for frame number
+        self.frame_box = QtGui.QLineEdit('0')
+        self.frame_box.setAlignment(
+            QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight)
+        self.frame_box.returnPressed.connect(self.setFrameFromBox)
+        self.frame_box.editingFinished.connect(self.setFrameFromBox)
+        self.l.addWidget(self.frame_box, 8, self.listoffset+5, 1, 2)
+        
+        
+
+
+        # # fast forward button
+        # self.ff_button = QtGui.QToolButton(self)
+        # self.ff_button.pressed.connect(self.lastFrame)
+        # self.ff_button.released.connect(self.setSliceStateOff)
+        # icon_ff = QtGui.QIcon(
+        #     os.path.dirname(full_path)+"/../icons/fastfor.svg")
+        # self.ff_button.setIcon(icon_ff)
+        # self.ff_button.setToolTip("move to end")
+        # self.l.addWidget(self.ff_button, 8, self.listoffset+9, 1, 1)
 
         # frame slider
         self.frame_sld = JumpSlider(QtCore.Qt.Horizontal)
@@ -1879,7 +1906,7 @@ class vviewer(QtGui.QMainWindow):
         """
         Resets the image arrays of all ImageItemMods.
         """
-        # treat original vviewer separately
+        # treat original viff separately
         mode = self.images[index].mode
         for window in range(len(self.image_window_list[index])):
             if self.image_window_list[index][window][0] is not None:
@@ -2018,7 +2045,7 @@ class vviewer(QtGui.QMainWindow):
         """
         if self.image_window_list[img_ind][win_ind][0] is not None:
             if win_ind == 0:
-                verboseprint("add to vviewer")
+                verboseprint("add to viff")
                 self.c_slice_widget.addImageItem(
                     self.image_window_list[img_ind][0][0])
                 self.s_slice_widget.addImageItem(
@@ -2050,7 +2077,7 @@ class vviewer(QtGui.QMainWindow):
     def removeFromSliceWidget(self, img_ind, win_ind):
         if self.image_window_list[img_ind][win_ind][0] is not None:
             if win_ind == 0:
-                verboseprint("remove from vviewer ", img_ind)
+                verboseprint("remove from viff ", img_ind)
                 self.c_slice_widget.removeImageItem(
                     self.image_window_list[img_ind][0][0])
                 self.s_slice_widget.removeImageItem(
@@ -2329,7 +2356,7 @@ class vviewer(QtGui.QMainWindow):
         image_item_list_tmp = [None] * 3
         self.image_window_list[index][window+1] = image_item_list_tmp
         # See if window contains images.
-        # Only do this if window is not the vviewer itself.
+        # Only do this if window is not the viff itself.
         no_images = True
         for i in range(len(self.image_window_list)):
             if self.image_window_list[i][window+1][0] is not None:
@@ -2491,8 +2518,8 @@ class vviewer(QtGui.QMainWindow):
         self.func_enabled = state
         self.frame_sld.setEnabled(state)
         self.frame_box.setEnabled(state)
-        self.fb_button.setEnabled(state)
-        self.ff_button.setEnabled(state)
+        # self.fb_button.setEnabled(state)
+        # self.ff_button.setEnabled(state)
         self.backward_button.setEnabled(state)
         self.forward_button.setEnabled(state)
         self.play_button.setEnabled(state)
@@ -2580,6 +2607,8 @@ class vviewer(QtGui.QMainWindow):
         """
         self.slicestate = False
         self.setFrame()
+        
+        
 
     def playFuncPressed(self):
         """
@@ -2683,6 +2712,28 @@ class vviewer(QtGui.QMainWindow):
         self.setFrameToBox()
         self.setFrameToSlider()
         log1("setFrame called (self.frame {})".format(self.frame))
+        
+    #%% setAlphaFromSlider
+    def setAlphaFromSlider(self):
+        """
+        Sets the alpha value of the current image
+        """
+
+        alpha = self.alpha_sld.value()
+        alpha_fract = float(alpha)/100
+        self.alpha_label.setText("{}%".format(alpha))
+        
+        index = self.imagelist.currentRow()
+        if index >= 0:
+            self.images[index].alpha = alpha_fract
+            self.images[index].setColorMapPos()
+            self.images[index].setColorMapNeg()
+            self.autoRange()
+
+        
+        # self.setFrame()
+        log1("setAlphaFromSlider called (alpha_fract{})".format(alpha_fract))
+
 
     def setFrameFromSlider(self):
         """
@@ -3375,7 +3426,7 @@ def main():
 
     # Initialize QT app GUI and setup the layout.
     app = QtGui.QApplication([])
-    viewer = vviewer()
+    viewer = viff()
 
     # change order of the images being loaded to be more intuitive
     filenames.reverse()
@@ -3462,7 +3513,7 @@ def main():
 
 def start_viewer():
     app = QtGui.QApplication([])
-    viewer = vviewer()
+    viewer = viff()
     viewer.show()
     app.exec_()
 
