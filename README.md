@@ -7,8 +7,10 @@ Currently, the following file formats are supported:
 *.nii.gz,
 *.img/.hdr and
 *.v (lipsia's vista format)
+
 The viewer is written in python and does not have any external dependencies.
 
+# Installation
 Follow the instructions here: https://github.com/lipsia-fmri/viff/blob/master/INSTALLATION.md
 
 
