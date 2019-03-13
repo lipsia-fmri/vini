@@ -24,7 +24,8 @@ Alternatively, you can click in the menu on file / open image or hit "o".
 
 ## Clicking and slicing
 ![viff_main](https://github.com/lipsia-fmri/viff/blob/master/docs/viff_vox.png)
-The viewer shows three panes: coronal, saggital and axial. You can click and drag into any of the panes to navigate within the that plane. You can use the arrow keys on your keyboard for voxel-by-voxel steering (the green crosshair indicates the active pane).
+
+You can click and drag into any of the panes to navigate within the each of the three panes. You can use the arrow keys on your keyboard for voxel-by-voxel steering (the green crosshair indicates the active pane).
 In order to zoom into the image, use your mouse wheel or "," and "." on your keyboard.
 If you want to pan the image left, right, up or down, hold the mouse wheel button while moving.
 The voxel's current location is displayed in the **(a)**, in voxel coordinates. If you want to switch to millimetres/MNI coordinates, click on the button **(b)**. The intensity value of the current image at the crosshair's position is shown **c**.
