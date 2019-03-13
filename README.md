@@ -78,7 +78,7 @@ Images usually come with affine transformations (saved in the header), that enco
 
 
 
-#Keyboard shortcut cheat sheet
+# Keyboard shortcut cheat sheet
 * o: open file
 * cursor left,right,up,down: change crosshair position within selected pane (green one!)
 * page up/down: change voxel position in remaining dimension (orthogonal to the selected plane)
