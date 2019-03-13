@@ -9,7 +9,7 @@ Currently, the following file formats are supported:
 *.v (lipsia's vista format)
 The viewer is written in python and does not have any external dependencies.
 
-To install viff, see the `installation`_  instructions.
+To install viff, see the `installation`_.  instructions.
 
 
 #How-to
