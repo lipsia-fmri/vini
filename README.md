@@ -9,10 +9,12 @@ Currently, the following file formats are supported:
 *.v (lipsia's vista format)
 The viewer is written in python and does not have any external dependencies.
 
-To install viff, see the `installation`_.  instructions.
+To install viff, see the `installation`_  instructions.
+
+Follow the instructions here: `install`_.
 
 
-#How-to
+# How-to
 
 ## Open an image
 You can open images directly from the terminal, using
@@ -89,3 +91,4 @@ Images usually come with affine transformations (saved in the header), that enco
 * w/s: select the image above or below
 
 .. _installation: INSTALLATION.md
+.. _install: INSTALLATION.rst
