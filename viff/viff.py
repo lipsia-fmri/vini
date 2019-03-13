@@ -2728,8 +2728,9 @@ class viff(QtGui.QMainWindow):
             self.images[index].alpha = alpha_fract
             self.images[index].setColorMapPos()
             self.images[index].setColorMapNeg()
-            self.autoRange()
-
+            self.updateSlices()
+            self.updateImageItems()
+          
         
         # self.setFrame()
         log1("setAlphaFromSlider called (alpha_fract{})".format(alpha_fract))
