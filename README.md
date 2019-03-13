@@ -9,8 +9,7 @@ Currently, the following file formats are supported:
 *.v (lipsia's vista format)
 The viewer is written in python and does not have any external dependencies.
 
-
-You can find the installation ... ???
+To install viff, see the `installation`_  instructions.
 
 
 #How-to
@@ -88,3 +87,5 @@ Images usually come with affine transformations (saved in the header), that enco
 * space: start/stop playing movie for time series
 * n/b: move to next or previous frame in time series
 * w/s: select the image above or below
+
+.. _installation: INSTALLATION.md
