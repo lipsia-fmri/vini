@@ -1,0 +1,6 @@
+<svg height="16" width="16" xmlns="http://www.w3.org/2000/svg">
+  <polyline points="2,12 5,7 8,9 11,3 14,14"
+  style="fill:none;stroke:black;stroke-width:1.5" />
+  <circle cx="11" cy="3" r="3" />
+  <circle cx="11" cy="3" r="1.5" fill='red'/>
+</svg>

@@ -1,0 +1,4 @@
+The icons are partly taken from
+https://octicons.github.com/
+and partly they are self-made.
+Malte Kuhlmann, 26.11.2015
