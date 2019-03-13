@@ -108,7 +108,8 @@ class HistogramThresholdWidget(pg.GraphicsWindow):
             self.plot.setYRange(0, ymax)
 
     def changed(self):
-        self.sigChanged.emit()
+        pass
+        # self.sigChanged.emit()
 
     def getThresholdsPos(self):
         if self.lr_pos is not None:
