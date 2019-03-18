@@ -77,21 +77,21 @@ def loadImageFromNifti(fileobject, pref, f_type):
     if img.two_cm == True:
         img.presetCMPos(pref['cm_pos'])
         img.presetCMNeg(pref['cm_neg'])
-        img.setClippingsPos(pref['clip_pos_low'][0], pref['clip_pos_high'][0])
-        img.setClippingsNeg(pref['clip_neg_low'][0], pref['clip_neg_high'][0])
-        img.setInterpolation(pref['interpolation'][0])
+        img.setClippingsPos(pref['clip_pos_low'], pref['clip_pos_high'])
+        img.setClippingsNeg(pref['clip_neg_low'], pref['clip_neg_high'])
+        img.setInterpolation(pref['interpolation'])
     else:
         if f_type > 0: # no underlay
             img.presetCMPos(pref['cm_pos'])
-            img.setClippingsPos(pref['clip_pos_low'][0], pref['clip_pos_high'][0])
-            img.setClippingsNeg(pref['clip_neg_low'][0], pref['clip_neg_high'][0])
-            img.setInterpolation(pref['interpolation'][0])
+            img.setClippingsPos(pref['clip_pos_low'], pref['clip_pos_high'])
+            img.setClippingsNeg(pref['clip_neg_low'], pref['clip_neg_high'])
+            img.setInterpolation(pref['interpolation'])
         else:
             img.presetCMPos(pref['cm_under'])
             img.presetCMNeg(pref['cm_neg'])
-            img.setClippingsPos(pref['clip_under_low'][0], pref['clip_under_high'][0])
-            img.setClippingsNeg(pref['clip_neg_low'][0], pref['clip_neg_high'][0])
-            img.setInterpolation(pref['interpolation'][0])
+            img.setClippingsPos(pref['clip_under_low'], pref['clip_under_high'])
+            img.setClippingsNeg(pref['clip_neg_low'], pref['clip_neg_high'])
+            img.setInterpolation(pref['interpolation'])
 
     img.writeProps()
 
@@ -196,21 +196,21 @@ def loadImageFromFile(filename, pref, f_type):
     if img.two_cm == True:
         img.presetCMPos(pref['cm_pos'])
         img.presetCMNeg(pref['cm_neg'])
-        img.setClippingsPos(pref['clip_pos_low'][0], pref['clip_pos_high'][0])
-        img.setClippingsNeg(pref['clip_neg_low'][0], pref['clip_neg_high'][0])
-        img.setInterpolation(pref['interpolation'][0])
+        img.setClippingsPos(pref['clip_pos_low'], pref['clip_pos_high'])
+        img.setClippingsNeg(pref['clip_neg_low'], pref['clip_neg_high'])
+        img.setInterpolation(pref['interpolation'])
     else:
         if f_type > 0: # no underlay
             img.presetCMPos(pref['cm_pos'])
-            img.setClippingsPos(pref['clip_pos_low'][0], pref['clip_pos_high'][0])
-            img.setClippingsNeg(pref['clip_neg_low'][0], pref['clip_neg_high'][0])
-            img.setInterpolation(pref['interpolation'][0])
+            img.setClippingsPos(pref['clip_pos_low'], pref['clip_pos_high'])
+            img.setClippingsNeg(pref['clip_neg_low'], pref['clip_neg_high'])
+            img.setInterpolation(pref['interpolation'])
         else:
             img.presetCMPos(pref['cm_under'])
             img.presetCMNeg(pref['cm_neg'])
-            img.setClippingsPos(pref['clip_under_low'][0], pref['clip_under_high'][0])
-            img.setClippingsNeg(pref['clip_neg_low'][0], pref['clip_neg_high'][0])
-            img.setInterpolation(pref['interpolation'][0])
+            img.setClippingsPos(pref['clip_under_low'], pref['clip_under_high'])
+            img.setClippingsNeg(pref['clip_neg_low'], pref['clip_neg_high'])
+            img.setInterpolation(pref['interpolation'])
 
     img.writeProps()
     img.filename = filename

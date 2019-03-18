@@ -117,8 +117,8 @@ class SettingsDialog(QtGui.QDialog):
         Set the tools to the correct values.
         """
         # View
-        self.voxel_cb.setChecked(self.preferences['voxel_coord'][0])
-        self.link_menu.setCurrentIndex(self.preferences['link_mode'][0])
+        self.voxel_cb.setChecked(self.preferences['voxel_coord'])
+        self.link_menu.setCurrentIndex(self.preferences['link_mode'])
         # window size...
 
         # Color
@@ -126,52 +126,47 @@ class SettingsDialog(QtGui.QDialog):
         self.gradient_overlay_pos.item.loadPreset(self.preferences['cm_pos'])
         self.gradient_overlay_neg.item.loadPreset(self.preferences['cm_neg'])
         self.clip_cb_under_high.setChecked(
-            self.preferences['clip_under_high'][0])
-        self.clip_cb_under_low.setChecked(self.preferences['clip_under_low'][0])
+            self.preferences['clip_under_high'])
+        self.clip_cb_under_low.setChecked(self.preferences['clip_under_low'])
         self.clip_cb_over_high_pos.setChecked(
-            self.preferences['clip_pos_high'][0])
+            self.preferences['clip_pos_high'])
         self.clip_cb_over_low_pos.setChecked(
-            self.preferences['clip_pos_low'][0])
+            self.preferences['clip_pos_low'])
         self.clip_cb_over_high_neg.setChecked(
-            self.preferences['clip_neg_high'][0])
+            self.preferences['clip_neg_high'])
         self.clip_cb_over_low_neg.setChecked(
-            self.preferences['clip_neg_low'][0])
+            self.preferences['clip_neg_low'])
 
         # Resampling
-        self.interp_menu.setCurrentIndex(self.preferences['interpolation'][0])
-        self.method_box.setCurrentIndex(self.preferences['res_method'][0])
+        self.interp_menu.setCurrentIndex(self.preferences['interpolation'])
+        self.method_box.setCurrentIndex(self.preferences['res_method'])
 
     def savePreferences(self):
         """
         Get the values form the tools and change preferences.
         """
         # View
-        self.preferences['voxel_coord'] = [self.voxel_cb.isChecked()]
-        self.preferences['link_mode'] = [self.link_menu.currentIndex()]
+        self.preferences['voxel_coord'] = self.voxel_cb.isChecked()
+        self.preferences['link_mode'] = self.link_menu.currentIndex()
         # window size has signal and is saved directly.
 
         # Color
         self.preferences['cm_under'] = self.gradient_underlay.item.name
         self.preferences['cm_pos'] = self.gradient_overlay_pos.item.name
         self.preferences['cm_neg'] = self.gradient_overlay_neg.item.name
-        self.preferences['clip_under_high'] = \
-            [self.clip_cb_under_high.isChecked()]
-        self.preferences['clip_under_low'] = \
-            [self.clip_cb_under_low.isChecked()]
-        self.preferences['clip_pos_high'] = \
-            [self.clip_cb_over_high_pos.isChecked()]
-        self.preferences['clip_pos_low'] = \
-            [self.clip_cb_over_low_pos.isChecked()]
-        self.preferences['clip_neg_high'] = \
-            [self.clip_cb_over_high_neg.isChecked()]
-        self.preferences['clip_neg_low'] = \
-            [self.clip_cb_over_low_neg.isChecked()]
+        self.preferences['clip_under_high'] = self.clip_cb_under_high.isChecked()
+        self.preferences['clip_under_low'] =  self.clip_cb_under_low.isChecked()
+        self.preferences['clip_pos_high'] = self.clip_cb_over_high_pos.isChecked()
+        self.preferences['clip_pos_low'] = self.clip_cb_over_low_pos.isChecked()
+        self.preferences['clip_neg_high'] = self.clip_cb_over_high_neg.isChecked()
+        self.preferences['clip_neg_low'] = self.clip_cb_over_low_neg.isChecked()
 
         # Resampling
-        self.preferences['interpolation'] = [self.interp_menu.currentIndex()]
-        self.preferences['res_method'] = [self.method_box.currentIndex()]
+        self.preferences['interpolation'] = self.interp_menu.currentIndex()
+        self.preferences['res_method'] = self.method_box.currentIndex()
 
         self.sigSaveSettings.emit()
+        self.close()
 
     def saveWindowSize(self):
         self.sigWindowSize.emit()

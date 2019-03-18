@@ -36,8 +36,8 @@ setapi("QUrl", 2)
 
 verbose_level = 5
 
-
 from pyqtgraph.Qt import QtCore, QtGui
+
 import numpy as np
 import math
 import os
@@ -202,13 +202,15 @@ class viff(QtGui.QMainWindow):
         #forbidding the display of mm units (whenevre clicked on ignoring affine)
         self.forbid_mm = False
 
-        # The dictionary 'preferences' is loaded at start from the config.ini-
-        #file and save to that location if changed.
+        #%% preferences: init with default preferences
         self.preferences = {
             # viewing
-            'voxel_coord': False,
+            'voxel_coord': True,
             'link_mode': 2, # linked == 0, link zoom == 1, unlinked == 2
-            'window_dims': [1000, 300],
+            'window_width': 1000,
+            'window_height': 300,
+            'window_posx': 0,
+            'window_posy': 0,
 
             # colormaps
             'cm_under': 'grey',
@@ -223,18 +225,27 @@ class viff(QtGui.QMainWindow):
 
             # resampling
             'res_method': 0, # (0 - affine, 1 - image, 2 - fit)
-            'interpolation': 0,
+            'interpolation': 1,
             'os_ratio': 1.0,
 
             # search
-            'search_radius': [5]
+            'search_radius': 5
         }
+        
+        
+        
 
-        # loads the config-file to 'preferences'
+        
+        #RESETTTING PREFERENCES: DO IT HERE!
+        # self.savePreferences()
+        
+        
+        # then overwrite specific settings that were saved in sessions before...
         self.loadPreferences()
+        
         # variables are copied, so changing them doesn't change the preferences
-        self.link_mode = self.preferences['link_mode'][0]
-        self.voxel_coord = self.preferences['voxel_coord'][0]
+        self.link_mode = self.preferences['link_mode']
+        self.voxel_coord = self.preferences['voxel_coord']
 
         # Initialize the SettingsDialog.
         self.settings = SettingsDialog.SettingsDialog(self.preferences)
@@ -271,9 +282,12 @@ class viff(QtGui.QMainWindow):
 
         # viff is a QMainWindow
         self.setObjectName(_fromUtf8("viff"))
-        width = self.preferences['window_dims'][0]
-        height = self.preferences['window_dims'][1]
-        self.setGeometry(0, 0, width, height)
+        width = self.preferences['window_width']
+        height = self.preferences['window_height']
+        posx = self.preferences['window_posx']
+        posy = self.preferences['window_posy']
+        log1("setupUI: window posx: {}, posy: {}, width: {}, height: {}".format(posx, posy, width, height))
+        self.setGeometry(posx, posy, width, height)
 
         # The size of the slice widget kept changing as did the offset of all
         # other widgets. 'listoffset' was used to make this easier.
@@ -468,13 +482,11 @@ class viff(QtGui.QMainWindow):
 
 
         
-        #%% injection of label for dim
         self.dim_label = QtGui.QLabel('voxel')
         self.dim_label.setAlignment(
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
         self.l.addWidget(self.dim_label, 5, self.listoffset+8, 1, 8)
         
-        #%% alpha slider
         self.alpha_sld = JumpSlider(QtCore.Qt.Horizontal)
         self.alpha_sld.setMinimum(0)
         self.alpha_sld.setMaximum(100)
@@ -697,7 +709,7 @@ class viff(QtGui.QMainWindow):
         # this turn on the visibility of the window
         self.show()
         # set to center of screen
-        self.move(QtGui.QApplication.desktop().screen().rect().center()- self.rect().center())
+        # self.move(QtGui.QApplication.desktop().screen().rect().center()- self.rect().center())
 
 
     def setMenu(self):
@@ -887,13 +899,13 @@ class viff(QtGui.QMainWindow):
 
         # Resample all loaded images to one coordinate system.
         # Which coordinate system is used depends on the preference settings.
-        if self.preferences['res_method'][0] == 0:
+        if self.preferences['res_method'] == 0:
             verboseprint("resampling to affine")
             self.resampleToAffine()
-        if self.preferences['res_method'][0] == 1:
+        if self.preferences['res_method'] == 1:
             verboseprint("resampling to current")
             self.resampleToCurrent()
-        if self.preferences['res_method'][0] == 2:
+        if self.preferences['res_method'] == 2:
             verboseprint("resampling to fit")
             self.resampleToFit()
 
@@ -1169,7 +1181,7 @@ class viff(QtGui.QMainWindow):
         """
         # compute voxel size with the oversampling ratio and the smallest voxel
         # resolution
-        vsize = 1./self.preferences['os_ratio'][0]*self.getVoxelResolution()
+        vsize = 1./self.preferences['os_ratio']*self.getVoxelResolution()
         self.affine = np.multiply(vsize, np.eye(4))
         self.affine[3,3] = 1
 
@@ -1662,7 +1674,6 @@ class viff(QtGui.QMainWindow):
             
         self.setAlphaToSlider()
 
-#%% setVoxelCoord function for setting voxel/mm
     def setVoxelCoord(self, state):
         """
         Changes the coordinates used.
@@ -2681,7 +2692,6 @@ class viff(QtGui.QMainWindow):
         self.setFrameToSlider()
         log1("setFrame called (self.frame {})".format(self.frame))
         
-    #%% setAlphaFromSlider
     def setAlphaFromSlider(self):
         """
         Sets the alpha value of the current image
@@ -2920,7 +2930,7 @@ class viff(QtGui.QMainWindow):
         index = self.imagelist.currentRow()
         if index >= 0:
             self.img_coord = self.images[index].getMinCoord(
-                self.preferences['search_radius'][0])
+                self.preferences['search_radius'])
             self.setCrosshair()
 
     def findMax(self):
@@ -2930,7 +2940,7 @@ class viff(QtGui.QMainWindow):
         index = self.imagelist.currentRow()
         if index >= 0:
             self.img_coord = self.images[index].getMaxCoord(
-                self.preferences['search_radius'][0])
+                self.preferences['search_radius'])
             self.setCrosshair()
 
 
@@ -3234,11 +3244,11 @@ class viff(QtGui.QMainWindow):
         self.sr_setting.resize(40,40)
 
         search_le = QtGui.QLineEdit()
-        search_le.setText(str(self.preferences['search_radius'][0]))
+        search_le.setText(str(self.preferences['search_radius']))
 
         def save():
             if testInteger(search_le.text()):
-                self.preferences['search_radius'][0] = int(search_le.text())
+                self.preferences['search_radius'] = int(search_le.text())
             self.savePreferences()
             self.sr_setting.close()
 
@@ -3265,102 +3275,165 @@ class viff(QtGui.QMainWindow):
         self.loadPreferences()
         self.settings.exec_()
 
+   
+
+#%% load save prefs
+    
     def loadPreferences(self):
-        """
-        Loads the settings from the config file to the dictionary.
-        """
-        full_path = os.path.realpath(__file__)
-        config_file = os.path.dirname(full_path)+"/config.ini"
-        pref_conf = ConfigParser()
-        pref_conf.read(config_file)
-
-        # View
-        self.preferences['voxel_coord'] = \
-            [pref_conf.getboolean('view','voxel_coord')]
-        self.preferences['link_mode'] = [pref_conf.getint('view','link_mode')]
-        width = pref_conf.getint('view', 'width')
-        height = pref_conf.getint('view', 'height')
-        self.preferences['window_dims'] = [width, height]
-
-        # Color
-        self.preferences['cm_under'] = pref_conf.get('color', 'colormap_under')
-        self.preferences['cm_pos'] = pref_conf.get('color', 'colormap_over_pos')
-        self.preferences['cm_neg'] = pref_conf.get('color', 'colormap_over_neg')
-        self.preferences['clip_under_high'] = \
-            [pref_conf.getboolean('color', 'clip_under_high')]
-        self.preferences['clip_under_low'] = \
-            [pref_conf.getboolean('color', 'clip_under_low')]
-        self.preferences['clip_pos_high'] = \
-            [pref_conf.getboolean('color', 'clip_pos_high')]
-        self.preferences['clip_pos_low'] = \
-            [pref_conf.getboolean('color', 'clip_pos_low')]
-        self.preferences['clip_neg_high'] = \
-            [pref_conf.getboolean('color', 'clip_neg_high')]
-        self.preferences['clip_neg_low'] = \
-            [pref_conf.getboolean('color', 'clip_neg_low')]
-
-        # Resampling
-        self.preferences['interpolation'] = \
-            [pref_conf.getint('resampling', 'interpolation')]
-        self.preferences['os_ratio'] = \
-            [pref_conf.getfloat('resampling', 'os_ratio')]
-        self.preferences['res_method'] = \
-            [pref_conf.getint('resampling', 'res_method')]
-
-        # Search
-        self.preferences['search_radius'] = \
-            [pref_conf.getint('search', 'search_radius')]
+        settings = QtCore.QSettings()
+        list_bools = ['voxel_coord', 'clip_under_high', 'clip_under_low', 'clip_pos_high', 'clip_pos_low', 'clip_neg_high', 'clip_neg_low']
+        list_ints = ['link_mode', 'window_width', 'window_height', 'window_posx', 'window_posy', 'interpolation', 'res_method', 'search_radius']
+        list_floats = ['os_ratio']
+        list_strings = ['cm_under', 'cm_pos', 'cm_neg']
+        
+        for xs in settings.allKeys():
+            if xs[0:5] != "viff/":
+                continue
+            val = settings.value(xs) 
+            if val is not None:
+                key = xs[5:]
+                #evil qt saves everything as string sooner or later... de-string it here.
+                if key in list_bools:
+                    if val == "true":
+                        val = True
+                    elif val == "false":
+                        val = False
+                elif key in list_ints:
+                    val =  int(val)
+                elif key in list_floats:
+                    val = float(val)
+                elif key in list_strings:
+                    pass
+                else:
+                    print("loadPreferences: WARNING! UNKNOWN TYPE OF PREFERENCE: {}. Ignoring!".format(key))
+                    continue
+                    
+                
+                self.preferences[key] = val
+                log1("loadPreferences: loading key: {} value: {}".format(key, val))
+                
+                
+            
+        
+        # self.preferences['cm_under'] = settings.value("cm_under")  #pref_conf.get('color', 'colormap_under')
+        
+        
 
     def savePreferences(self):
-        """
-        Saves the preferences from the dictionary to the config file.
-        """
-        full_path = os.path.realpath(__file__)
-        config_file = os.path.dirname(full_path)+"/config.ini"
-        pref_conf = ConfigParser()
-        pref_conf.read(config_file)
-        pref_conf.set(
-            'view', 'voxel_coord', str(self.preferences['voxel_coord'][0]))
-        pref_conf.set(
-            'view', 'link_mode', str(self.preferences['link_mode'][0]))
-        pref_conf.set(
-            'view', 'width', str(self.preferences['window_dims'][0]))
-        pref_conf.set(
-            'view', 'height', str(self.preferences['window_dims'][1]))
+        settings = QtCore.QSettings()
+        for key in self.preferences.keys():
+            savekey = "viff/{}".format(key)
+            settings.setValue(savekey, self.preferences[key])
+            log1("savePreferences: writing key: {} value: {}".format(key, self.preferences[key]))
+      
+        
+    # def loadPreferences(self):
+    #     """
+    #     Loads the settings from the config file to the dictionary.
+    #     """
+    #     full_path = os.path.realpath(__file__)
+    #     config_file = os.path.dirname(full_path)+"/config.ini"
+    #     pref_conf = ConfigParser()
+    #     pref_conf.read(config_file)
 
-        pref_conf.set('color', 'colormap_under', self.preferences['cm_under'])
-        pref_conf.set('color', 'colormap_over_pos', self.preferences['cm_pos'])
-        pref_conf.set('color', 'colormap_over_neg', self.preferences['cm_neg'])
-        pref_conf.set('color', 'clip_under_high',
-                      str(self.preferences['clip_under_high'][0]))
-        pref_conf.set('color', 'clip_under_low',
-                      str(self.preferences['clip_under_low'][0]))
-        pref_conf.set('color', 'clip_pos_high',
-                      str(self.preferences['clip_pos_high'][0]))
-        pref_conf.set('color', 'clip_pos_low',
-                      str(self.preferences['clip_pos_low'][0]))
-        pref_conf.set('color', 'clip_neg_high',
-                      str(self.preferences['clip_neg_high'][0]))
-        pref_conf.set('color', 'clip_neg_low',
-                      str(self.preferences['clip_neg_low'][0]))
+    #     # View
+    #     self.preferences['voxel_coord'] = \
+    #         [pref_conf.getboolean('view','voxel_coord')]
+    #     self.preferences['link_mode'] = [pref_conf.getint('view','link_mode')]
+    #     width = pref_conf.getint('view', 'width')
+    #     height = pref_conf.getint('view', 'height')
+    #     self.preferences['window_dims'] = [width, height]
 
-        pref_conf.set('resampling', 'interpolation',
-                      str(self.preferences['interpolation'][0]))
-        pref_conf.set('resampling', 'os_ratio',
-                      str(self.preferences['os_ratio'][0]))
-        pref_conf.set('resampling', 'res_method',
-                      str(self.preferences['res_method'][0]))
+    #     # Color
+    #     self.preferences['cm_under'] = pref_conf.get('color', 'colormap_under')
+    #     self.preferences['cm_pos'] = pref_conf.get('color', 'colormap_over_pos')
+    #     self.preferences['cm_neg'] = pref_conf.get('color', 'colormap_over_neg')
+    #     self.preferences['clip_under_high'] = \
+    #         [pref_conf.getboolean('color', 'clip_under_high')]
+    #     self.preferences['clip_under_low'] = \
+    #         [pref_conf.getboolean('color', 'clip_under_low')]
+    #     self.preferences['clip_pos_high'] = \
+    #         [pref_conf.getboolean('color', 'clip_pos_high')]
+    #     self.preferences['clip_pos_low'] = \
+    #         [pref_conf.getboolean('color', 'clip_pos_low')]
+    #     self.preferences['clip_neg_high'] = \
+    #         [pref_conf.getboolean('color', 'clip_neg_high')]
+    #     self.preferences['clip_neg_low'] = \
+    #         [pref_conf.getboolean('color', 'clip_neg_low')]
 
-        pref_conf.set('search', 'search_radius',
-                      str(self.preferences['search_radius'][0]))
+    #     # Resampling
+    #     self.preferences['interpolation'] = \
+    #         [pref_conf.getint('resampling', 'interpolation')]
+    #     self.preferences['os_ratio'] = \
+    #         [pref_conf.getfloat('resampling', 'os_ratio')]
+    #     self.preferences['res_method'] = \
+    #         [pref_conf.getint('resampling', 'res_method')]
 
-        with open(config_file, 'w') as f:
-            pref_conf.write(f)
+    #     # Search
+    #     self.preferences['search_radius'] = \
+    #         [pref_conf.getint('search', 'search_radius')]
+        
+        
+
+    # def savePreferences(self):
+    #     """
+    #     Saves the preferences from the dictionary to the config file.
+    #     """
+    #     full_path = os.path.realpath(__file__)
+    #     config_file = os.path.dirname(full_path)+"/config.ini"
+    #     pref_conf = ConfigParser()
+    #     pref_conf.read(config_file)
+    #     pref_conf.set(
+    #         'view', 'voxel_coord', str(self.preferences['voxel_coord'][0]))
+    #     pref_conf.set(
+    #         'view', 'link_mode', str(self.preferences['link_mode'][0]))
+    #     pref_conf.set(
+    #         'view', 'width', str(self.preferences['window_dims'][0]))
+    #     pref_conf.set(
+    #         'view', 'height', str(self.preferences['window_dims'][1]))
+
+    #     pref_conf.set('color', 'colormap_under', self.preferences['cm_under'])
+    #     pref_conf.set('color', 'colormap_over_pos', self.preferences['cm_pos'])
+    #     pref_conf.set('color', 'colormap_over_neg', self.preferences['cm_neg'])
+    #     pref_conf.set('color', 'clip_under_high',
+    #                   str(self.preferences['clip_under_high'][0]))
+    #     pref_conf.set('color', 'clip_under_low',
+    #                   str(self.preferences['clip_under_low'][0]))
+    #     pref_conf.set('color', 'clip_pos_high',
+    #                   str(self.preferences['clip_pos_high'][0]))
+    #     pref_conf.set('color', 'clip_pos_low',
+    #                   str(self.preferences['clip_pos_low'][0]))
+    #     pref_conf.set('color', 'clip_neg_high',
+    #                   str(self.preferences['clip_neg_high'][0]))
+    #     pref_conf.set('color', 'clip_neg_low',
+    #                   str(self.preferences['clip_neg_low'][0]))
+
+    #     pref_conf.set('resampling', 'interpolation',
+    #                   str(self.preferences['interpolation'][0]))
+    #     pref_conf.set('resampling', 'os_ratio',
+    #                   str(self.preferences['os_ratio'][0]))
+    #     pref_conf.set('resampling', 'res_method',
+    #                   str(self.preferences['res_method'][0]))
+
+    #     pref_conf.set('search', 'search_radius',
+    #                   str(self.preferences['search_radius'][0]))
+
+    #     with open(config_file, 'w') as f:
+    #         pref_conf.write(f)
 
     def saveWindowSize(self):
         width = self.geometry().width()
         height = self.geometry().height()
-        self.preferences['window_dims'] = [width, height]
+        
+        posx = self.geometry().x()
+        posy = self.geometry().y()
+        
+        self.preferences['window_width'] = width
+        self.preferences['window_height'] = height
+        self.preferences['window_posx'] = posx
+        self.preferences['window_posy'] = posy
+        
+        
         self.savePreferences()
 
     ## Section: Closing the Viewer ##
