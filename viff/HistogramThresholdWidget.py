@@ -8,7 +8,7 @@ class HistogramThresholdWidget(pg.GraphicsWindow):
 
     sigChanged = QtCore.Signal()
 
-    def __init__(self):
+    def __init__(self, title="Histogram"):
 
         super(HistogramThresholdWidget, self).__init__(title="Histogram")
 
@@ -17,7 +17,7 @@ class HistogramThresholdWidget(pg.GraphicsWindow):
         # Set foreground black.
         pg.setConfigOption('foreground', 'k')
 
-        self.plot = self.addPlot(title="Intensity Histogram")
+        self.plot = self.addPlot(title="Histogram: {}".format(title))
 
         self.setBackground('w')
         pg.setConfigOption('foreground', 'w')
@@ -37,6 +37,10 @@ class HistogramThresholdWidget(pg.GraphicsWindow):
         exit_action.setShortcut(QtGui.QKeySequence.Quit)
         exit_action.triggered.connect(self.closeHist)
         self.addAction(exit_action)
+
+    def setTitle(self, title):
+        self.plot.setTitle("Histogram: {}".format(title), color="#000000")
+
 
     def closeHist(self):
         self.hide()

@@ -74,6 +74,7 @@ class Image(object):
 
         # Has to be kept up to date when resampling or changing frame (4D).
         self.extremum = [0, 0]
+        self.deadzone = 1e-7 #for two colormaps: excludes values from negative cmap (otherwise 0 = blue)
 
         # Use as an alpha for the whole image.
         self.alpha = 1.0
@@ -214,9 +215,9 @@ class Image(object):
 
     def setNegThresholdsDefault(self):
         if self.extremum[0] > 0:
-            self.threshold_neg = [0.0, 0.0]
+            self.threshold_neg = [0.0, -self.deadzone]
         else:
-            self.threshold_neg = [self.extremum[0], 0.0]
+            self.threshold_neg = [self.extremum[0], -self.deadzone ]
 
     def setPosThresholdsFromSlider(self, lower_value, upper_value):
         """
@@ -232,7 +233,7 @@ class Image(object):
         """
         self.threshold_neg = list(self.threshold_neg)
         self.threshold_neg[0] = (upper_value)/1000.0 * self.extremum[0]
-        self.threshold_neg[1] = (lower_value)/1000.0 * self.extremum[0]
+        self.threshold_neg[1] = (lower_value)/1000.0 * self.extremum[0] -self.deadzone 
 
     def setPosThresholds(self, threshold):
         """

@@ -500,29 +500,6 @@ class viff(QtGui.QMainWindow):
         self.l.addWidget(self.intensity_label, 7, self.listoffset+2, 1, 8)
         
 
-        # Label showing the values for mouse position
-        # label 'cursor'
-        # self.cursor_int_label = QtGui.QLabel('Cursor:')
-        # self.cursor_int_label.setAlignment(
-        #     QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight)
-        # self.l.addWidget(self.cursor_int_label, 7, self.listoffset+2, 1, 2)
-        # self.intensity_lbl_cursor = QtGui.QLabel('nan')
-        # self.intensity_lbl_cursor.setAlignment(
-        #     QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
-        # self.l.addWidget(self.intensity_lbl_cursor, 7, self.listoffset+4, 1, 10)
-
-        ## For playing time series movies ##
-        # # fast backward button
-        # self.fb_button = QtGui.QToolButton(self)
-        # self.fb_button.pressed.connect(self.firstFrame)
-        # self.fb_button.released.connect(self.setSliceStateOff)
-        # icon_fb = QtGui.QIcon(
-        #     os.path.dirname(full_path)+"/../icons/fastback.svg")
-        # self.fb_button.setIcon(icon_fb)
-        # self.fb_button.setToolTip("move to start")
-        # self.l.addWidget(self.fb_button, 8, self.listoffset+2, 1, 1)
-
-
         # one frame backward button
         self.backward_button = QtGui.QToolButton(self)
         self.backward_button.pressed.connect(self.prevFrame)
@@ -567,18 +544,6 @@ class viff(QtGui.QMainWindow):
         self.l.addWidget(self.frame_box, 8, self.listoffset+5, 1, 2)
         
         
-
-
-        # # fast forward button
-        # self.ff_button = QtGui.QToolButton(self)
-        # self.ff_button.pressed.connect(self.lastFrame)
-        # self.ff_button.released.connect(self.setSliceStateOff)
-        # icon_ff = QtGui.QIcon(
-        #     os.path.dirname(full_path)+"/../icons/fastfor.svg")
-        # self.ff_button.setIcon(icon_ff)
-        # self.ff_button.setToolTip("move to end")
-        # self.l.addWidget(self.ff_button, 8, self.listoffset+9, 1, 1)
-
         # frame slider
         self.frame_sld = JumpSlider(QtCore.Qt.Horizontal)
         self.frame_sld.setMinimum(0)
@@ -3048,16 +3013,26 @@ class viff(QtGui.QMainWindow):
             self.console.kernel.shell.run_cell('%pylab qt')
         self.console.show()
 
+#%% openHistogramWindow (here filename is set)
     def openHistogramWindow(self):
         """
         Opens the histogram window.
         """
-        if self.hist is None:
-            self.hist = HistogramThresholdWidget.HistogramThresholdWidget()
-            # self.hist.sigChanged.connect(self.setThresholdsFromHistogram)
+        #set title
+        index = self.imagelist.currentRow()
+        filename = ""
+        if index >= 0:
+            filename = self.images[index].filename
+            
+        self.hist = HistogramThresholdWidget.HistogramThresholdWidget(filename)
+        log1("openHistogramWindow: filename {}".format(filename))
+        
+
+            
         self.resetHistogram()
         self.hist.show()
 
+#%% resetHistogram
     def resetHistogram(self):
         """
         Resets the histogram window when changing the current image or the
@@ -3065,7 +3040,16 @@ class viff(QtGui.QMainWindow):
         """
         index = self.imagelist.currentRow()
         if index >= 0:
+            #set title
+            index = self.imagelist.currentRow()
+            filename = ""
+            if index >= 0:
+                filename = self.images[index].filename
+                
+            # self.hist = HistogramThresholdWidget.HistogramThresholdWidget(filename)
+            
             self.hist.reset()
+            self.hist.setTitle(filename)
             # set Histogram
             [x, y] = self.images[index].getHistogram()
             self.hist.setPlot(x,y)

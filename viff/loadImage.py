@@ -213,5 +213,6 @@ def loadImageFromFile(filename, pref, f_type):
             img.setInterpolation(pref['interpolation'][0])
 
     img.writeProps()
+    img.filename = filename
 
     return img
