@@ -30,12 +30,12 @@ import re
 # subprocess.call("vnifti -in /home/morty/tmp/test.nii -out /home/morty/tmp/test.v", shell=True)
 
 # #%%BINARY writer
-# dtype = np.int16
-# # data_orig = 13*np.ones((6,6,6), dtype=dtype)
+dtype = np.int16
+# data_orig = 13*np.ones((6,6,6), dtype=dtype)
 # xdim = 5
 # ydim = 5
 # zdim = 5
-# # tdim = 11
+# tdim = 11
 
 # data_1D = np.ones(xdim*ydim*zdim, dtype=np.int32)
 # data_1D = np.random.rand(xdim*ydim*zdim)
@@ -177,14 +177,19 @@ def load_vista(fp_input):
             img1D = np.frombuffer(raw, dtype=dict_image["dtype"], count=dict_image["length"], offset=dict_image["offset"]).byteswap()
         else: #bit representation (masks etc)
             img1D_byterepn = np.frombuffer(raw, dtype=np.uint8, count=dict_image["length"], offset=dict_image["offset"])#.byteswap()
-            img1D_bit_graced = np.array([])
-            for l in img1D_byterepn:
-                bx = bin(l)[2:]
-                bx = (8-len(bx))*"0"+bx
-                for j in range(8):
-                    # b = bx[7-j]
-                    b = bx[j]
-                    img1D_bit_graced = np.append(img1D_bit_graced, int(b))
+            img1D_bit_graced = np.unpackbits(img1D_byterepn)
+            
+            #OLD AND SLOW
+            # img1D_bit_graced = np.array([])
+            # for l in img1D_byterepn:
+            #     bx = bin(l)[2:]
+            #     bx = (8-len(bx))*"0"+bx
+            #     for j in range(8):
+            #         # b = bx[7-j]
+            #         b = bx[j]
+            #         img1D_bit_graced = np.append(img1D_bit_graced, int(b))
+                    
+                    
             img1D = img1D_bit_graced[0:xdim*ydim*zdim]
             
         img3D = np.transpose(np.reshape(img1D, (zdim,ydim,xdim)), (2,1,0))
