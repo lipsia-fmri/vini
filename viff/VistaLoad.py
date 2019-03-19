@@ -95,11 +95,14 @@ def load_vista(fp_input):
         raw=f.read()
     
     #find the ^L breaker, determining where the header part stops
+    last_idx_header = -1
     for i in range(len(raw)):
         if raw[i:i+2]==b'\x0c\n':
             last_idx_header = i+2
             break
     
+    if last_idx_header == -1:
+        raise ValueError("WARNING! BAD VISTA FILE? {}".format(fp_input))
     #now parse the header for the first time to load the data.
     header = raw[0:last_idx_header-2].decode("utf-8")
     

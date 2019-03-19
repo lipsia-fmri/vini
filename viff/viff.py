@@ -98,6 +98,10 @@ def log1(msg):
     if verbose_level <= 1:
         print("log1 {}: {}".format(get_time(),msg))
 
+def log2(msg):
+    if verbose_level <= 2:
+        print("log2 {}: {}".format(get_time(),msg))
+
 def get_time():
     current_time = time.localtime()
     str_time = time.strftime('%H%M%S', current_time)
@@ -203,42 +207,11 @@ class viff(QtGui.QMainWindow):
         self.forbid_mm = False
 
         #%% preferences: init with default preferences
-        self.preferences = {
-            # viewing
-            'voxel_coord': True,
-            'link_mode': 2, # linked == 0, link zoom == 1, unlinked == 2
-            'window_width': 1000,
-            'window_height': 300,
-            'window_posx': 0,
-            'window_posy': 0,
-
-            # colormaps
-            'cm_under': 'grey',
-            'cm_pos': 'red_vlv',
-            'cm_neg': 'blue_vlv',
-            'clip_under_high': False,
-            'clip_under_low': False,
-            'clip_pos_high': False,
-            'clip_pos_low': True,
-            'clip_neg_high': True,
-            'clip_neg_low': False,
-
-            # resampling
-            'res_method': 0, # (0 - affine, 1 - image, 2 - fit)
-            'interpolation': 1,
-            'os_ratio': 1.0,
-
-            # search
-            'search_radius': 5
-        }
-        
+        self.setDefaultPreferences()
         
         
 
-        
-        #RESETTTING PREFERENCES: DO IT HERE!
-        # self.savePreferences()
-        
+
         
         # then overwrite specific settings that were saved in sessions before...
         self.loadPreferences()
@@ -274,6 +247,9 @@ class viff(QtGui.QMainWindow):
 
         self.setWindowTitle("Main window")
         self.setupUI()
+        
+        
+    
 
     def setupUI(self):
         """
@@ -463,6 +439,11 @@ class viff(QtGui.QMainWindow):
         self.x_box.setMaxLength(4)
         self.y_box.setMaxLength(4)
         self.z_box.setMaxLength(4)
+        
+        validator = QtGui.QDoubleValidator()
+        self.x_box.setValidator(validator)
+        self.y_box.setValidator(validator)
+        self.z_box.setValidator(validator)
         
         
         self.x_box.editingFinished.connect(self.setCrosshairBoxCoord)
@@ -739,7 +720,7 @@ class viff(QtGui.QMainWindow):
         exit_action.setShortcut(QtGui.QKeySequence("Ctrl+C"))
         #exit_action.setShortcut(QtGui.QKeySequence.Quit)
         exit_action.setStatusTip('Exit application')
-        exit_action.triggered.connect(self.close)
+        exit_action.triggered.connect(self.closeAndSave)
         self.file_menu.addAction(exit_action)
 
         ## resampling and view related menu items ##
@@ -1172,6 +1153,11 @@ class viff(QtGui.QMainWindow):
         Removes the item of index ind from the imagelist.
         """
         self.imagelist.takeItem(ind)
+        
+    def closeAndSave(self):
+        log1("closeAndSave called!")
+        self.saveWindowSize()
+        self.close()
 
     ## Section: Resampling Methods ##
     def resampleToAffine(self):
@@ -1514,7 +1500,9 @@ class viff(QtGui.QMainWindow):
                 self.extra_windows[i-1].sw_t.sb.setYLink(
                     self.extra_windows[i].sw_t.sb)
 
+
     ## Section: Crosshair and Cursor Movements and Connected Functions ##
+    #%% setCrosshairBoxCoord
     def setCrosshairBoxCoord(self):
         """
         Sets the crosshair to the box coordinates on enter.
@@ -1530,14 +1518,16 @@ class viff(QtGui.QMainWindow):
             index = self.imagelist.currentRow()
             if self.voxel_coord:
                 if index >= 0:
-                    m = self.applyTransform(x, y, z, self.images[index].getAffineUsed())
+                    m = self.applyTransform(x, y, z, self.images[index].getAffineUsed(), inverse=True)
+                    log2("setCrosshairBoxCoord: x {} y {} z {}. Transformed to: m={}".format(x,y,z,m))
                 else:
                     QtGui.QMessageBox.warning(self, "Warning",
                         "Error: No image selected to display voxel \
                         coordinates for.")
             else:
                 m = self.applyTransform(x, y, z, self.affine, inverse=True)
-            self.img_coord = copy.copy(np.asarray(m).astype(int))
+            # self.img_coord = copy.copy(np.asarray(m).astype(int))
+            self.img_coord = np.asarray(np.round(m), dtype=np.int32)
             # Now that the new coordinates are computed, move the crosshair
             # to that position.
             # But first check whether the coordinates are in the resampled
@@ -1686,7 +1676,7 @@ class viff(QtGui.QMainWindow):
         else:
             self.voxel_coord = state
         self.refreshVoxelCoord()
-        log1("setVoxelCoord to state {}".format(state))
+        log2("setVoxelCoord to state {}".format(state))
 
         
     def refreshVoxelCoord(self):
@@ -1703,7 +1693,7 @@ class viff(QtGui.QMainWindow):
                 m = [np.trunc(x) for x in self.img_coord]
                 m = self.images[index]
                 sform_code = m.sform_code
-            log1("setVoxelCoord, sform_code {}".format(sform_code))
+            log2("setVoxelCoord, sform_code {}".format(sform_code))
             if sform_code == 4:
                 self.dim_label.setText("mni")
             else:
@@ -1759,7 +1749,7 @@ class viff(QtGui.QMainWindow):
             shape = self.images[0].image_res.shape
             self.img_coord = np.multiply(np.asarray(shape),0.5).astype(int)
             self.setCrosshair()
-
+    #%% setCrosshair
     def setCrosshair(self):
         """
         This function literally moves the crosshair to the desired position.
@@ -2690,7 +2680,7 @@ class viff(QtGui.QMainWindow):
         self.updateCrossIntensityLabel()
         self.setFrameToBox()
         self.setFrameToSlider()
-        log1("setFrame called (self.frame {})".format(self.frame))
+        log2("setFrame called (self.frame {})".format(self.frame))
         
     def setAlphaFromSlider(self):
         """
@@ -2709,7 +2699,7 @@ class viff(QtGui.QMainWindow):
             self.updateSlices()
             self.updateImageItems()
             
-        log1("setAlphaFromSlider called (alpha_fract {})".format(alpha_fract))
+        log2("setAlphaFromSlider called (alpha_fract {})".format(alpha_fract))
 
 
     def setAlphaToSlider(self):
@@ -3035,7 +3025,7 @@ class viff(QtGui.QMainWindow):
             filename = self.images[index].filename
             
         self.hist = HistogramThresholdWidget.HistogramThresholdWidget(filename)
-        log1("openHistogramWindow: filename {}".format(filename))
+        log2("openHistogramWindow: filename {}".format(filename))
         
 
             
@@ -3276,8 +3266,37 @@ class viff(QtGui.QMainWindow):
         self.settings.exec_()
 
    
+    def setDefaultPreferences(self):
+        self.preferences = {
+            # viewing
+            'voxel_coord': True,
+            'link_mode': 0, # linked == 0, link zoom == 1, unlinked == 2
+            'window_width': 1000,
+            'window_height': 300,
+            'window_posx': 0,
+            'window_posy': 0,
 
-#%% load save prefs
+            # colormaps
+            'cm_under': 'grey',
+            'cm_pos': 'red_vlv',
+            'cm_neg': 'blue_vlv',
+            'clip_under_high': False,
+            'clip_under_low': True,
+            'clip_pos_high': False,
+            'clip_pos_low': True,
+            'clip_neg_high': True,
+            'clip_neg_low': False,
+
+            # resampling
+            'res_method': 0, # (0 - affine, 1 - image, 2 - fit)
+            'interpolation': 1,
+            'os_ratio': 1.0,
+
+            # search
+            'search_radius': 5
+        }
+        
+
     
     def loadPreferences(self):
         settings = QtCore.QSettings()
@@ -3486,6 +3505,7 @@ def main():
                         help = "specify a functional image", type=str)
     parser.add_argument('-l', action='store_true', default=False,
                         dest='linked', help='Set linked views to true')
+
     args = parser.parse_args()
     filenames = args.input
     z_filenames = args.zmap
@@ -3583,6 +3603,8 @@ def main():
                     print("Error: File doesn't exist")
         if file_list is not None:
             viewer.loadImagesFromFiles(file_list, type_list)
+
+        
 
     sys.exit(app.exec_())
 
