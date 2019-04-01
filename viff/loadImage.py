@@ -125,45 +125,11 @@ def loadImageFromFile(filename, pref, f_type):
     elif (filetype == '.v'):
         image = load_vista(filename)
         hdr = image.header
-        
-        #old way of loading vista file!
-        # try:
-        #     [img_data, dim, pixdim, sform_code, sform, qform_code, qform,
-        #         voxel_res, quatern, qoffset, column_vec, row_vec, slice_vec,
-        #         index_origin, ca, cp, extent] = pyvista.loadVImage(filename)
-        #     hdr = {'pixdim': pixdim}
-        #     if len(pixdim) == 1: # version 1 .v file
-        #         pixdim.append(voxel_res[1])
-        #         pixdim.append(voxel_res[2])
-        #         pixdim.append(voxel_res[3])
-        #         # Build affine from old version header info
-        #         affine = np.eye(4)
-        #         affine[0, 0:3] = column_vec
-        #         affine[1, 0:3] = row_vec
-        #         affine[2, 0:3] = slice_vec
-        #         affine[0:3, 3] = np.transpose(index_origin)
-        #         # if affine is still build incorrectly, use identity
-        #         if np.linalg.det(affine[0:2, 0:2]) == 0:
-        #             affine = np.identity(4)
-        #         image = Nifti2Image(img_data.astype(np.float32), affine)
-        #     else: # version 2 .v file
-        #         # sform, or qform, and if not, then fall-back affine
-        #         if sform_code != 0:
-        #             affine = sform
-        #         elif qform_code != 0:
-        #             qform_affine = calculateQFormAffine(pixdim, qform_code, qform)
-        #             affine = qform_affine
-        #         else:
-        #             affine = shape_zoom_affine(img_data.shape, pixdim[1:4], False)
-        #         image = Nifti2Image(img_data.astype(np.float32), affine)
-        #         if sform_code != 0:
-        #             image.set_sform(sform)
-        #         if qform_code != 0:
-        #             qform_affine = calculateQFormAffine(pixdim, qform_code, qform)
-        #             image.set_qform(qform_affine)
-        # except RuntimeError:
-        #     print("Cannot load .v file given!")
-
+    else:
+        print("ERROR!! CANNOT LOAD THIS IMAGE!")
+        return
+    
+    # import pdb; pdb.set_trace()
 
     # if data contain NaNs convert to zero
     if np.isnan(image.get_data()).any():

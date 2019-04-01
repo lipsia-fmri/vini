@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 This module contains the viff class for viewing MRI files.
 
@@ -34,7 +34,7 @@ setapi("QVariant", 2)
 setapi("QString", 2)
 setapi("QUrl", 2)
 
-verbose_level = 5
+verbose_level = 2
 
 from pyqtgraph.Qt import QtCore, QtGui
 
@@ -107,6 +107,12 @@ def get_time():
     str_time = time.strftime('%H%M%S', current_time)
     return str_time
 
+def unicode(string):
+    try:
+        res = unicode(string)
+    except:
+        res = string
+    return res
 
 class viff(QtGui.QMainWindow):
     """
@@ -210,8 +216,6 @@ class viff(QtGui.QMainWindow):
         self.setDefaultPreferences()
         
         
-
-
         
         # then overwrite specific settings that were saved in sessions before...
         self.loadPreferences()
@@ -255,6 +259,10 @@ class viff(QtGui.QMainWindow):
         """
         Sets up all window elements, keyboard shortcuts and signal.
         """
+        
+        #%%setupUI
+        
+        full_path = os.path.realpath(__file__)
 
         # viff is a QMainWindow
         self.setObjectName(_fromUtf8("viff"))
@@ -289,9 +297,10 @@ class viff(QtGui.QMainWindow):
         self.c_slice_widget = SliceWidget.SliceWidget('c')
         self.s_slice_widget = SliceWidget.SliceWidget('s')
         self.t_slice_widget = SliceWidget.SliceWidget('t')
-        self.l.addWidget(self.c_slice_widget, 0, 0, 12, 12)
-        self.l.addWidget(self.s_slice_widget, 0, 12, 12, 12)
-        self.l.addWidget(self.t_slice_widget, 0, 24, 12, 12)
+        ydim_slicewidget = 13
+        self.l.addWidget(self.c_slice_widget, 0, 0, ydim_slicewidget, ydim_slicewidget)
+        self.l.addWidget(self.s_slice_widget, 0, 12, ydim_slicewidget, ydim_slicewidget)
+        self.l.addWidget(self.t_slice_widget, 0, 24, ydim_slicewidget, ydim_slicewidget)
         self.c_slice_widget.sigSelected.connect(self.sliceFocusC)
         self.s_slice_widget.sigSelected.connect(self.sliceFocusS)
         self.t_slice_widget.sigSelected.connect(self.sliceFocusT)
@@ -303,87 +312,8 @@ class viff(QtGui.QMainWindow):
         self.slice_popouts[1] = SingleSlice.SingleSlice('s')
         self.slice_popouts[2] = SingleSlice.SingleSlice('t')
 
-        # threshold slider
-        self.slider_color = QtGui.QColor()
-        self.slider_color.setRgb(255, 110, 0)
-        self.slider_color_off = QtGui.QColor()
-        self.slider_color_off.setRgb(150, 150, 150)
 
-        self.slider_pos = QxtSpanSlider()
-        self.slider_pos.setGradientLeftColor(self.slider_color)
-        self.slider_pos.setGradientRightColor(self.slider_color)
-        self.slider_pos.setRange(0, 1000)
-        self.slider_pos.setSpan(0, 1000)
-        self.slider_pos.setEnabled(False)
-        self.slider_pos.setMinimumWidth(20)
-        self.slider_pos.spanChanged.connect(self.setThresholdsFromSliders)
-        self.l.addWidget(self.slider_pos, 0, self.listoffset, 12, 1)
 
-        self.slider_neg = QxtSpanSlider()
-        self.slider_neg.setGradientLeftColor(self.slider_color)
-        self.slider_neg.setGradientRightColor(self.slider_color)
-        self.slider_neg.setRange(0, 1000)
-        self.slider_neg.setSpan(0, 1000)
-        self.disableSliderNeg()
-        self.slider_neg.spanChanged.connect(self.setThresholdsFromSliders)
-        self.l.addWidget(self.slider_neg, 0, self.listoffset+1, 12, 1)
-
-        # Crosshair button toggle
-        self.cross_button = QtGui.QToolButton(self)
-        self.cross_button.setCheckable(True)
-        self.cross_button.setChecked(True)
-        full_path = os.path.realpath(__file__)
-        icon_cross = QtGui.QIcon(
-            os.path.dirname(full_path)+"/../icons/cross.svg")
-        self.cross_button.setIcon(icon_cross)
-        self.cross_button.setToolTip("toggle crosshair on/off")
-        self.cross_button.clicked.connect(self.setCrosshairsVisible)
-        self.l.addWidget(self.cross_button, 4, self.listoffset+2, 1, 1)
-
-        # Reset image view button
-        self.reset_button = QtGui.QToolButton(self)
-        icon_reset = QtGui.QIcon(
-            os.path.dirname(full_path)+"/../icons/reset.svg")
-        self.reset_button.setIcon(icon_reset)
-        self.reset_button.setToolTip("recenter image")
-        self.reset_button.clicked.connect(self.autoRange)
-        self.l.addWidget(self.reset_button, 4, self.listoffset+3, 1, 1)
-
-        # Find min/max buttons
-        self.min_button = QtGui.QToolButton(self)
-        self.max_button = QtGui.QToolButton(self)
-        self.min_button.clicked.connect(self.findMin)
-        self.max_button.clicked.connect(self.findMax)
-        icon_min = QtGui.QIcon(os.path.dirname(full_path)+"/../icons/min.svg")
-        icon_max = QtGui.QIcon(os.path.dirname(full_path)+"/../icons/max.svg")
-        self.min_button.setIcon(icon_min)
-        self.max_button.setIcon(icon_max)
-        self.min_button.setToolTip("find minimum")
-        self.max_button.setToolTip("find maximum")
-        self.l.addWidget(self.min_button, 4, self.listoffset+4, 1, 1)
-        self.l.addWidget(self.max_button, 4, self.listoffset+5, 1, 1)
-
-        # Link views button
-        self.link_button = QtGui.QToolButton(self)
-        self.link_button.setCheckable(True)
-        self.link_button.setChecked(True)
-        icon_link = QtGui.QIcon(
-            os.path.dirname(full_path)+"/../icons/link.svg")
-        self.link_button.setIcon(icon_link)
-        self.link_button.setToolTip("toggle linked slices on/off")
-        self.link_button.clicked.connect(self.linkSlices)
-        self.l.addWidget(self.link_button, 4, self.listoffset+6, 1, 1)
-
-        # Voxel coordinates toggle button
-        self.voxel_button = QtGui.QToolButton(self)
-        self.voxel_button.setCheckable(True)
-        self.voxel_button.setChecked(self.voxel_coord)
-        icon_voxel = QtGui.QIcon(
-            os.path.dirname(full_path)+"/../icons/voxel.svg")
-        self.voxel_button.setIcon(icon_voxel)
-        self.voxel_button.setToolTip("toggle voxel coordinates on/off")
-        self.voxel_button.clicked.connect(self.setVoxelCoord)
-        self.l.addWidget(self.voxel_button, 4, self.listoffset+7, 1, 1)
 
         # Imagelist widget (containing the names of all images)
         self.imagelist = QtGui.QListWidget()
@@ -394,11 +324,14 @@ class viff(QtGui.QMainWindow):
         self.imagelist.currentItemChanged.connect(self.selectionChange)
         self.imagelist.itemClicked.connect(self.selectionChange)
         self.imagelist.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.imagelist.connect(
-            self.imagelist,
-            QtCore.SIGNAL("customContextMenuRequested(QPoint)"),
-            self.rightClickedList)
-        self.l.addWidget(self.imagelist, 0, self.listoffset+2, 4, 7)
+        
+        #%% BAD COMMENT OUT... BRING BACK DA LIST
+        # self.imagelist.connectNotify(
+        #     self.imagelist,
+        #     QtCore.SIGNAL("customContextMenuRequested(QPoint)"),
+        #     self.rightClickedList)
+        ypos = 0
+        self.l.addWidget(self.imagelist, ypos, self.listoffset+2, 4, 7)
 
         # Swap up and down buttons
         self.up_button = QtGui.QToolButton(self)
@@ -413,16 +346,17 @@ class viff(QtGui.QMainWindow):
         self.down_button.setIcon(icon_down)
         self.up_button.setToolTip('move image up')
         self.down_button.setToolTip('move image down')
-        self.l.addWidget(self.up_button, 0, self.listoffset+9, 1, 1)
-        self.l.addWidget(self.down_button, 1, self.listoffset+9, 1, 1)
+        self.l.addWidget(self.up_button, ypos, self.listoffset+9, 1, 1)
+        self.l.addWidget(self.down_button, ypos+1, self.listoffset+9, 1, 1)
 
         # add image button
+        ypos = 2
         self.add_button = QtGui.QToolButton(self)
         self.add_button.clicked.connect(self.openNewFile)
         icon_add = QtGui.QIcon(os.path.dirname(full_path)+"/../icons/plus.svg")
         self.add_button.setIcon(icon_add)
         self.add_button.setToolTip("add image")
-        self.l.addWidget(self.add_button, 2, self.listoffset+9, 1, 1)
+        self.l.addWidget(self.add_button, ypos, self.listoffset+9, 1, 1)
 
         # delete image button
         self.del_button = QtGui.QToolButton(self)
@@ -430,16 +364,94 @@ class viff(QtGui.QMainWindow):
         icon_dash = QtGui.QIcon(os.path.dirname(full_path)+"/../icons/dash.svg")
         self.del_button.setIcon(icon_dash)
         self.del_button.setToolTip("remove currently selected image")
-        self.l.addWidget(self.del_button, 3, self.listoffset+9, 1, 1)
+        self.l.addWidget(self.del_button, ypos+1, self.listoffset+9, 1, 1)
+        
+        
+        # Crosshair button toggle
+        self.cross_button = QtGui.QToolButton(self)
+        self.cross_button.setCheckable(True)
+        self.cross_button.setChecked(True)
+        
+        icon_cross = QtGui.QIcon(
+            os.path.dirname(full_path)+"/../icons/cross.svg")
+        self.cross_button.setIcon(icon_cross)
+        self.cross_button.setToolTip("toggle crosshair on/off")
+        self.cross_button.clicked.connect(self.setCrosshairsVisible)
+        self.l.addWidget(self.cross_button, 4, self.listoffset+2, 1, 1)
+
+        # Reset image view button
+        ypos = 4
+        # self.reset_button = QtGui.QToolButton(self)
+        # icon_reset = QtGui.QIcon(
+        #     os.path.dirname(full_path)+"/../icons/reset.svg")
+        # self.reset_button.setIcon(icon_reset)
+        # self.reset_button.setToolTip("recenter image")
+        # self.reset_button.clicked.connect(self.autoRange)
+        # self.l.addWidget(self.reset_button, ypos, self.listoffset+3, 1, 1)
+
+        # Find min/max buttons
+        self.min_button = QtGui.QToolButton(self)
+        self.max_button = QtGui.QToolButton(self)
+        self.min_button.clicked.connect(self.findMin)
+        self.max_button.clicked.connect(self.findMax)
+        icon_min = QtGui.QIcon(os.path.dirname(full_path)+"/../icons/min.svg")
+        icon_max = QtGui.QIcon(os.path.dirname(full_path)+"/../icons/max.svg")
+        self.min_button.setIcon(icon_min)
+        self.max_button.setIcon(icon_max)
+        self.min_button.setToolTip("go to local minimum")
+        self.max_button.setToolTip("go to local maximum")
+        self.l.addWidget(self.min_button, ypos, self.listoffset+3, 1, 1)
+        self.l.addWidget(self.max_button, ypos, self.listoffset+4, 1, 1)
+        
+        #reset all button
+        self.reset_button = QtGui.QPushButton("reset")
+        self.reset_button.clicked.connect(self.resetEverything)
+        self.reset_button.setToolTip("reset everything!")
+        self.l.addWidget(self.reset_button, ypos, self.listoffset+5, 1, 1)
+        
+        
+        # alpha slider
+        # ypos = 8
+        self.alpha_sld = JumpSlider(QtCore.Qt.Horizontal)
+        self.alpha_sld.setMinimum(0)
+        self.alpha_sld.setMaximum(100)
+        self.alpha_sld.setValue(100)
+        self.alpha_sld.setToolTip("change opacity of selected image")
+        # self.alpha_sld.sliderPressed.connect(self.setSliceStateOn)
+        # self.alpha_sld.sliderReleased.connect(self.setSliceStateOff)
+        self.alpha_sld.valueChanged.connect(self.setAlphaFromSlider)
+        self.l.addWidget(self.alpha_sld, ypos, self.listoffset+6, 1, 1)
+        
+        self.alpha_label = QtGui.QLabel('100% opacity')
+        self.alpha_label.setAlignment(
+            QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
+        self.l.addWidget(self.alpha_label, ypos, self.listoffset+7, 1, 2)
+        
+
+        # # Link views button
+        # self.link_button = QtGui.QToolButton(self)
+        # self.link_button.setCheckable(True)
+        # self.link_button.setChecked(True)
+        # icon_link = QtGui.QIcon(
+        #     os.path.dirname(full_path)+"/../icons/link.svg")
+        # self.link_button.setIcon(icon_link)
+        # self.link_button.setToolTip("toggle linked slices on/off")
+        # self.link_button.clicked.connect(self.linkSlices)
+        # self.l.addWidget(self.link_button, 4, self.listoffset+6, 1, 1)
+
+        
 
         # coordinate labels
         self.x_box = QtGui.QLineEdit()
         self.y_box = QtGui.QLineEdit()
         self.z_box = QtGui.QLineEdit()
-        self.x_box.setMaxLength(4)
-        self.y_box.setMaxLength(4)
-        self.z_box.setMaxLength(4)
-        
+        self.x_box.setMaxLength(3)
+        self.y_box.setMaxLength(3)
+        self.z_box.setMaxLength(3)
+        self.x_box.setToolTip("enter x coordinate")
+        self.y_box.setToolTip("enter y coordinate")
+        self.z_box.setToolTip("enter z coordinate")
+        #only allow numbers here...
         validator = QtGui.QDoubleValidator()
         self.x_box.setValidator(validator)
         self.y_box.setValidator(validator)
@@ -449,50 +461,30 @@ class viff(QtGui.QMainWindow):
         self.x_box.editingFinished.connect(self.setCrosshairBoxCoord)
         self.y_box.editingFinished.connect(self.setCrosshairBoxCoord)
         self.z_box.editingFinished.connect(self.setCrosshairBoxCoord)
-        self.l.addWidget(self.x_box, 5, self.listoffset+2, 1, 2)
-        self.l.addWidget(self.y_box, 5, self.listoffset+4, 1, 2)
-        self.l.addWidget(self.z_box, 5, self.listoffset+6, 1, 2)
-
-        # Crosshair intensity label showing the value of the current image
-        # label 'cross'
-        # self.cross_int_label = QtGui.QLabel('Cross:')
-        # self.cross_int_label.setAlignment(
-        #     QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight)
-        # self.l.addWidget(self.cross_int_label, 6, self.listoffset+2, 1, 2)
-
-
-
+        ypos = 5
+        self.l.addWidget(self.x_box, ypos, self.listoffset+2, 1, 2)
+        self.l.addWidget(self.y_box, ypos, self.listoffset+4, 1, 2)
+        self.l.addWidget(self.z_box, ypos, self.listoffset+6, 1, 2)
         
-        self.dim_label = QtGui.QLabel('voxel')
-        self.dim_label.setAlignment(
-            QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
-        self.l.addWidget(self.dim_label, 5, self.listoffset+8, 1, 8)
-        
-        self.alpha_sld = JumpSlider(QtCore.Qt.Horizontal)
-        self.alpha_sld.setMinimum(0)
-        self.alpha_sld.setMaximum(100)
-        self.alpha_sld.setValue(100)
-        # self.alpha_sld.sliderPressed.connect(self.setSliceStateOn)
-        # self.alpha_sld.sliderReleased.connect(self.setSliceStateOff)
-        self.alpha_sld.valueChanged.connect(self.setAlphaFromSlider)
-        self.l.addWidget(self.alpha_sld, 6, self.listoffset+2, 1, 4)
-        
-        # label for actual value
-        self.alpha_label = QtGui.QLabel('100% ')
-        self.alpha_label.setAlignment(
-            QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
-        # self.l.addWidget(self.intensity_label, 6, self.listoffset+4, 1, 8)
-        self.l.addWidget(self.alpha_label, 6, self.listoffset+6, 1, 4)
-        
-        
-                # label for actual value
-        self.intensity_label = QtGui.QLabel('nan')
-        self.intensity_label.setAlignment(
-            QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
-        # self.l.addWidget(self.intensity_label, 6, self.listoffset+4, 1, 8)
-        self.l.addWidget(self.intensity_label, 7, self.listoffset+2, 1, 8)
+        self.voxel_button = QtGui.QPushButton("voxel")
+        self.voxel_button.clicked.connect(self.switchVoxelCoord)
+        self.voxel_button.setToolTip("toggle voxel / millimeter coordinates")
         
 
+        # self.dim_button.setAlignment(
+        #     QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
+        self.l.addWidget(self.voxel_button, ypos, self.listoffset+8, 1, 2)
+        
+        
+
+        # self.dim_label = QtGui.QLabel('voxel')
+        # self.dim_label.setAlignment(
+        #     QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
+        # self.l.addWidget(self.dim_label, ypos, self.listoffset+8, 1, 2)
+        
+        
+        
+        ypos = 6
         # one frame backward button
         self.backward_button = QtGui.QToolButton(self)
         self.backward_button.pressed.connect(self.prevFrame)
@@ -500,8 +492,8 @@ class viff(QtGui.QMainWindow):
         icon_backward = QtGui.QIcon(
             os.path.dirname(full_path)+"/../icons/prev.svg")
         self.backward_button.setIcon(icon_backward)
-        self.backward_button.setToolTip("move to previous Frame")
-        self.l.addWidget(self.backward_button, 8, self.listoffset+2, 1, 1)
+        self.backward_button.setToolTip("move to previous volume")
+        self.l.addWidget(self.backward_button, ypos, self.listoffset+2, 1, 1)
 
         
         # play button
@@ -513,8 +505,8 @@ class viff(QtGui.QMainWindow):
         self.icon_pause = QtGui.QIcon(
             os.path.dirname(full_path)+"/../icons/pause.svg")
         self.play_button.setIcon(self.icon_play)
-        self.play_button.setToolTip("play")
-        self.l.addWidget(self.play_button, 8, self.listoffset+3, 1, 1)
+        self.play_button.setToolTip("play as movie")
+        self.l.addWidget(self.play_button, ypos, self.listoffset+3, 1, 1)
         
         # forward one frame button
         self.forward_button = QtGui.QToolButton(self)
@@ -523,9 +515,9 @@ class viff(QtGui.QMainWindow):
         icon_forward = QtGui.QIcon(
             os.path.dirname(full_path)+"/../icons/next.svg")
         self.forward_button.setIcon(icon_forward)
-        self.forward_button.setToolTip("move to next frame")
+        self.forward_button.setToolTip("move to next volume")
         # self.l.addWidget(self.forward_button, 8, self.listoffset+8, 1, 1)
-        self.l.addWidget(self.forward_button, 8, self.listoffset+4, 1, 1)
+        self.l.addWidget(self.forward_button, ypos, self.listoffset+4, 1, 1)
 
 
         # Lineedit for frame number
@@ -534,10 +526,11 @@ class viff(QtGui.QMainWindow):
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight)
         self.frame_box.returnPressed.connect(self.setFrameFromBox)
         self.frame_box.editingFinished.connect(self.setFrameFromBox)
-        self.l.addWidget(self.frame_box, 8, self.listoffset+5, 1, 2)
+        self.frame_box.setToolTip("enter volume")
         
+        self.l.addWidget(self.frame_box, ypos, self.listoffset+5, 1, 2)
         
-        # frame slider
+        # frame slider (time)
         self.frame_sld = JumpSlider(QtCore.Qt.Horizontal)
         self.frame_sld.setMinimum(0)
         self.frame_sld.setMaximum(0)
@@ -545,7 +538,46 @@ class viff(QtGui.QMainWindow):
         self.frame_sld.sliderPressed.connect(self.setSliceStateOn)
         self.frame_sld.sliderReleased.connect(self.setSliceStateOff)
         self.frame_sld.valueChanged.connect(self.setFrameFromSlider)
-        self.l.addWidget(self.frame_sld, 9, self.listoffset+2, 1, 8)
+        self.frame_sld.setToolTip("select volume")
+        # self.l.addWidget(self.frame_sld, 8, self.listoffset+2, 1, 8)
+        self.l.addWidget(self.frame_sld, ypos, self.listoffset+7, 1, 8)
+
+        
+                
+        # label for actual value
+        ypos = 7
+        self.intensity_label = QtGui.QLabel('nan')
+        self.intensity_label.setAlignment(
+            QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
+        # self.l.addWidget(self.intensity_label, 6, self.listoffset+4, 1, 8)
+        self.l.addWidget(self.intensity_label, ypos, self.listoffset+2, 1, 8)
+        
+        
+        
+
+        
+        
+        # upper threshold slider
+        ypos = 9
+        self.slider_color = QtGui.QColor()
+        self.slider_color.setRgb(255, 110, 0)
+        
+        self.slider_color_off = QtGui.QColor()
+        self.slider_color_off.setRgb(150, 150, 150)
+
+        self.slider_pos = QxtSpanSlider()
+        self.slider_pos.setGradientLeftColor(self.slider_color)
+        self.slider_pos.setGradientRightColor(self.slider_color)
+        self.slider_pos.setRange(0, 1000)
+        self.slider_pos.setSpan(0, 1000)
+        self.slider_pos.setEnabled(False)
+        self.slider_pos.setMinimumWidth(100)
+        self.slider_pos.spanChanged.connect(self.setThresholdsFromSliders)
+        self.slider_pos.setToolTip("change positive thresholds")
+        self.l.addWidget(self.slider_pos, ypos, self.listoffset+2, 1, 8)
+        # self.l.addWidget(self.slider_pos, 0, self.listoffset, 12, 1)
+
+
 
         # threshold line edits
         self.min_pos = QtGui.QLineEdit()
@@ -564,24 +596,43 @@ class viff(QtGui.QMainWindow):
         self.max_pos.editingFinished.connect(self.setPosThresholdsFromBoxes)
         self.max_neg.editingFinished.connect(self.setNegThresholdsFromBoxes)
         self.min_neg.editingFinished.connect(self.setNegThresholdsFromBoxes)
-        self.l.addWidget(self.min_pos, 10, self.listoffset+2, 1, 2)
-        self.l.addWidget(self.max_pos, 10, self.listoffset+7, 1, 2)
-        self.l.addWidget(self.max_neg, 11, self.listoffset+2, 1, 2)
-        self.l.addWidget(self.min_neg, 11, self.listoffset+7, 1, 2)
+        
+        self.min_neg.setToolTip("change minimum negative threshold")
+        self.max_neg.setToolTip("change maximum negative threshold")
+        self.min_pos.setToolTip("change minimum positive threshold")
+        self.max_pos.setToolTip("change maximum positive threshold")
+        
+        self.l.addWidget(self.min_pos, ypos+1, self.listoffset+2, 1, 2)
+        self.l.addWidget(self.max_pos, ypos+1, self.listoffset+7, 1, 2)
+        self.l.addWidget(self.max_neg, ypos+2, self.listoffset+2, 1, 2)
+        self.l.addWidget(self.min_neg, ypos+2, self.listoffset+7, 1, 2)
 
         # reset thresholds buttons
-        self.pos_thr_button = QtGui.QToolButton(self)
-        self.neg_thr_button = QtGui.QToolButton(self)
-        icon_undo = QtGui.QIcon(
-            os.path.dirname(full_path)+"/../icons/mail-reply.svg")
-        self.pos_thr_button.setIcon(icon_undo)
-        self.neg_thr_button.setIcon(icon_undo)
-        self.pos_thr_button.setToolTip("reset default thresholds")
-        self.neg_thr_button.setToolTip("reset default thresholds")
-        self.pos_thr_button.clicked.connect(self.resetPosThresholds)
-        self.neg_thr_button.clicked.connect(self.resetNegThresholds)
-        self.l.addWidget(self.pos_thr_button, 10, self.listoffset+9, 1, 1)
-        self.l.addWidget(self.neg_thr_button, 11, self.listoffset+9, 1, 1)
+        # self.pos_thr_button = QtGui.QToolButton(self)
+        # self.neg_thr_button = QtGui.QToolButton(self)
+        # icon_undo = QtGui.QIcon(
+        #     os.path.dirname(full_path)+"/../icons/mail-reply.svg")
+        # # self.pos_thr_button.setIcon(icon_undo)
+        # self.neg_thr_button.setIcon(icon_undo)
+        # self.pos_thr_button.setToolTip("reset default thresholds")
+        # self.neg_thr_button.setToolTip("reset default thresholds")
+        # self.pos_thr_button.clicked.connect(self.resetPosThresholds)
+        # self.neg_thr_button.clicked.connect(self.resetNegThresholds)
+        # self.l.addWidget(self.pos_thr_button, 11, self.listoffset+9, 1, 1)
+        # self.l.addWidget(self.neg_thr_button, 12, self.listoffset+9, 1, 1)
+        
+        
+        self.slider_neg = QxtSpanSlider()
+        self.slider_neg.setGradientLeftColor(self.slider_color)
+        self.slider_neg.setGradientRightColor(self.slider_color)
+        self.slider_neg.setRange(0, 1000)
+        self.slider_neg.setSpan(0, 1000)
+        self.disableSliderNeg()
+        self.slider_neg.spanChanged.connect(self.setThresholdsFromSliders)
+        self.slider_neg.setToolTip("change negative thresholds")
+        self.l.addWidget(self.slider_neg, ypos+3, self.listoffset+2, 1, 8)
+        
+        
 
         # connect crosshair and cursor move events
         # for crosshair
@@ -999,8 +1050,8 @@ class viff(QtGui.QMainWindow):
         self.setCrosshairPositionCenter()
 
         # Colormaps
-        self.l.addWidget(self.images[0].pos_gradient, 10, 40, 1, 3)
-        self.l.addWidget(self.images[0].neg_gradient, 11, 40, 1, 3)
+        self.l.addWidget(self.images[0].pos_gradient, 11, 40, 1, 3)
+        self.l.addWidget(self.images[0].neg_gradient, 12, 40, 1, 3)
         # connect to update slices and imageitems
         self.images[0].pos_gradient.sigGradientChanged.connect(
             self.updateImages)
@@ -1111,7 +1162,10 @@ class viff(QtGui.QMainWindow):
         # Go through list and add them one by one.
         if fnames != []:
             for filename in fnames:
-                self.loadNewImage(unicode(filename))
+                # self.loadNewImage(unicode(filename))
+                if os.path.isfile(filename[0]):
+                    log2("openNewFile: filename {}".format(filename[0]))
+                    self.loadNewImage(filename[0])
 
     def deleteImage(self):
         """
@@ -1140,13 +1194,14 @@ class viff(QtGui.QMainWindow):
         """
         Adds the name to the imagelist.
         """
+        log2("addToList: adding {}".format(name))
         item = QtGui.QListWidgetItem(name)
         item.setFlags(item.flags() |
                       QtCore.Qt.ItemIsUserCheckable |
                       QtCore.Qt.ItemIsEditable)
         item.setCheckState(QtCore.Qt.Checked)
         self.imagelist.insertItem(0, item)
-        self.imagelist.setItemSelected(item, True)
+        # self.imagelist.selectedItems(item, True)
 
     def removeFromList(self, ind):
         """
@@ -1502,7 +1557,6 @@ class viff(QtGui.QMainWindow):
 
 
     ## Section: Crosshair and Cursor Movements and Connected Functions ##
-    #%% setCrosshairBoxCoord
     def setCrosshairBoxCoord(self):
         """
         Sets the crosshair to the box coordinates on enter.
@@ -1638,6 +1692,17 @@ class viff(QtGui.QMainWindow):
                 # str_intens += " (%s)" %str(self.imagelist.item(i).text()).split(".")[0]
             intensity = (str_intens)
             self.intensity_label.setText(intensity)
+            
+            str_intens = ""
+            for i in range(nmb_images):
+                if i > 0:
+                    str_intens += "\n"
+                if i<6:
+                    # str_intens += "%s:  %g" %(abc[i],self.images[i].getIntensity())
+                    str_intens += "%s: %g" %(str(self.imagelist.item(i).text()).split(".")[0], self.images[i].getIntensity())
+            intensity = (str_intens)
+            
+            self.intensity_label.setToolTip(intensity)
 
         # update ValueWindow
         if self.value_window.isVisible():
@@ -1663,8 +1728,16 @@ class viff(QtGui.QMainWindow):
             self.value_window.cross_coords_lbl.setText(coords)
             
         self.setAlphaToSlider()
+        
+    #%% resetEverything
+    def resetEverything(self):
+        self.resetAlpha()
+        self.autoRange()
+        self.resetPosThresholds()
+        self.resetNegThresholds()
+        
 
-    def setVoxelCoord(self, state):
+    def switchVoxelCoord(self):
         """
         Changes the coordinates used.
 
@@ -1674,9 +1747,9 @@ class viff(QtGui.QMainWindow):
         if self.forbid_mm:
             self.voxel_coord = True
         else:
-            self.voxel_coord = state
+            self.voxel_coord = not self.voxel_coord
         self.refreshVoxelCoord()
-        log2("setVoxelCoord to state {}".format(state))
+        log2("switchVoxelCoord to state {}".format(self.voxel_coord))
 
         
     def refreshVoxelCoord(self):
@@ -1685,7 +1758,7 @@ class viff(QtGui.QMainWindow):
         """
         self.updateDisplayCoordinates()
         if self.voxel_coord:
-            self.dim_label.setText("voxel")
+            self.voxel_button.setText("voxel")
         else:
             index = self.imagelist.currentRow()
             sform_code=-2
@@ -1693,11 +1766,11 @@ class viff(QtGui.QMainWindow):
                 m = [np.trunc(x) for x in self.img_coord]
                 m = self.images[index]
                 sform_code = m.sform_code
-            log2("setVoxelCoord, sform_code {}".format(sform_code))
+            log2("refreshVoxelCoord, sform_code {}".format(sform_code))
             if sform_code == 4:
-                self.dim_label.setText("mni")
+                self.voxel_button.setText("mni")
             else:
-                self.dim_label.setText("mm")
+                self.voxel_button.setText("mm")
                 
                 
         
@@ -1749,7 +1822,6 @@ class viff(QtGui.QMainWindow):
             shape = self.images[0].image_res.shape
             self.img_coord = np.multiply(np.asarray(shape),0.5).astype(int)
             self.setCrosshair()
-    #%% setCrosshair
     def setCrosshair(self):
         """
         This function literally moves the crosshair to the desired position.
@@ -2116,12 +2188,12 @@ class viff(QtGui.QMainWindow):
                 self.disableSliderNeg()
                 self.min_neg.setEnabled(False)
                 self.max_neg.setEnabled(False)
-                self.neg_thr_button.setEnabled(False)
+                # self.neg_thr_button.setEnabled(False)
             if self.images[index].type() is "two":
                 self.enableSliderNeg()
                 self.min_neg.setEnabled(True)
                 self.max_neg.setEnabled(True)
-                self.neg_thr_button.setEnabled(True)
+                # self.neg_thr_button.setEnabled(True)
                 self.slider_neg.setSpan(
                     self.images[index].getNegSldValueHigh(),
                     self.images[index].getNegSldValueLow())
@@ -2689,7 +2761,7 @@ class viff(QtGui.QMainWindow):
 
         alpha = self.alpha_sld.value()
         alpha_fract = float(alpha)/100
-        self.alpha_label.setText("{}%".format(alpha))
+        self.alpha_label.setText("{}% opacity".format(alpha))
         
         index = self.imagelist.currentRow()
         if index >= 0:
@@ -2716,6 +2788,24 @@ class viff(QtGui.QMainWindow):
         self.alpha_sld.setValue(alpha)
         
         log1("setAlphaFromSlider called (alpha {})".format(alpha))
+        
+        
+
+    def resetAlpha(self):
+        """
+        Takes the alpha value of the current image and sets that the slider.
+        """
+        
+        alpha = 100
+        for i in range(len(self.images)):
+            self.images[i].alpha = alpha
+
+        self.alpha_sld.setValue(alpha)
+        
+        log1("resetAlpha called")
+        
+        
+        
 
 
     def setFrameFromSlider(self):
