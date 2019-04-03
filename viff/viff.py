@@ -3193,10 +3193,15 @@ class viff(QtGui.QMainWindow):
             filename = ""
             if index >= 0:
                 filename = self.images[index].filename
+            
+                if len(self.images[index].image.shape) == 4:
+                    filename += " (vol {})".format(self.frame)
+            # if 
                 
             # self.hist = HistogramThresholdWidget.HistogramThresholdWidget(filename)
             
             self.hist.reset()
+            
             self.hist.setTitle(filename)
             # set Histogram
             [x, y] = self.images[index].getHistogram()
