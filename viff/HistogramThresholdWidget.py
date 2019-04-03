@@ -8,11 +8,12 @@ class HistogramThresholdWidget(pg.GraphicsWindow):
 
     sigChanged = QtCore.Signal()
 
-    def __init__(self, title="Histogram"):
+    def __init__(self, pos=(150,150,600,600), title="Histogram"):
 
         super(HistogramThresholdWidget, self).__init__(title="Histogram")
 
         self.resize(750,375)
+        self.setGeometry(pos[0], pos[1], pos[2], pos[3])
 
         # Set foreground black.
         pg.setConfigOption('foreground', 'k')

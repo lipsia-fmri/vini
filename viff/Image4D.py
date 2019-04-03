@@ -330,14 +330,15 @@ class Image4D(Image):
             self.image_slices[2] = self.image_slices_pos[2]
 
     def setTime(self, time):
-        self.frame_time = time
+        self.frame_time = 1 #time #TR =1 forever...
 
-    def showTimeSeries(self):
+    def showTimeSeries(self, pos=(150,150,600,600)):
         """
         Opens time series plot.
         """
         if self.timeseries is None:
-            self.timeseries = TimePlot()
+            self.timeseries = TimePlot(title=self.filename)
+        self.timeseries.setGeometry(pos[0], pos[1], pos[2], pos[3])
         self.updateTimeData()
         self.timeseries.show()
 

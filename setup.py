@@ -7,8 +7,8 @@ import os
 
 VERSION = '0.0.1.dev'
 config = {
-    'author' : "Malte Kuhlmann, Eric Lacosse",
-    'name' : 'vviewer',
+    'author' : "Malte Kuhlmann, Eric Lacosse, Johannes Stelzer",
+    'name' : 'viff',
     'maintainer' : '',
     'maintainer_email' : '',
     'license' : 'MIT',
@@ -19,8 +19,8 @@ config = {
     'url' : '',
     'download_url' : '',
     'keywords' : 'visualization, neuroscience, MRI, fMRI',
-    'packages' : ['vviewer'],
-    'scripts' : ['vviewer/vviewer.py'],
+    'packages' : ['viff'],
+    'scripts' : ['viff/viff.py'],
     'classifiers' : [
         "Development Status :: 1 - Beta",
         "Topic :: Scientific Software",

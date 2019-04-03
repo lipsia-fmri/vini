@@ -9,7 +9,7 @@ class TimePlot(pg.GraphicsWindow):
     Plots the time series of a voxel of a functional image.
     """
 
-    def __init__(self, time_step = None):
+    def __init__(self, time_step = None, title="time plot"):
         super(TimePlot, self).__init__()
 
         self.resize(720,320)
@@ -24,7 +24,7 @@ class TimePlot(pg.GraphicsWindow):
         pg.setConfigOption('foreground', 'k')
 
         # Open a new plot with black pen.
-        self.plot = self.addPlot(title="time plot",pen='k')
+        self.plot = self.addPlot(title="time plot: %s" %title,pen='k')
         self.curve = self.plot.plot(pen='k')
         self.setBackground('w')
         # Set configuration back to white for other widgets.
