@@ -457,7 +457,7 @@ class viff(QtGui.QMainWindow):
         # self.z_box.setMaxLength(4)
         
         #not nice!
-        self.txt_box_size = width/36
+        self.txt_box_size = width/30
         self.x_box.setFixedWidth(self.txt_box_size)
         self.y_box.setFixedWidth(self.txt_box_size)
         self.z_box.setFixedWidth(self.txt_box_size)
@@ -646,10 +646,10 @@ class viff(QtGui.QMainWindow):
         self.min_neg.setMaxLength(6)
         
         
-        self.min_pos.setFixedWidth(self.txt_box_size)
-        self.max_pos.setFixedWidth(self.txt_box_size)
-        self.max_neg.setFixedWidth(self.txt_box_size)
-        self.min_neg.setFixedWidth(self.txt_box_size)
+        self.min_pos.setFixedWidth(self.txt_box_size*1.5)
+        self.max_pos.setFixedWidth(self.txt_box_size*1.5)
+        self.max_neg.setFixedWidth(self.txt_box_size*1.5)
+        self.min_neg.setFixedWidth(self.txt_box_size*1.5)
         
         
         self.min_pos.returnPressed.connect(self.setPosThresholdsFromBoxes)
