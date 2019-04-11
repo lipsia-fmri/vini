@@ -568,9 +568,6 @@ class viff(QtGui.QMainWindow):
         self.l.addLayout(button_row_fmrislider, 5, self.listoffset+2, 1, 1)
         
         
-
-        
-        
         
         
         
@@ -585,8 +582,6 @@ class viff(QtGui.QMainWindow):
         self.l.addWidget(self.intensity_label, 6, self.listoffset+2, 1, 4)
         
         
-        
-
         
         
         # upper threshold slider

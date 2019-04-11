@@ -214,26 +214,26 @@ class Image(object):
             #     self.upper = np.percentile(samples, 99.9)
 
     def setNegThresholdsDefault(self):
-        if self.extremum[0] > 0:
-            self.threshold_neg = [0.0, -self.deadzone]
+        if self.extremum[0] >= 0:
+            self.threshold_neg = [-self.deadzone, -self.deadzone]
         else:
-            self.threshold_neg = [self.extremum[0], -self.deadzone ]
+            self.threshold_neg = [self.extremum[0], -self.deadzone]
 
     def setPosThresholdsFromSlider(self, lower_value, upper_value):
         """
         Set positive thresholds from slider value.
         """
         self.threshold_pos = list(self.threshold_pos)
-        self.threshold_pos[0] = (lower_value)/1000.0 * self.extremum[1]
-        self.threshold_pos[1] = (upper_value)/1000.0 * self.extremum[1]
+        self.threshold_pos[0] = (lower_value)/1000.0 * self.extremum[1] +self.deadzone
+        self.threshold_pos[1] = (upper_value)/1000.0 * self.extremum[1] +self.deadzone
 
     def setNegThresholdsFromSlider(self, lower_value, upper_value):
         """
         Set negative thresholds from slider value.
         """
         self.threshold_neg = list(self.threshold_neg)
-        self.threshold_neg[0] = (upper_value)/1000.0 * self.extremum[0]
-        self.threshold_neg[1] = (lower_value)/1000.0 * self.extremum[0] -self.deadzone 
+        self.threshold_neg[0] = (upper_value)/1000.0 * self.extremum[0] -self.deadzone
+        self.threshold_neg[1] = (lower_value)/1000.0 * self.extremum[0] -self.deadzone
 
     def setPosThresholds(self, threshold):
         """
@@ -251,7 +251,7 @@ class Image(object):
         """
         Computes the positive lower slider value.
         """
-        tick_length = self.extremum[1]/1000.0
+        tick_length = self.extremum[1]/1000.0 - self.deadzone 
         if tick_length == 0:
             return 1000
         else:
@@ -261,7 +261,7 @@ class Image(object):
         """
         Computes the positive higher slider value.
         """
-        tick_length = self.extremum[1]/1000.0
+        tick_length = self.extremum[1]/1000.0 + self.deadzone 
         if tick_length == 0:
             return 1000
         else:
