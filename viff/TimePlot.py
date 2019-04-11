@@ -24,7 +24,7 @@ class TimePlot(pg.GraphicsWindow):
         pg.setConfigOption('foreground', 'k')
 
         # Open a new plot with black pen.
-        self.plot = self.addPlot(title="time plot: %s" %title,pen='k')
+        self.plot = self.addPlot(title="time plot: %s" %title, pen='k', labels={'left': "signal", 'bottom': "volumes"})
         self.curve = self.plot.plot(pen='k')
         self.setBackground('w')
         # Set configuration back to white for other widgets.

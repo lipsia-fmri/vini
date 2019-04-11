@@ -3438,12 +3438,12 @@ class viff(QtGui.QMainWindow):
             'window_posx': 0,
             'window_posy': 0,
             
-            'hist_width': 600,
+            'hist_width': 900,
             'hist_height': 600,
             'hist_posx': 150,
             'hist_posy': 150,
             
-            'ts_width': 600,
+            'ts_width': 900,
             'ts_height': 600,
             'ts_posx': 150,
             'ts_posy': 150,
