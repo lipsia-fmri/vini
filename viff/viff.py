@@ -1204,10 +1204,32 @@ class viff(QtGui.QMainWindow):
 #%% addPosNegWidget
     def addPosNegWidget(self, grad_pos, grad_neg):
         """ helper function for refreshing the positive and negative colormap and sliders"""
-        # self.l.removeItem(self.l.itemAt(13))
-        # self.l.removeItem(self.l.itemAt(12))
-        # self.l.removeItem(self.l.itemAt(11))
-        # self.l.removeItem(self.l.itemAt(10))
+
+    
+    
+        # px = grad_pos.item.getLookupTable(512)
+        # self.slider_pos.setStyleSheet("""QSlider::groove:horizontal {
+        #         border: 01px solid;
+        #         height: 5px;
+        #         margin: 0px;
+        #         }
+        #     QSlider::handle:horizontal {
+        #         background-color: QColor(%i,%i,%i);
+        #         border: 1px solid;
+        #         height: 20px;
+        #         width: 20px;
+        #         margin: -20px 0px;
+        #         }
+        #     QSlider::handle:horizontal {
+        #         background-color: QColor(%i,%i,%i);
+        #         border: 1px solid;
+        #         height: 20px;
+        #         width: 20px;
+        #         margin: -20px 0px;
+        #         }
+        #     """ %(px[0][0], px[0][1], px[0][2], px[-1][0], px[-1][1], px[-1][2]))
+        
+    
         
         button_row_pos_slider = QtGui.QHBoxLayout()
         button_row_pos_slider.addWidget(self.min_pos)
@@ -1224,6 +1246,9 @@ class viff(QtGui.QMainWindow):
         button_row_neg_slider.addWidget(self.max_neg)
         self.l.addLayout(button_row_neg_slider, 11, self.listoffset+2, 1, 1)
         self.l.addWidget(self.slider_neg, 12, self.listoffset+2, 1, 1)
+        
+        
+        
         
         log2("addPosNegWidget called")
         
@@ -3208,7 +3233,8 @@ class viff(QtGui.QMainWindow):
             # if 
                 
             # self.hist = HistogramThresholdWidget.HistogramThresholdWidget(filename)
-            
+            if self.hist is None:
+                return
             self.hist.reset()
             
             self.hist.setTitle(filename)

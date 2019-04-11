@@ -43,7 +43,7 @@ class HistogramThresholdWidget(pg.GraphicsWindow):
         
         # xax.maxTickLength = -10
         # xax.showValues = False
-        # xax.setTickSpacing(1000,200)
+        # xax.setTickSpacing(100,20)
 
     def setTitle(self, title):
         self.plot.setTitle("Histogram: {}".format(title), color="#000000")
