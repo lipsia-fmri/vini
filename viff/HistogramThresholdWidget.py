@@ -27,7 +27,7 @@ class HistogramThresholdWidget(pg.GraphicsWindow):
         self.plot.setLimits(yMin = 0)
 
         color = QtGui.QColor()
-        color.setRgb(0, 0, 170, 80)
+        color.setRgb(0, 0, 170, 40)
         self.brush = pg.mkBrush(color)
 
         # Line regions
@@ -38,6 +38,12 @@ class HistogramThresholdWidget(pg.GraphicsWindow):
         exit_action.setShortcut(QtGui.QKeySequence.Quit)
         exit_action.triggered.connect(self.closeHist)
         self.addAction(exit_action)
+        
+        xax = self.plot.getAxis('bottom')
+        
+        # xax.maxTickLength = -10
+        # xax.showValues = False
+        # xax.setTickSpacing(1000,200)
 
     def setTitle(self, title):
         self.plot.setTitle("Histogram: {}".format(title), color="#000000")
@@ -65,9 +71,9 @@ class HistogramThresholdWidget(pg.GraphicsWindow):
             self.lr_pos = None
         self.lr_pos = pg.LinearRegionItem(brush=self.brush, values=[low,high])
         self.lr_pos.setZValue(-1)
+        self.lr_pos.setMovable(False)
+        
         self.plot.addItem(self.lr_pos)
-        self.lr_pos.sigRegionChanged.connect(self.changed)
-        self.lr_pos.sigRegionChangeFinished.connect(self.changed)
 
     def LineRegionNeg(self, low, high):
         """
@@ -78,9 +84,8 @@ class HistogramThresholdWidget(pg.GraphicsWindow):
             self.lr_neg = None
         self.lr_neg = pg.LinearRegionItem(brush=self.brush, values=[low,high])
         self.lr_neg.setZValue(-1)
+        self.lr_neg.setMovable(False)
         self.plot.addItem(self.lr_neg)
-        self.lr_neg.sigRegionChanged.connect(self.changed)
-        self.lr_neg.sigRegionChangeFinished.connect(self.changed)
 
     def setPosRegion(self, low, high):
         """
@@ -112,9 +117,7 @@ class HistogramThresholdWidget(pg.GraphicsWindow):
         if ymax != 0:
             self.plot.setYRange(0, ymax)
 
-    def changed(self):
-        pass
-        # self.sigChanged.emit()
+
 
     def getThresholdsPos(self):
         if self.lr_pos is not None:

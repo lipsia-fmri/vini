@@ -1794,6 +1794,8 @@ class viff(QtGui.QMainWindow):
         self.resetPosThresholds()
         self.resetNegThresholds()
         
+        self.resetHistogram()
+        
 
     def switchVoxelCoord(self):
         """
