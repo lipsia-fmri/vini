@@ -34,7 +34,7 @@ setapi("QVariant", 2)
 setapi("QString", 2)
 setapi("QUrl", 2)
 
-verbose_level = 1
+verbose_level = 5
 
 from pyqtgraph.Qt import QtCore, QtGui
 
@@ -458,7 +458,7 @@ class viff(QtGui.QMainWindow):
         
         #not nice!
         self.txt_box_size = round(width/30)
-        self.txt_box_size_xl = round(width/22)
+        self.txt_box_size_xl = round(width/20)
         
         self.x_box.setFixedWidth(self.txt_box_size)
         self.y_box.setFixedWidth(self.txt_box_size)
@@ -646,10 +646,10 @@ class viff(QtGui.QMainWindow):
         self.min_neg.setMaxLength(6)
         
         
-        self.min_pos.setFixedWidth(self.txt_box_size_xl)
-        self.max_pos.setFixedWidth(self.txt_box_size_xl)
-        self.max_neg.setFixedWidth(self.txt_box_size_xl)
-        self.min_neg.setFixedWidth(self.txt_box_size_xl)
+        # self.min_pos.setFixedWidth(self.txt_box_size_xl)
+        # self.max_pos.setFixedWidth(self.txt_box_size_xl)
+        # self.max_neg.setFixedWidth(self.txt_box_size_xl)
+        # self.min_neg.setFixedWidth(self.txt_box_size_xl)
         
         
         self.min_pos.returnPressed.connect(self.setPosThresholdsFromBoxes)
@@ -1229,30 +1229,39 @@ class viff(QtGui.QMainWindow):
         #         }
         #     """ %(px[0][0], px[0][1], px[0][2], px[-1][0], px[-1][1], px[-1][2]))
         
-        self.min_pos.setFixedWidth(self.txt_box_size_xl)
-        self.max_pos.setFixedWidth(self.txt_box_size_xl)
-        self.max_neg.setFixedWidth(self.txt_box_size_xl)
-        self.min_neg.setFixedWidth(self.txt_box_size_xl)
+        
+        # self.l.removeItem(self.l.itemAt(13))
+        # self.l.removeItem(self.l.itemAt(12))
+        # self.l.removeItem(self.l.itemAt(11))
+        # self.l.removeItem(self.l.itemAt(10))
+        
+        # self.min_pos.setFixedWidth(self.txt_box_size_xl)
+        # self.max_pos.setFixedWidth(self.txt_box_size_xl)
+        # self.max_neg.setFixedWidth(self.txt_box_size_xl)
+        # self.min_neg.setFixedWidth(self.txt_box_size_xl)
     
         
         button_row_pos_slider = QtGui.QHBoxLayout()
-        button_row_pos_slider.addWidget(self.min_pos)
+        
+        button_row_pos_slider.addWidget(self.min_pos, 1)
         button_row_pos_slider.addWidget(grad_pos, 1)
-        button_row_pos_slider.addWidget(self.max_pos)
+        button_row_pos_slider.addWidget(self.max_pos, 1)
         self.l.addWidget(self.slider_pos, 9, self.listoffset+2, 1, 1)
         self.l.addLayout(button_row_pos_slider, 10, self.listoffset+2, 1, 1)    
         
 
         # print("grad neg is: {}".format(grad_neg))
         button_row_neg_slider = QtGui.QHBoxLayout()
-        button_row_neg_slider.addWidget(self.max_neg)
+        button_row_neg_slider.addWidget(self.max_neg, 1)
         button_row_neg_slider.addWidget(grad_neg, 1)
-        button_row_neg_slider.addWidget(self.min_neg)
+        button_row_neg_slider.addWidget(self.min_neg, 1)
         self.l.addLayout(button_row_neg_slider, 11, self.listoffset+2, 1, 1)
         self.l.addWidget(self.slider_neg, 12, self.listoffset+2, 1, 1)
         
-        
-        
+        # index = self.imagelist.currentRow()
+        # if index >= 0:
+        #     if self.images[index].type() is "two":
+
         
         log2("addPosNegWidget called")
         
