@@ -239,7 +239,7 @@ def load_vista(fp_input):
         
     
     if sform_code > 0:
-        print("USING SFORM!")
+        # print("USING SFORM!")
         header_sform = get_subheader(header, "sform: image")
         offset_sform = get_property_str(header_sform, "data", "int")
         if offset_sform != -1:
@@ -250,7 +250,7 @@ def load_vista(fp_input):
             nii_loaded.set_sform(sform2D)
         
     if qform_code > 0:
-        print("USING QFORM!")
+        # print("USING QFORM!")
         header_qform = get_subheader(header, "qform: bundle")
         offset_qform = get_property_str(header_qform, "data", "int")
         if offset_qform != -1:

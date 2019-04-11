@@ -491,30 +491,6 @@ class viff(QtGui.QMainWindow):
         
         self.l.addLayout(button_row_coordinates, 3, self.listoffset+2, 1, 1)
         
-
-        
-        # frame slider (time)
-        button_row_fmrislider = QtGui.QHBoxLayout()
-        self.frame_sld = JumpSlider(QtCore.Qt.Horizontal)
-        self.frame_sld.setMinimum(0)
-        self.frame_sld.setMaximum(0)
-        self.frame_sld.setValue(0)
-        self.frame_sld.sliderPressed.connect(self.setSliceStateOn)
-        self.frame_sld.sliderReleased.connect(self.setSliceStateOff)
-        self.frame_sld.valueChanged.connect(self.setFrameFromSlider)
-        self.frame_sld.setToolTip("select volume")
-        
-        
-        
-        button_row_fmrislider.addWidget(self.frame_sld,3)
-        
-        spacer = QtGui.QWidget()
-        spacer.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
-        button_row_fmrislider.addWidget(spacer,1)
-        
-        self.l.addLayout(button_row_fmrislider, 4, self.listoffset+2, 1, 1)
-        
-        
         # ypos = 6
         # one frame backward button
         button_row_fmri = QtGui.QHBoxLayout()
@@ -568,7 +544,34 @@ class viff(QtGui.QMainWindow):
         spacer = QtGui.QWidget()
         spacer.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
         button_row_fmri.addWidget(spacer,5)
-        self.l.addLayout(button_row_fmri, 5, self.listoffset+2, 1, 1)
+        self.l.addLayout(button_row_fmri, 4, self.listoffset+2, 1, 1)
+
+
+        
+        # frame slider (time)
+        button_row_fmrislider = QtGui.QHBoxLayout()
+        self.frame_sld = JumpSlider(QtCore.Qt.Horizontal)
+        self.frame_sld.setMinimum(0)
+        self.frame_sld.setMaximum(0)
+        self.frame_sld.setValue(0)
+        self.frame_sld.sliderPressed.connect(self.setSliceStateOn)
+        self.frame_sld.sliderReleased.connect(self.setSliceStateOff)
+        self.frame_sld.valueChanged.connect(self.setFrameFromSlider)
+        self.frame_sld.setToolTip("select volume")
+        
+        
+        button_row_fmrislider.addWidget(self.frame_sld,3)
+        spacer = QtGui.QWidget()
+        spacer.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        button_row_fmrislider.addWidget(spacer,1)
+        
+        self.l.addLayout(button_row_fmrislider, 5, self.listoffset+2, 1, 1)
+        
+        
+
+        
+        
+        
         
         
         
