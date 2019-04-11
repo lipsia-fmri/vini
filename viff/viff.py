@@ -34,7 +34,7 @@ setapi("QVariant", 2)
 setapi("QString", 2)
 setapi("QUrl", 2)
 
-verbose_level = 5
+verbose_level = 1
 
 from pyqtgraph.Qt import QtCore, QtGui
 
@@ -457,7 +457,9 @@ class viff(QtGui.QMainWindow):
         # self.z_box.setMaxLength(4)
         
         #not nice!
-        self.txt_box_size = width/30
+        self.txt_box_size = round(width/30)
+        self.txt_box_size_xl = round(width/22)
+        
         self.x_box.setFixedWidth(self.txt_box_size)
         self.y_box.setFixedWidth(self.txt_box_size)
         self.z_box.setFixedWidth(self.txt_box_size)
@@ -644,10 +646,10 @@ class viff(QtGui.QMainWindow):
         self.min_neg.setMaxLength(6)
         
         
-        # self.min_pos.setFixedWidth(self.txt_box_size*1.5)
-        # self.max_pos.setFixedWidth(self.txt_box_size*1.5)
-        # self.max_neg.setFixedWidth(self.txt_box_size*1.5)
-        # self.min_neg.setFixedWidth(self.txt_box_size*1.5)
+        self.min_pos.setFixedWidth(self.txt_box_size_xl)
+        self.max_pos.setFixedWidth(self.txt_box_size_xl)
+        self.max_neg.setFixedWidth(self.txt_box_size_xl)
+        self.min_neg.setFixedWidth(self.txt_box_size_xl)
         
         
         self.min_pos.returnPressed.connect(self.setPosThresholdsFromBoxes)
@@ -1227,15 +1229,15 @@ class viff(QtGui.QMainWindow):
         #         }
         #     """ %(px[0][0], px[0][1], px[0][2], px[-1][0], px[-1][1], px[-1][2]))
         
-        # self.min_pos.setFixedWidth(self.txt_box_size*1.5)
-        # self.max_pos.setFixedWidth(self.txt_box_size*1.5)
-        # self.max_neg.setFixedWidth(self.txt_box_size*1.5)
-        # self.min_neg.setFixedWidth(self.txt_box_size*1.5)
+        self.min_pos.setFixedWidth(self.txt_box_size_xl)
+        self.max_pos.setFixedWidth(self.txt_box_size_xl)
+        self.max_neg.setFixedWidth(self.txt_box_size_xl)
+        self.min_neg.setFixedWidth(self.txt_box_size_xl)
     
         
         button_row_pos_slider = QtGui.QHBoxLayout()
         button_row_pos_slider.addWidget(self.min_pos)
-        button_row_pos_slider.addWidget(grad_pos, 2)
+        button_row_pos_slider.addWidget(grad_pos, 1)
         button_row_pos_slider.addWidget(self.max_pos)
         self.l.addWidget(self.slider_pos, 9, self.listoffset+2, 1, 1)
         self.l.addLayout(button_row_pos_slider, 10, self.listoffset+2, 1, 1)    
@@ -1244,7 +1246,7 @@ class viff(QtGui.QMainWindow):
         # print("grad neg is: {}".format(grad_neg))
         button_row_neg_slider = QtGui.QHBoxLayout()
         button_row_neg_slider.addWidget(self.max_neg)
-        button_row_neg_slider.addWidget(grad_neg, 2)
+        button_row_neg_slider.addWidget(grad_neg, 1)
         button_row_neg_slider.addWidget(self.min_neg)
         self.l.addLayout(button_row_neg_slider, 11, self.listoffset+2, 1, 1)
         self.l.addWidget(self.slider_neg, 12, self.listoffset+2, 1, 1)
