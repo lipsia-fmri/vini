@@ -526,7 +526,7 @@ class Image(object):
             xmin = self.getMin()
             xmax = self.getMax()
             hist_bins = np.linspace(xmin, xmax, targetHistogramSize)
-            self.hist = np.histogram(self.image_res, bins=hist_bins)
+            self.hist = np.histogram(self.image_res[self.image_res!=0], bins=hist_bins)
             self.hist_saved = True
         return self.hist[1][:-1], self.hist[0]
 

@@ -561,6 +561,7 @@ class viff(QtGui.QMainWindow):
         self.frame_box.editingFinished.connect(self.setFrameFromBox)
         self.frame_box.setToolTip("enter volume")
         self.frame_box.setFixedWidth(self.txt_box_size)
+        self.frame_box.setValidator(QtGui.QDoubleValidator())
         
         button_row_fmri.addWidget(self.frame_box)
         
@@ -625,6 +626,11 @@ class viff(QtGui.QMainWindow):
         self.max_pos = QtGui.QLineEdit()
         self.max_neg = QtGui.QLineEdit()
         self.min_neg = QtGui.QLineEdit()
+        
+        self.min_pos.setValidator(QtGui.QDoubleValidator())
+        self.max_pos.setValidator(QtGui.QDoubleValidator())
+        self.max_neg.setValidator(QtGui.QDoubleValidator())
+        self.min_neg.setValidator(QtGui.QDoubleValidator())
         
         # small fix, otherwise layout will be messed up!
         not_resize = self.max_neg.sizePolicy()
