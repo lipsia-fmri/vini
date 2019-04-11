@@ -1322,12 +1322,15 @@ class viff(QtGui.QMainWindow):
 
         # set offset and shape with bounds
         self.affine[0:3,3] = bounds[:,0]
+
+        
         self.img_dims = np.ceil(np.dot(np.linalg.inv(self.affine[0:3,0:3]),
                                        np.ceil(bounds[:,1]-bounds[:,0])) + 1)
         # +1 to avoid having a 0 in img_dims
 
         # resample
         for img in self.images:
+            # print("dims: {} affine {}".format(self.img_dims, self.affine))
             img.resample(shape = self.img_dims, affine = self.affine)
 
         self.transform_ind = 0 # save what transformation was applied

@@ -236,49 +236,72 @@ def load_vista(fp_input):
     qform_code = get_property_str(header, "qform_code", "int")
     if qform_code != -1:
         nii_loaded.header['qform_code'] = qform_code
+        
     
-    header_sform = get_subheader(header, "sform: image")
-    offset_sform = get_property_str(header_sform, "data", "int")
-    if offset_sform != -1:
-        offset_sform += last_idx_header
-        length_sform = int(get_property_str(header_sform, "length", "int")/4)
-        sform1D = np.frombuffer(raw, dtype=np.float32, count=length_sform, offset=offset_sform).byteswap()
-        sform2D = np.reshape(sform1D, (4,4))
-        nii_loaded.set_sform(sform2D)
+    if sform_code > 0:
+        print("USING SFORM!")
+        header_sform = get_subheader(header, "sform: image")
+        offset_sform = get_property_str(header_sform, "data", "int")
+        if offset_sform != -1:
+            offset_sform += last_idx_header
+            length_sform = int(get_property_str(header_sform, "length", "int")/4)
+            sform1D = np.frombuffer(raw, dtype=np.float32, count=length_sform, offset=offset_sform).byteswap()
+            sform2D = np.reshape(sform1D, (4,4))
+            nii_loaded.set_sform(sform2D)
+        
+    if qform_code > 0:
+        print("USING QFORM!")
+        header_qform = get_subheader(header, "qform: bundle")
+        offset_qform = get_property_str(header_qform, "data", "int")
+        if offset_qform != -1:
+            offset_qform += last_idx_header
+            length_qform = int(get_property_str(header_qform, "length", "int")/4)
+            qformdim1D = np.frombuffer(raw, dtype=np.float32, count=length_qform, offset=offset_qform)
+            nii_loaded.header['quatern_b'] = qformdim1D[0]
+            nii_loaded.header['quatern_c'] = qformdim1D[1]
+            nii_loaded.header['quatern_d'] = qformdim1D[2]
+            nii_loaded.header['qoffset_x'] = qformdim1D[3]
+            nii_loaded.header['qoffset_y'] = qformdim1D[4]
+            nii_loaded.header['qoffset_z'] = qformdim1D[5]
+            nii_loaded.set_qform(nii_loaded.header.get_qform(coded=True)[0])
+            
+            # print("qform affine: {}".format())
+            
+            
+        
+    
+        
+    
     
     
     header_dim = get_subheader(header, "dim: bundle")
     offset_dim = get_property_str(header_dim, "data", "int")
-    if offset_sform != -1:
-        offset_sform += last_idx_header
+    if offset_dim != -1:
+        offset_dim += last_idx_header
         length_dim = int(get_property_str(header_dim, "length", "int")/4)
         dim1D = np.frombuffer(raw, dtype=np.float32, count=length_dim, offset=offset_dim)
         
     
     header_pixdim = get_subheader(header, "pixdim: bundle")
     offset_pixdim= get_property_str(header_dim, "data", "int")
-    if offset_sform != -1:
-        offset_sform += last_idx_header
+    if offset_pixdim != -1:
+        offset_pixdim += last_idx_header
         length_pixdim = int(get_property_str(header_dim, "length", "int")/4)
-        pixdim1D = np.frombuffer(raw, dtype=np.float32, count=length_dim, offset=offset_dim)
+        pixdim1D = np.frombuffer(raw, dtype=np.float32, count=length_dim, offset=offset_pixdim)
         
         
-    header_qform = get_subheader(header, "qform: bundle")
-    offset_qform = get_property_str(header_qform, "data", "int")
-    if offset_sform != -1:
-        offset_sform += last_idx_header
-        length_qform = int(get_property_str(header_qform, "length", "int")/4)
-        qformdim1D = np.frombuffer(raw, dtype=np.float32, count=length_qform, offset=offset_qform)
-        nii_loaded.header['quatern_b'] = qformdim1D[0]
-        nii_loaded.header['quatern_c'] = qformdim1D[1]
-        nii_loaded.header['quatern_d'] = qformdim1D[2]
-        nii_loaded.header['qoffset_x'] = qformdim1D[3]
-        nii_loaded.header['qoffset_y'] = qformdim1D[4]
-        nii_loaded.header['qoffset_z'] = qformdim1D[5]
+
+        
         # quatern_b quatern_c quatern_d qoffset_x qoffset_y qoffset_z
     
-    
-    
+    #finally check determinant... better wrong affine than crash!
+    det = np.linalg.det(nii_loaded.affine[0:3,0:3])
+    if det == 0:
+        print("WARNING! BAD AFFINE (DET=0). SETTING UNIT MATRIX...")
+        nii_loaded.affine = nii_loaded.get_base_affine()
+        nii_new = nib.Nifti1Image(nii_loaded.get_data(), np.eye(4), nii_loaded.header)
+        # nii_loaded = nii_new
+        
     return nii_loaded
 
 # nii_loaded.to_filename("/home/morty/tmp/out.nii")
