@@ -64,7 +64,7 @@ class ColorMapWidget(GraphicsView):
 
         if self.orientation in ['bottom', 'top']:
             self.setFixedHeight(mx)
-            self.setMaximumWidth(120)
+            self.setMaximumWidth(100)
         else:
             self.setFixedWidth(mx)
             self.setMaximumHeight(16777215)

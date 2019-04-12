@@ -34,7 +34,7 @@ setapi("QVariant", 2)
 setapi("QString", 2)
 setapi("QUrl", 2)
 
-verbose_level = 5
+verbose_level = 1
 
 from pyqtgraph.Qt import QtCore, QtGui
 
@@ -458,7 +458,7 @@ class viff(QtGui.QMainWindow):
         
         #not nice!
         self.txt_box_size = round(width/30)
-        self.txt_box_size_xl = round(width/30)
+        self.txt_box_size_xl = round(width/24)
         
         self.x_box.setFixedWidth(self.txt_box_size)
         self.y_box.setFixedWidth(self.txt_box_size)
