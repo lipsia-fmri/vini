@@ -458,7 +458,7 @@ class viff(QtGui.QMainWindow):
         
         #not nice!
         self.txt_box_size = round(width/30)
-        self.txt_box_size_xl = round(width/20)
+        self.txt_box_size_xl = round(width/30)
         
         self.x_box.setFixedWidth(self.txt_box_size)
         self.y_box.setFixedWidth(self.txt_box_size)
@@ -489,7 +489,7 @@ class viff(QtGui.QMainWindow):
         
         spacer = QtGui.QWidget()
         spacer.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        button_row_coordinates.addWidget(spacer,4)
+        button_row_coordinates.addWidget(spacer,5)
         
         self.l.addLayout(button_row_coordinates, 3, self.listoffset+2, 1, 1)
         
@@ -572,24 +572,23 @@ class viff(QtGui.QMainWindow):
         
         
         
-        
-        
                 
         # label for actual value
-        # ypos = 7
-        # button_row_valuedisp = QtGui.QHBoxLayout()
         self.intensity_label = QtGui.QLabel('none')
         self.intensity_label.setAlignment(
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
         self.l.addWidget(self.intensity_label, 6, self.listoffset+2, 1, 4)
         
         
+        spacer.setSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        self.l.addWidget(spacer, 8, self.listoffset+2, 1, 1)
+        
+        
         
         
         # upper threshold slider
-        # ypos = 9
-        button_row_pos_slider = QtGui.QHBoxLayout()
-        button_row_neg_slider = QtGui.QHBoxLayout()
+        button_row_thresh_pos = QtGui.QHBoxLayout()
+        button_row_thresh_neg = QtGui.QHBoxLayout()
         self.slider_color = QtGui.QColor()
         self.slider_color.setRgb(255, 110, 0)
         
@@ -646,10 +645,10 @@ class viff(QtGui.QMainWindow):
         self.min_neg.setMaxLength(6)
         
         
-        # self.min_pos.setFixedWidth(self.txt_box_size_xl)
-        # self.max_pos.setFixedWidth(self.txt_box_size_xl)
-        # self.max_neg.setFixedWidth(self.txt_box_size_xl)
-        # self.min_neg.setFixedWidth(self.txt_box_size_xl)
+        self.min_pos.setFixedWidth(self.txt_box_size_xl)
+        self.max_pos.setFixedWidth(self.txt_box_size_xl)
+        self.max_neg.setFixedWidth(self.txt_box_size_xl)
+        self.min_neg.setFixedWidth(self.txt_box_size_xl)
         
         
         self.min_pos.returnPressed.connect(self.setPosThresholdsFromBoxes)
@@ -667,17 +666,23 @@ class viff(QtGui.QMainWindow):
         self.max_pos.setToolTip("change maximum positive threshold")
         
         
+        # tmp_gradient1 = ColorMapWidget.ColorMapWidget()
+        # tmp_gradient1.item.loadPreset('grey')
+        # tmp_gradient2 = ColorMapWidget.ColorMapWidget()
+        # tmp_gradient2.item.loadPreset('grey')
         
-        button_row_pos_slider.addWidget(self.min_pos)
-        button_row_pos_slider.addWidget(self.max_pos)
+        button_row_thresh_pos.addWidget(self.min_pos)
+        # button_row_thresh_pos.addWidget(tmp_gradient1)
+        button_row_thresh_pos.addWidget(self.max_pos)
         
-        button_row_neg_slider.addWidget(self.max_neg)
-        button_row_neg_slider.addWidget(self.min_neg)
+        button_row_thresh_neg.addWidget(self.max_neg)
+        # button_row_thresh_neg.addWidget(tmp_gradient2)
+        button_row_thresh_neg.addWidget(self.min_neg)
 
         
         self.l.addWidget(self.slider_pos, 9, self.listoffset+2, 1, 1)
-        self.l.addLayout(button_row_pos_slider, 10, self.listoffset+2, 1, 1)
-        self.l.addLayout(button_row_neg_slider, 11, self.listoffset+2, 1, 1)
+        self.l.addLayout(button_row_thresh_pos, 10, self.listoffset+2, 1, 1)
+        self.l.addLayout(button_row_thresh_neg, 11, self.listoffset+2, 1, 1)
         self.l.addWidget(self.slider_neg, 12, self.listoffset+2, 1, 1)
         
         
@@ -1204,9 +1209,41 @@ class viff(QtGui.QMainWindow):
         self.autoRange()
         
 #%% addPosNegWidget
-    def addPosNegWidget(self, grad_pos, grad_neg):
+    def addPosNegWidget(self, pos_gradient, neg_gradient):
         """ helper function for refreshing the positive and negative colormap and sliders"""
 
+        spacer = QtGui.QWidget()
+        spacer.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+
+    
+        button_row_thresh_pos = QtGui.QHBoxLayout()
+        button_row_thresh_pos.addWidget(self.min_pos, 1)
+        button_row_thresh_pos.addWidget(pos_gradient, 1)
+        # button_row_crosshair.addWidget(spacer,5)
+        button_row_thresh_pos.addWidget(self.max_pos, 1)
+        # self.l.addWidget(self.slider_pos, 9, self.listoffset+2, 1, 1)
+        self.l.addLayout(button_row_thresh_pos, 10, self.listoffset+2, 1, 1)    
+        
+
+        # print("grad neg is: {}".format(grad_neg))
+        button_row_thresh_neg = QtGui.QHBoxLayout()
+        button_row_thresh_neg.addWidget(self.max_neg, 1)
+        # button_row_thresh_neg.addWidget(neg_gradient, 1)
+        button_row_thresh_neg.addWidget(self.min_neg, 1)
+        self.l.addLayout(button_row_thresh_neg, 11, self.listoffset+2, 1, 1)
+        # self.l.addWidget(self.slider_neg, 12, self.listoffset+2, 1, 1)
+        
+        # index = self.imagelist.currentRow()
+        # if index >= 0:
+        #     pos_gradient.show()
+        #     if self.images[index].type() is "two":
+        #         neg_gradient.show()
+                
+        log2("addPosNegWidget called")
+        
+        
+        
+        
         # px = grad_pos.item.getLookupTable(512)
         # self.slider_pos.setStyleSheet("""QSlider::groove:horizontal {
         #         border: 01px solid;
@@ -1239,31 +1276,18 @@ class viff(QtGui.QMainWindow):
         # self.max_pos.setFixedWidth(self.txt_box_size_xl)
         # self.max_neg.setFixedWidth(self.txt_box_size_xl)
         # self.min_neg.setFixedWidth(self.txt_box_size_xl)
+        
+        # old_button_row_thresh_pos = self.l.itemAt(11).widget()
+        # old_button_row_thresh_neg = self.l.itemAt(12).widget()
+        
+        # if old_button_row_thresh_neg is not None:
+        #     old_button_row_thresh_neg.setParent(None)
+        #     print("removing...")
+            
+        # if old_button_row_thresh_pos is not None:
+        #     old_button_row_thresh_pos.setParent(None)
+        #     print("removing...")
     
-        
-        button_row_pos_slider = QtGui.QHBoxLayout()
-        
-        button_row_pos_slider.addWidget(self.min_pos, 1)
-        button_row_pos_slider.addWidget(grad_pos, 1)
-        button_row_pos_slider.addWidget(self.max_pos, 1)
-        self.l.addWidget(self.slider_pos, 9, self.listoffset+2, 1, 1)
-        self.l.addLayout(button_row_pos_slider, 10, self.listoffset+2, 1, 1)    
-        
-
-        # print("grad neg is: {}".format(grad_neg))
-        button_row_neg_slider = QtGui.QHBoxLayout()
-        button_row_neg_slider.addWidget(self.max_neg, 1)
-        button_row_neg_slider.addWidget(grad_neg, 1)
-        button_row_neg_slider.addWidget(self.min_neg, 1)
-        self.l.addLayout(button_row_neg_slider, 11, self.listoffset+2, 1, 1)
-        self.l.addWidget(self.slider_neg, 12, self.listoffset+2, 1, 1)
-        
-        # index = self.imagelist.currentRow()
-        # if index >= 0:
-        #     if self.images[index].type() is "two":
-
-        
-        log2("addPosNegWidget called")
         
 
     def openNewFile(self):
@@ -2300,7 +2324,7 @@ class viff(QtGui.QMainWindow):
                 self.slider_neg.setSpan(
                     self.images[index].getNegSldValueHigh(),
                     self.images[index].getNegSldValueLow())
-                self.images[index].neg_gradient.show()
+            # self.images[index].neg_gradient.show()
 
             self.updateCrossIntensityLabel()
             self.updateCursorIntensityLabel()
