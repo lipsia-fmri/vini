@@ -34,7 +34,7 @@ setapi("QVariant", 2)
 setapi("QString", 2)
 setapi("QUrl", 2)
 
-verbose_level = 1
+verbose_level = 5
 
 from pyqtgraph.Qt import QtCore, QtGui
 
@@ -2340,6 +2340,9 @@ class viff(QtGui.QMainWindow):
             if self.states[index] is True and self.images[index].type_d() == "4D":
                 self.enableFuncView()
         self.threshold_write_block = False
+        
+        #also save current window sizes....
+        self.saveWindowSize()
 
     def disableControls(self):
         self.min_neg.setEnabled(False)
