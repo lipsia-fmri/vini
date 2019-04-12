@@ -602,7 +602,7 @@ class viff(QtGui.QMainWindow):
         self.slider_pos.setSpan(0, 1000)
         self.slider_pos.setEnabled(False)
         self.slider_pos.setMinimumWidth(100)
-        self.slider_pos.spanChanged.connect(self.setThresholdsFromSliders)
+        self.slider_pos.spanChanged.connect(self.setPosThresholdFromSliders)
         self.slider_pos.setToolTip("change positive thresholds")
         
         self.slider_neg = QxtSpanSlider()
@@ -611,7 +611,7 @@ class viff(QtGui.QMainWindow):
         self.slider_neg.setRange(0, 1000)
         self.slider_neg.setSpan(0, 1000)
         self.disableSliderNeg()
-        self.slider_neg.spanChanged.connect(self.setThresholdsFromSliders)
+        self.slider_neg.spanChanged.connect(self.setNegThresholdFromSliders)
         self.slider_neg.setToolTip("change negative thresholds")
         # small fix, otherwise layout will be messed up!
         not_resize = self.slider_neg.sizePolicy()
@@ -2989,6 +2989,38 @@ class viff(QtGui.QMainWindow):
         if index >= 0 and self.threshold_write_block != True:
             self.images[index].setPosThresholdsFromSlider(
                 self.slider_pos.lowerValue, self.slider_pos.upperValue)
+            self.images[index].setNegThresholdsFromSlider(
+                self.slider_neg.lowerValue, self.slider_neg.upperValue)
+            self.threshold_write_block = True
+            self.setThresholdsToBoxes()
+            self.setThresholdsToHistogram()
+            self.threshold_write_block = False
+        # Make changes visible.
+        self.updateSlices()
+        self.updateImageItems()
+        
+    def setPosThresholdFromSliders(self):
+        """
+        Resets all thresholds when the sliders are moved.
+        """
+        index = self.imagelist.currentRow()
+        if index >= 0 and self.threshold_write_block != True:
+            self.images[index].setPosThresholdsFromSlider(
+                self.slider_pos.lowerValue, self.slider_pos.upperValue)
+            self.threshold_write_block = True
+            self.setThresholdsToBoxes()
+            self.setThresholdsToHistogram()
+            self.threshold_write_block = False
+        # Make changes visible.
+        self.updateSlices()
+        self.updateImageItems()
+        
+    def setNegThresholdFromSliders(self):
+        """
+        Resets all thresholds when the sliders are moved.
+        """
+        index = self.imagelist.currentRow()
+        if index >= 0 and self.threshold_write_block != True:
             self.images[index].setNegThresholdsFromSlider(
                 self.slider_neg.lowerValue, self.slider_neg.upperValue)
             self.threshold_write_block = True
