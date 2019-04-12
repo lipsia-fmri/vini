@@ -1228,7 +1228,7 @@ class viff(QtGui.QMainWindow):
         # print("grad neg is: {}".format(grad_neg))
         button_row_thresh_neg = QtGui.QHBoxLayout()
         button_row_thresh_neg.addWidget(self.max_neg, 1)
-        # button_row_thresh_neg.addWidget(neg_gradient, 1)
+        button_row_thresh_neg.addWidget(neg_gradient, 1)
         button_row_thresh_neg.addWidget(self.min_neg, 1)
         self.l.addLayout(button_row_thresh_neg, 11, self.listoffset+2, 1, 1)
         # self.l.addWidget(self.slider_neg, 12, self.listoffset+2, 1, 1)
@@ -2324,7 +2324,7 @@ class viff(QtGui.QMainWindow):
                 self.slider_neg.setSpan(
                     self.images[index].getNegSldValueHigh(),
                     self.images[index].getNegSldValueLow())
-            # self.images[index].neg_gradient.show()
+                self.images[index].neg_gradient.show()
 
             self.updateCrossIntensityLabel()
             self.updateCursorIntensityLabel()
