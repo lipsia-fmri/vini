@@ -40,7 +40,7 @@ class ImageDialog(QtGui.QDialog):
         self.alpha_le.setMaxLength(5)
         self.alpha_le.returnPressed.connect(self.savePreferences)
         self.alpha_le.editingFinished.connect(self.savePreferences)
-        self.form.addRow("Set alpha:", self.alpha_le)
+        # self.form.addRow("Set alpha:", self.alpha_le)
 
         # Composition mode
         self.comp_menu = QtGui.QComboBox()
