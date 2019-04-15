@@ -80,6 +80,8 @@ from testInputs import testFloat, testInteger
 # print infos if necessary
 from Verboseprint import verboseprint
 import time
+import re
+import traceback
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -1212,17 +1214,14 @@ class Viff(QtGui.QMainWindow):
         self.updateSelected()
         self.autoRange()
         
-        #%% loadNewImageFromNp
-    def loadNewImageFromNp(self, data):
+        #%% loadImagesFromNumpy
+    def loadImagesFromNumpy(self, array, itemname):
         """
         Loads an image provided as numpy array
         """
-        # Gets the image instance from loadImage.
-        
-        
-        img = loadImage.loadImageFromFile(unicode(filename), self.preferences, 0)
+
+        img = loadImage.loadImageFromNumpy(array, self.preferences, 0)
         # save path as prefered
-        self.prefered_path = "/".join(filename.split('/')[:-1])
         img.dialog.sigImageChanged.connect(self.updateImages)
         img.dialog.sigImageChanged.connect(self.updateSelected)
 
@@ -1231,10 +1230,7 @@ class Viff(QtGui.QMainWindow):
                 self.time_dim = img.getTimeDim()
                 self.frame_sld.setMaximum(self.time_dim-1)
             if img.frame_time == 0:
-                QtGui.QMessageBox.warning(
-                    self, "Warning",
-                    "Warning: TR not found. Set it automatically in the \
-                    functional image dialog.")
+                img.frame_time = 1
 
         # For each extra window add a list of Nones because the image is in
         # none of them.
@@ -1250,8 +1246,9 @@ class Viff(QtGui.QMainWindow):
         self.images.insert(0, img)
         self.states.insert(0, True)
 
-        itemname = os.path.split(filename)[-1]
+        img.filename = itemname
         self.addToList(itemname)
+        
 
         # Resample all images with previous settings
         # This makes sense since the new image might have a higher resolution.
@@ -1278,10 +1275,7 @@ class Viff(QtGui.QMainWindow):
         if self.images[0].type_d() == "4D":
             self.images[0].funcdialog.setWindowTitle(itemname)
             if self.images[0].frame_time == 0:
-                QtGui.QMessageBox.warning(
-                    self, "Warning",
-                    "Warning: TR not found. Set it automatically in the \
-                    functional image dialog.")
+                self.images[0].frame_time = 1
 
         self.resetFuncView()
 
@@ -1828,7 +1822,6 @@ class Viff(QtGui.QMainWindow):
             self.img_coord[i] for i in range(3)]
 
 
-    #%% updateCrossIntensityLabel
     def updateCrossIntensityLabel(self):
         """
         Updates the intensity labels in the main window and the value window
@@ -2307,6 +2300,7 @@ class Viff(QtGui.QMainWindow):
             
             self.addPosNegWidget(self.images[index].pos_gradient, self.images[index].neg_gradient)
             
+            
             # only the checkbox is checked or unchecked
             if bool(item.checkState()) != self.states[index]:
                 if item.checkState():
@@ -2315,7 +2309,8 @@ class Viff(QtGui.QMainWindow):
                     self.deactivateImage()
             else:
                 self.updateSelected()
-
+                
+#%% updateSelected: updating boxes sliders labels
     def updateSelected(self):
         """
         Updates the boxes, sliders, labels, when the selected image is changed.
@@ -2341,13 +2336,11 @@ class Viff(QtGui.QMainWindow):
                 self.min_neg.setHidden(True)
                 self.max_neg.setHidden(True)
                 self.slider_neg.setHidden(True)
-                # self.neg_thr_button.setEnabled(False)
             if self.images[index].type() is "two":
                 self.enableSliderNeg()
                 self.min_neg.setHidden(False)
                 self.max_neg.setHidden(False)
                 self.slider_neg.setHidden(False)
-                # self.neg_thr_button.setEnabled(True)
                 self.slider_neg.setSpan(
                     self.images[index].getNegSldValueHigh(),
                     self.images[index].getNegSldValueLow())
@@ -2365,7 +2358,17 @@ class Viff(QtGui.QMainWindow):
             # image is functional and active enable functional widgets
             if self.states[index] is True and self.images[index].type_d() == "4D":
                 self.enableFuncView()
+        
+            #should time controls be enabled or disabled?
+            if self.images[index].type_d() == "4D":
+                self.enableFuncView()
+            else:
+                self.disableFuncView()
+                
+            
         self.threshold_write_block = False
+        
+        
         
         #also save current window sizes....
         self.saveWindowSize()
@@ -3919,10 +3922,30 @@ def start_viewer():
     viewer.show()
     app.exec_()
 
-def show(data):
+def show(*argv):
+    """ 
+    use this function to visualize numpy arrays. can handle multiple arguments, e.g.
+    viff.show(a,b,c)
+    where a,b,c are numpy arrays.
+    """
     app = QtGui.QApplication([])
     viewer = Viff()
-    viewer.show()
+    
+    #attempt to get array name...
+    try:
+        stack = traceback.extract_stack()
+        filename, lineno, function_name, code = stack[-2]
+        itemname = re.compile(r'\((.*?)\).*$').search(code).groups()[0]
+        if len(itemname) == 1:
+            itemname = [itemname]
+        else:
+            itemname = itemname.split(",")
+    except:
+        itemname = ["numpy_array"]
+    
+    for i,arg in enumerate(argv):
+        viewer.loadImagesFromNumpy(arg, itemname[i])
+    # viewer.show()
     
     app.exec_()
 
