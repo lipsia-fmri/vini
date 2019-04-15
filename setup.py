@@ -5,14 +5,14 @@ except ImportError:
 
 import os
 
-VERSION = '0.0.1.dev'
+VERSION = '0.0.2.dev'
 config = {
     'author' : "Malte Kuhlmann, Eric Lacosse, Johannes Stelzer",
     'name' : 'viff',
     'maintainer' : '',
     'maintainer_email' : '',
     'license' : 'MIT',
-    'packages' : ['vviewer'],
+    'packages' : ['viff'],
     'description' : 'A visualization tool for 3D MRI slices and fMRI applications',
     'long_description' : '',
     'version' : VERSION,
@@ -30,19 +30,21 @@ config = {
         'Operating System :: OS Independent',
         'Operating System :: POSIX',
         'Operating System :: Unix',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Topic :: Scientific/Engineering',
     ],
-    'install_requires' : ['nose', 'nibabel', 'numpy', 'scipy'],
+    'install_requires' : ['nose', 'nibabel', 'numpy', 'scipy', 'matplotlib', 'PyQt5'],
 }
+
+
+
 
 
 def checkDependencies():
 
     # Just make sure dependencies exist, I haven't rigorously
     # tested what the minimal versions that will work are
-    needed_deps = ["IPython", "numpy", "scipy", "nibabel"]
+    needed_deps = ['IPython', 'nibabel', 'numpy', 'scipy', 'matplotlib', 'PyQt5']
     missing_deps = []
     for dep in needed_deps:
         try:

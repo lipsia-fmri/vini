@@ -333,8 +333,8 @@ class Viff(QtGui.QMainWindow):
         self.imagelist.customContextMenuRequested.connect(self.rightClickedList)
         
         # self.imagelist.connectNotify(
-        #     self.imagelist,
-        #     QtCore.SIGNAL("customContextMenuRequested(QPoint)"),
+        #     # self.imagelist,
+        #     # QtCore.SIGNAL("customContextMenuRequested(QPoint)"),
         #     self.rightClickedList)
         
         
@@ -2359,7 +2359,7 @@ class Viff(QtGui.QMainWindow):
             if self.states[index] is True and self.images[index].type_d() == "4D":
                 self.enableFuncView()
         
-            #should time controls be enabled or disabled?
+            #should func view (aka time controls) be enabled or disabled?
             if self.images[index].type_d() == "4D":
                 self.enableFuncView()
             else:
@@ -3941,7 +3941,7 @@ def show(*argv):
         else:
             itemname = itemname.split(",")
     except:
-        itemname = ["numpy_array"]
+        itemname = ["array {}".format(i) for i in range(len(argv))]
     
     for i,arg in enumerate(argv):
         viewer.loadImagesFromNumpy(arg, itemname[i])
