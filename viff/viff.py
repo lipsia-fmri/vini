@@ -114,14 +114,14 @@ def unicode(string):
         res = string
     return res
 
-class viff(QtGui.QMainWindow):
+class Viff(QtGui.QMainWindow):
     """
     Class to view MRI files
     """
 
     def __init__(self, parent=None):
         """Initialize viff object"""
-        super(viff, self).__init__(parent)
+        super(Viff, self).__init__(parent)
 
         # 'img_coord' contains the coordinates of the crosshair/slices within
         # the resampled image data.
@@ -212,7 +212,7 @@ class viff(QtGui.QMainWindow):
         #forbidding the display of mm units (whenevre clicked on ignoring affine)
         self.forbid_mm = False
 
-        #%% preferences: init with default preferences
+        # preferences: init with default preferences
         self.setDefaultPreferences()
         
         
@@ -571,7 +571,6 @@ class viff(QtGui.QMainWindow):
         
         
                 
-        #%% label for intensity values
         row_intensity = QtGui.QHBoxLayout()
         self.intensity_value = QtGui.QLabel('none')
         self.intensity_value.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
@@ -1213,7 +1212,85 @@ class viff(QtGui.QMainWindow):
         self.updateSelected()
         self.autoRange()
         
-#%% addPosNegWidget
+        #%% loadNewImageFromNp
+    def loadNewImageFromNp(self, data):
+        """
+        Loads an image provided as numpy array
+        """
+        # Gets the image instance from loadImage.
+        
+        
+        img = loadImage.loadImageFromFile(unicode(filename), self.preferences, 0)
+        # save path as prefered
+        self.prefered_path = "/".join(filename.split('/')[:-1])
+        img.dialog.sigImageChanged.connect(self.updateImages)
+        img.dialog.sigImageChanged.connect(self.updateSelected)
+
+        if img.type_d() == "4D":
+            if img.getTimeDim() > self.time_dim:
+                self.time_dim = img.getTimeDim()
+                self.frame_sld.setMaximum(self.time_dim-1)
+            if img.frame_time == 0:
+                QtGui.QMessageBox.warning(
+                    self, "Warning",
+                    "Warning: TR not found. Set it automatically in the \
+                    functional image dialog.")
+
+        # For each extra window add a list of Nones because the image is in
+        # none of them.
+        image_item_list_tmp = [[]] + [ [None]*3 ] * len(self.extra_windows)
+        image_item_list_tmp_po = []
+        # The image should be in the main window.
+        for j in range(3):
+            image_item_list_tmp[0].append(ImageItemMod.ImageItemMod())
+            image_item_list_tmp_po.append(ImageItemMod.ImageItemMod())
+        self.image_window_list.insert(0, image_item_list_tmp)
+        self.popouts_ii.insert(0, image_item_list_tmp_po)
+
+        self.images.insert(0, img)
+        self.states.insert(0, True)
+
+        itemname = os.path.split(filename)[-1]
+        self.addToList(itemname)
+
+        # Resample all images with previous settings
+        # This makes sense since the new image might have a higher resolution.
+        self.reresample()
+
+        self.addToSliceWidgets(0)
+
+        self.setSliceWidgetsDims()
+        self.setCrosshairPositionCenter()
+
+        # Colormaps
+        self.addPosNegWidget(self.images[0].pos_gradient, self.images[0].neg_gradient)
+        # self.addNegWidget(self.images[0].neg_gradient)
+        # self.l.addWidget(self.images[0].pos_gradient, 10, 40, 1, 3)
+        # self.l.addWidget(self.images[0].neg_gradient, 11, 40, 1, 3)
+        # connect to update slices and imageitems
+        self.images[0].pos_gradient.sigGradientChanged.connect(
+            self.updateImages)
+        self.images[0].neg_gradient.sigGradientChanged.connect(
+            self.updateImages)
+
+        self.images[0].dialog.setWindowTitle(itemname)
+
+        if self.images[0].type_d() == "4D":
+            self.images[0].funcdialog.setWindowTitle(itemname)
+            if self.images[0].frame_time == 0:
+                QtGui.QMessageBox.warning(
+                    self, "Warning",
+                    "Warning: TR not found. Set it automatically in the \
+                    functional image dialog.")
+
+        self.resetFuncView()
+
+        self.resetZValues()
+
+        self.imagelist.setCurrentRow(0)
+        self.updateSelected()
+        self.autoRange()
+        
     def addPosNegWidget(self, pos_gradient, neg_gradient):
         """ helper function for refreshing the positive and negative colormap and sliders"""
 
@@ -1749,72 +1826,9 @@ class viff(QtGui.QMainWindow):
         """
         self.cursor_coord = [xyz[i] if xyz[i] is not None else
             self.img_coord[i] for i in range(3)]
-        self.updateCursorIntensityLabel()
 
-    def updateCursorIntensityLabel(self):
-        return
-        # """
-        # Updates the intensity labels in the main window and the value window
-        # for the cursor.
-        # """
-        # index = self.imagelist.currentRow()
-        # if index >= 0:
-        #     coords_valid = False
-        #     if (self.cursor_coord[0] < self.images[index].getDimensions()[0] and
-        #         self.cursor_coord[1] < self.images[index].getDimensions()[1] and
-        #         self.cursor_coord[2] < self.images[index].getDimensions()[2] and
-        #         self.cursor_coord[0] >= 0 and
-        #         self.cursor_coord[1] >= 0 and
-        #         self.cursor_coord[2] >= 0):
-        #         coords_valid = True
-        #     if coords_valid:
-        #         # intensity = str(np.round(
-        #         #     self.images[index].getIntensity(self.cursor_coord),3))
-        #         # intensity = str(self.images[index].getIntensity(self.cursor_coord))
-        #         intensity = ("%.6f" %self.images[index].getIntensity())
-        #     else:
-        #         intensity = "nan"
-        #         # print('invalid')
-        #     # self.intensity_lbl_cursor.setText(intensity)
-        #     if self.value_window.isVisible():
-        #         if coords_valid:
-        #             names = "<b>filename</b><br>"
-        #             values = "<b>intensity</b><br>"
-        #             coords = "<b>voxel coordinates</b><br>"
-        #             for i in range(len(self.images)):
-        #                 names = names + self.imagelist.item(i).text()
-        #                 values = (values +
-        #                     str(np.round(self.images[i].getIntensity(
-        #                         self.cursor_coord),3)))
-        #                 m = [math.trunc(x) for x in self.cursor_coord]
-        #                 m = self.images[i].getVoxelCoords(m)
-        #                 coords = (coords +
-        #                     "[" + str(int(np.round(m[0]))) + ", " +
-        #                     str(int(np.round(m[1]))) + ", " +
-        #                     str(int(np.round(m[2]))) + "]")
-        #                 if i != len(self.images)-1:
-        #                     names = names + "<br>"
-        #                     values = values + "<br>"
-        #                     coords = coords + "<br>"
-        #             self.value_window.cursor_names_lbl.setText(names)
-        #             self.value_window.cursor_values_lbl.setText(values)
-        #             self.value_window.cursor_coords_lbl.setText(coords)
-        #         else:
-        #             names = "<b>filename</b><br>"
-        #             values = "<b>intensity</b><br>"
-        #             coords = "<b>voxel coordinates</b><br>"
-        #             for i in range(len(self.images)):
-        #                 names = names + self.imagelist.item(i).text()
-        #                 values = values + "Nan"
-        #                 coords = coords + "[Nan, Nan, Nan]"
-        #                 if i != len(self.images)-1:
-        #                     names = names + "<br>"
-        #                     values = values + "<br>"
-        #                     coords = coords + "<br>"
-        #             self.value_window.cursor_names_lbl.setText(names)
-        #             self.value_window.cursor_values_lbl.setText(values)
-        #             self.value_window.cursor_coords_lbl.setText(coords)
 
+    #%% updateCrossIntensityLabel
     def updateCrossIntensityLabel(self):
         """
         Updates the intensity labels in the main window and the value window
@@ -1831,7 +1845,13 @@ class viff(QtGui.QMainWindow):
             str_intens_tooltip = ""
             for i in range(nmb_images):
                 str_img = str(self.imagelist.item(i).text()).split(".")[0]
-                str_tooltip = "%g \t %s" %(self.images[i].getIntensity(),str_img)
+                
+                if (self.playstate or self.slicestate) and self.images[i].type_d() == "4D":
+                    intensity = self.images[i].xhairval
+                else:
+                    intensity = self.images[i].getIntensity()
+                
+                str_tooltip = "%g \t %s" %(intensity,str_img)
                 if i > 0:
                     str_intens += "\n"
                     str_image_name += "\n"
@@ -1839,7 +1859,7 @@ class viff(QtGui.QMainWindow):
                 if i<6:
                     # str_intens += "%s:  %g" %(abc[i],self.images[i].getIntensity())
                     # str_intens += " %s:  %g" %("i%i" %(i+1),self.images[i].getIntensity())
-                    str_intens += " %g" %self.images[i].getIntensity()
+                    str_intens += " %g" %intensity
                     if len(str_img) > 15:
                         str_img = str_img[0:15] + "..."
                     str_image_name += str_img
@@ -1857,7 +1877,6 @@ class viff(QtGui.QMainWindow):
             
         self.setAlphaToSlider()
         
-    #%% resetEverything
     def resetEverything(self):
         self.resetAlpha()
         self.autoRange()
@@ -2335,7 +2354,6 @@ class viff(QtGui.QMainWindow):
                 self.images[index].neg_gradient.show()
 
             self.updateCrossIntensityLabel()
-            self.updateCursorIntensityLabel()
             self.updateDisplayCoordinates()
             self.setThresholdsToBoxes()
             # If there is a histogram window, update that, too.
@@ -2874,8 +2892,7 @@ class viff(QtGui.QMainWindow):
                 self.images[i].setFrame(self.frame) # only set the variable
                 if self.playstate or self.slicestate:
                     # resample only slices
-                    self.images[i].resample_slice(
-                        shape=self.img_dims, affine=self.affine)
+                    self.images[i].resample_slice(shape=self.img_dims, affine=self.affine)
                     self.updateImageItem(i)
                 else:
                     # resample whole frame and slice
@@ -2886,7 +2903,6 @@ class viff(QtGui.QMainWindow):
                             self.resetHistogram()
                     self.images[i].slice()
                     self.updateImageItem(i)
-        self.updateCursorIntensityLabel()
         self.setFrameToBox()
         self.setFrameToSlider()
         self.updateCrossIntensityLabel()
@@ -3275,7 +3291,6 @@ class viff(QtGui.QMainWindow):
             self.console.kernel.shell.run_cell('%pylab qt')
         self.console.show()
 
-#%% openHistogramWindow (here filename is set)
     def openHistogramWindow(self):
         """
         Opens the histogram window.
@@ -3294,7 +3309,6 @@ class viff(QtGui.QMainWindow):
         self.resetHistogram()
         self.hist.show()
 
-#%% resetHistogram
     def resetHistogram(self):
         """
         Resets the histogram window when changing the current image or the
@@ -3354,7 +3368,6 @@ class viff(QtGui.QMainWindow):
         self.value_window.show()
         # refresh the text
         self.updateCrossIntensityLabel()
-        self.updateCursorIntensityLabel()
 
     def openMosaic(self):
         """
@@ -3605,7 +3618,7 @@ class viff(QtGui.QMainWindow):
                 elif key in list_strings:
                     pass
                 else:
-                    print("loadPreferences: WARNING! UNKNOWN TYPE OF PREFERENCE: {}. Ignoring!".format(key))
+                    # print("loadPreferences: WARNING! UNKNOWN TYPE OF PREFERENCE: {}. Ignoring!".format(key))
                     continue
                     
                 
@@ -3795,14 +3808,14 @@ def main():
                         type=str)
     parser.add_argument("-f", "--func", "--functional", metavar='N', nargs='+',
                         help = "specify a functional image", type=str)
-    parser.add_argument('-l', action='store_true', default=False,
-                        dest='linked', help='Set linked views to true')
+    # parser.add_argument('-l', action='store_true', default=False,
+    #                     dest='linked', help='Set linked views to true')
 
     args = parser.parse_args()
     filenames = args.input
     z_filenames = args.zmap
     func_filenames = args.func
-    is_linked = args.linked
+    # is_linked = args.linked
 
     if filenames is None:
         filenames = []
@@ -3813,88 +3826,88 @@ def main():
 
     # Initialize QT app GUI and setup the layout.
     app = QtGui.QApplication([])
-    viewer = viff()
+    viewer = Viff()
 
     # change order of the images being loaded to be more intuitive
     filenames.reverse()
     z_filenames.reverse()
     func_filenames.reverse()
 
-    if is_linked:
-        file_list = []
-        type_list = []
-        if filenames is not None:
-            for i in range(0, len(filenames)):
-                verboseprint("Loading file: " + filenames[i])
-                if os.path.isfile(filenames[i]):
-                    file_list.append(filenames[i])
-                    type_list.append(0)
-                else:
-                    print("Error: File doesn't exist")
-        if z_filenames is not None:
-            for i in range(0, len(z_filenames)):
-                verboseprint("Loading file: " + z_filenames[i])
-                if os.path.isfile(z_filenames[i]):
-                    file_list.append(z_filenames[i])
-                    type_list.append(1)
-                else:
-                    print("Error: File doesn't exist")
-        if func_filenames is not None:
-            for i in range(0, len(func_filenames)):
-                verboseprint("Loading file: " + func_filenames[i])
-                if os.path.isfile(func_filenames[i]):
-                    file_list.append(func_filenames[i])
-                    type_list.append(2)
-                else:
-                    print("Error: File doesn't exist")
-        if file_list is not None:
-            viewer.loadImagesFromFiles(file_list, type_list)
+    # if is_linked:
+    #     file_list = []
+    #     type_list = []
+    #     if filenames is not None:
+    #         for i in range(0, len(filenames)):
+    #             verboseprint("Loading file: " + filenames[i])
+    #             if os.path.isfile(filenames[i]):
+    #                 file_list.append(filenames[i])
+    #                 type_list.append(0)
+    #             else:
+    #                 print("Error: File doesn't exist")
+    #     if z_filenames is not None:
+    #         for i in range(0, len(z_filenames)):
+    #             verboseprint("Loading file: " + z_filenames[i])
+    #             if os.path.isfile(z_filenames[i]):
+    #                 file_list.append(z_filenames[i])
+    #                 type_list.append(1)
+    #             else:
+    #                 print("Error: File doesn't exist")
+    #     if func_filenames is not None:
+    #         for i in range(0, len(func_filenames)):
+    #             verboseprint("Loading file: " + func_filenames[i])
+    #             if os.path.isfile(func_filenames[i]):
+    #                 file_list.append(func_filenames[i])
+    #                 type_list.append(2)
+    #             else:
+    #                 print("Error: File doesn't exist")
+    #     if file_list is not None:
+    #         viewer.loadImagesFromFiles(file_list, type_list)
 
-        len_files = len(filenames)
-        len_funcs = len(func_filenames)
-        len_zmaps = len(z_filenames)
+    #     len_files = len(filenames)
+    #     len_funcs = len(func_filenames)
+    #     len_zmaps = len(z_filenames)
 
-        # now open new windows and move the z-maps and functional images there
-        for i in range(1, len_zmaps + len_funcs):
-            verboseprint("move image to new window")
-            viewer.newWindowInd(i) # adds to new window
-            viewer.deactivateImageIndex(i) # remove from main window
+    #     # now open new windows and move the z-maps and functional images there
+    #     for i in range(1, len_zmaps + len_funcs):
+    #         verboseprint("move image to new window")
+    #         viewer.newWindowInd(i) # adds to new window
+    #         viewer.deactivateImageIndex(i) # remove from main window
 
-        for i in range(len_zmaps + len_funcs, len_files + len_zmaps +
-                len_funcs):
-            for j in range(1, len(z_filenames + func_filenames)):
-                verboseprint("move underlay to new window")
-                viewer.addToWindowId(i,j-1)
+    #     for i in range(len_zmaps + len_funcs, len_files + len_zmaps +
+    #             len_funcs):
+    #         for j in range(1, len(z_filenames + func_filenames)):
+    #             verboseprint("move underlay to new window")
+    #             viewer.addToWindowId(i,j-1)
 
-    else:
-        file_list = []
-        type_list = []
-        if filenames is not None:
-            for i in range(0, len(filenames)):
-                verboseprint("Loading file: " + filenames[i])
-                if os.path.isfile(filenames[i]):
-                    file_list.append(filenames[i])
-                    type_list.append(0)
-                else:
-                    print("Error: File doesn't exist")
-        if z_filenames is not None:
-            for i in range(0, len(z_filenames)):
-                verboseprint("Loading file: " + z_filenames[i])
-                if os.path.isfile(z_filenames[i]):
-                    file_list.append(z_filenames[i])
-                    type_list.append(1)
-                else:
-                    print("Error: File doesn't exist")
-        if func_filenames is not None:
-            for i in range(0, len(func_filenames)):
-                verboseprint("Loading file: " + func_filenames[i])
-                if os.path.isfile(func_filenames[i]):
-                    file_list.append(func_filenames[i])
-                    type_list.append(2)
-                else:
-                    print("Error: File doesn't exist")
-        if file_list is not None:
-            viewer.loadImagesFromFiles(file_list, type_list)
+    # else:
+    file_list = []
+    type_list = []
+    if filenames is not None:
+        for i in range(0, len(filenames)):
+            verboseprint("Loading file: " + filenames[i])
+            if os.path.isfile(filenames[i]):
+                file_list.append(filenames[i])
+                type_list.append(0)
+            else:
+                print("Error: File doesn't exist: {}".format(filenames[i]))
+    if z_filenames is not None:
+        for i in range(0, len(z_filenames)):
+            verboseprint("Loading file: " + z_filenames[i])
+            if os.path.isfile(z_filenames[i]):
+                file_list.append(z_filenames[i])
+                type_list.append(1)
+            else:
+                print("Error: File doesn't exist: {}".format(filenames[i]))
+    if func_filenames is not None:
+        for i in range(0, len(func_filenames)):
+            verboseprint("Loading file: " + func_filenames[i])
+            if os.path.isfile(func_filenames[i]):
+                file_list.append(func_filenames[i])
+                type_list.append(2)
+            else:
+                print("Error: File doesn't exist: {}".format(filenames[i]))
+    if file_list is not None:
+        viewer.loadImagesFromFiles(file_list, type_list)
 
         
 
@@ -3902,8 +3915,15 @@ def main():
 
 def start_viewer():
     app = QtGui.QApplication([])
-    viewer = viff()
+    viewer = Viff()
     viewer.show()
+    app.exec_()
+
+def show(data):
+    app = QtGui.QApplication([])
+    viewer = Viff()
+    viewer.show()
+    
     app.exec_()
 
 if __name__ == '__main__':

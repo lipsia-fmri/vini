@@ -183,6 +183,7 @@ class Image4D(Image):
         """
         Resamples only current slices.
         """
+        
         t_affine = np.dot(np.linalg.inv(self.image.affine), affine)
         if self.state_affine_over:
             # TODO: use this as default without if-clause?
@@ -200,6 +201,9 @@ class Image4D(Image):
         self.image_slice_res_sa = resample_image(
             self.image.get_data()[:,:,:,self.frame], affine=t_affine_0,
             shape=shape_0, interpolation=self.interp_type)[0,:,:]
+        
+        self.xhairval = self.image_slice_res_sa[self.coord[1], self.coord[2]]
+        
         n_coord = np.zeros((3,1))
         n_coord[1] = self.coord[1]
         shift = np.dot(t_affine[0:3,0:3], n_coord)
@@ -207,6 +211,9 @@ class Image4D(Image):
         t_affine_1[0:3][:,3:4] = np.add(t_affine_1[0:3][:,3:4], shift)
         shape_1 = np.copy(shape)
         shape_1[1] = 1
+        
+       
+        
         self.image_slice_res_co = resample_image(
             self.image.get_data()[:,:,:,self.frame], affine=t_affine_1,
             shape=shape_1, interpolation=self.interp_type)[:,0,:]
@@ -257,16 +264,15 @@ class Image4D(Image):
         # add positive and negative parts
         if (self.two_cm and
                 float(self.threshold_neg[0]) != float(self.threshold_neg[1])):
-            self.image_slices[0] = \
-                self.image_slices_pos[0] + self.image_slices_neg[0]
-            self.image_slices[1] = \
-                self.image_slices_pos[1] + self.image_slices_neg[1]
-            self.image_slices[2] = \
-                self.image_slices_pos[2] + self.image_slices_neg[2]
+            self.image_slices[0] = self.image_slices_pos[0] + self.image_slices_neg[0]
+            self.image_slices[1] = self.image_slices_pos[1] + self.image_slices_neg[1]
+            self.image_slices[2] = self.image_slices_pos[2] + self.image_slices_neg[2]
         else:
             self.image_slices[0] = self.image_slices_pos[0]
             self.image_slices[1] = self.image_slices_pos[1]
             self.image_slices[2] = self.image_slices_pos[2]
+            
+        
 
     def setPlaying(self, state):
         self.playing = state

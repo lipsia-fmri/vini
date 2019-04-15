@@ -103,6 +103,8 @@ class Image(object):
         alpha=self.alpha, interp=self.interp_type, two_cm=self.two_cm,
         mode=self.mode, clippings_pos =self.clippings_pos,
         clippings_neg=self.clippings_neg)
+        
+        self.xhairval = -1
 
         if filename is not None:
             self.loadImage(filename)
