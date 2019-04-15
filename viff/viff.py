@@ -442,8 +442,6 @@ class viff(QtGui.QMainWindow):
         button_row_alpha.addWidget(self.alpha_label, 3)
         self.l.addLayout(button_row_alpha, 2, self.listoffset+2, 1, 1)
         
-        
-
   
         
 
@@ -573,15 +571,22 @@ class viff(QtGui.QMainWindow):
         
         
                 
-        # label for actual value
-        self.intensity_label = QtGui.QLabel('none')
-        self.intensity_label.setAlignment(
-            QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
-        self.l.addWidget(self.intensity_label, 6, self.listoffset+2, 1, 4)
+        #%% label for intensity values
+        row_intensity = QtGui.QHBoxLayout()
+        self.intensity_value = QtGui.QLabel('none')
+        self.intensity_value.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
+        row_intensity.addWidget(self.intensity_value,1)
+        
+        self.intensity_image_name= QtGui.QLabel('baba')
+        self.intensity_image_name.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
+        row_intensity.addWidget(self.intensity_image_name,1)
+        
+        self.l.addLayout(row_intensity, 6, self.listoffset+2, 1, 4)
+        # self.l.addWidget(self.intensity_value, 6, self.listoffset+2, 1, 4)
         
         
-        spacer.setSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
-        self.l.addWidget(spacer, 8, self.listoffset+2, 1, 1)
+        # spacer.setSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        # self.l.addWidget(spacer, 8, self.listoffset+2, 1, 1)
         
         
         
@@ -1822,26 +1827,29 @@ class viff(QtGui.QMainWindow):
             # always be within the image
             nmb_images = len(self.images)
             str_intens = ""
+            str_image_name = ""
+            str_intens_tooltip = ""
             for i in range(nmb_images):
+                str_img = str(self.imagelist.item(i).text()).split(".")[0]
+                str_tooltip = "%g \t %s" %(self.images[i].getIntensity(),str_img)
                 if i > 0:
                     str_intens += "\n"
+                    str_image_name += "\n"
+                    str_intens_tooltip += "\n"
                 if i<6:
                     # str_intens += "%s:  %g" %(abc[i],self.images[i].getIntensity())
-                    str_intens += " %s:  %g" %("i%i" %(i+1),self.images[i].getIntensity())
-                    # str_intens += "%g (%s)" %(self.images[i].getIntensity(),str(self.imagelist.item(i).text()).split(".")[0])
-            intensity = (str_intens)
-            self.intensity_label.setText(intensity)
+                    # str_intens += " %s:  %g" %("i%i" %(i+1),self.images[i].getIntensity())
+                    str_intens += " %g" %self.images[i].getIntensity()
+                    if len(str_img) > 15:
+                        str_img = str_img[0:15] + "..."
+                    str_image_name += str_img
+                str_intens_tooltip += str_tooltip
+                    
+            self.intensity_value.setText((str_intens))
             
-            str_intens = ""
-            for i in range(nmb_images):
-                if i > 0:
-                    str_intens += "\n"
-                if i<6:
-                    # str_intens += "%s:  %g" %(abc[i],self.images[i].getIntensity())
-                    str_intens += "%s: %g" %(str(self.imagelist.item(i).text()).split(".")[0], self.images[i].getIntensity())
-            intensity = (str_intens)
+            self.intensity_image_name.setText((str_image_name))
             
-            self.intensity_label.setToolTip(intensity)
+            self.intensity_value.setToolTip(str_intens_tooltip)
             
             log1("updateCrossIntensityLabel was called")
             

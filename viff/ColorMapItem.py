@@ -437,7 +437,7 @@ class ColorMapItem(TickSliderItem):
         l = self.length
         self.length = 100
         global Gradients
-        for g in Gradients:
+        for j, g in enumerate(Gradients):
             px = QtGui.QPixmap(100, 15)
             p = QtGui.QPainter(px)
             self.restoreState(Gradients[g])
