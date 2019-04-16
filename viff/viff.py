@@ -37,6 +37,7 @@ setapi("QUrl", 2)
 verbose_level = 5
 
 from pyqtgraph.Qt import QtCore, QtGui
+from pyqtgraph.exporters import ImageExporter
 
 import numpy as np
 import math
@@ -82,6 +83,8 @@ from Verboseprint import verboseprint
 import time
 import re
 import traceback
+import matplotlib
+from matplotlib.image import imsave
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -439,7 +442,7 @@ class Viff(QtGui.QMainWindow):
         
         #not nice!
         self.txt_box_size = round(width/30)
-        self.txt_box_size_xl = round(width/24)
+        self.txt_box_size_xl = round(width/22)
         
         self.x_box.setFixedWidth(self.txt_box_size)
         self.y_box.setFixedWidth(self.txt_box_size)
@@ -862,19 +865,25 @@ class Viff(QtGui.QMainWindow):
         image_time.triggered.connect(self.openTimeSeries)
         self.image_menu.addAction(image_time)
 
-        # for opening the functional image properties
-        func_settings = QtGui.QAction('Functional image settings', self)
-        func_settings.setShortcut(QtGui.QKeySequence('f'))
-        func_settings.triggered.connect(self.openFuncSettings)
-        self.image_menu.addAction(func_settings)
+        # # for opening the functional image properties
+        # func_settings = QtGui.QAction('Functional image settings', self)
+        # func_settings.setShortcut(QtGui.QKeySequence('f'))
+        # func_settings.triggered.connect(self.openFuncSettings)
+        # self.image_menu.addAction(func_settings)
 
 
 
         ## Tools menu for helpful tools ##
+        # export function
+        openExport = QtGui.QAction('Export Images', self)
+        openExport.setShortcut(QtGui.QKeySequence('e'))
+        openExport.setStatusTip('Open Exporter')
+        openExport.triggered.connect(self.export)
+        self.tools_menu.addAction(openExport)
 
         # for opening the ipython qtconsole for interactivity
         openQtConsole = QtGui.QAction('iPython Console', self)
-        openQtConsole.setShortcut(QtGui.QKeySequence('Ctrl+P'))
+        openQtConsole.setShortcut(QtGui.QKeySequence('l'))
         openQtConsole.setStatusTip('Open ipython qtconsole')
         openQtConsole.triggered.connect(self.openQtConsoleWindow)
         self.tools_menu.addAction(openQtConsole)
@@ -2945,7 +2954,6 @@ class Viff(QtGui.QMainWindow):
             self.images[index].setColorMapNeg()
             self.updateSlices()
             self.updateImageItems()
-            self.refreshMosaicView()
         log2("setAlphaFromSlider called (alpha_fract {})".format(alpha_fract))
 
 
@@ -3041,7 +3049,6 @@ class Viff(QtGui.QMainWindow):
         # Make changes visible.
         self.updateSlices()
         self.updateImageItems()
-        self.refreshMosaicView()
         
     def setNegThresholdFromSliders(self):
         """
@@ -3058,7 +3065,6 @@ class Viff(QtGui.QMainWindow):
         # Make changes visible.
         self.updateSlices()
         self.updateImageItems()
-        self.refreshMosaicView()
 
     def setPosThresholdsFromBoxes(self):
         """
@@ -3537,8 +3543,7 @@ class Viff(QtGui.QMainWindow):
             if self.image_window_list[img_ind][0][0] is not None:
                 # iterate over viewboxes
                 for coord_ind in range(len(coords)):
-                    rgba_slice = self.images[img_ind].mosaicSlice(
-                        plane, coords[coord_ind])
+                    rgba_slice = self.images[img_ind].mosaicSlice(plane, coords[coord_ind])
                     img = ImageItemMod.ImageItemMod()
                     img.setImage(rgba_slice)
                     img.setZValue(-img_ind)
@@ -3546,7 +3551,80 @@ class Viff(QtGui.QMainWindow):
                     img.setCompositionMode(self.images[img_ind].mode)
                     self.mosaic_view.viewboxes[coord_ind].addItem(img)
         self.mosaic_view.show()
+        
+    #%% export    
+    def export(self):
+        """
+        exports the current view and colorbar
+        """
+        # self = viewer
+        # from pyqtgraph.exporters import ImageExporter
+        
+        filename = QtGui.QFileDialog.getSaveFileName(self, 'Export Images')[0]
+        dp_write = os.path.split(filename)[0]
+        fn_base = os.path.split(filename)[1].split(".")[0]
+        fp_base = os.path.join(dp_write, fn_base+".png")
+        
+        
+        self.setCrosshairsVisible(False)
+        
+        
+        #concatenate all images and save
+        list_slices = [self.c_slice_widget.sb, self.s_slice_widget.sb, self.t_slice_widget.sb]
+        ydim = 1000
+        imgs = []
+        for i,l in enumerate(list_slices):
+            x = ImageExporter(l)
+            x.parameters()['width'] = ydim 
+            x.parameters()['height'] = ydim 
+            img = x.export(toBytes=True)
+            ptr = img.bits()
+            ptr.setsize(img.byteCount())
+            arr = np.asarray(ptr).reshape(img.height(), img.width(), 4)
+            if i==0:
+                imgs = arr
+            else:
+                imgs = np.append(imgs, arr, axis=1)
+        
+        imsave(fp_base, imgs)
+        
+        
+        index = self.imagelist.currentRow()
+        
+        #save positive cmap
+        ar = np.outer(np.ones(200),np.arange(0,1,0.001))
+        br = pg.mymakeARGB(ar, lut=self.images[index].cmap_pos,levels=[0, 1],useRGBA=True)[0]
+        from matplotlib import pyplot
+        
+        fig, ax = pyplot.subplots()
+        pyplot.imshow(br)
+        pyplot.xticks([0,1000],["%g" %self.images[index].threshold_pos[0], "%g" %self.images[index].threshold_pos[1]])
+        pyplot.yticks([])
+        fp_figure_pos = os.path.join(dp_write, fn_base+"_cmap_pos.png")
+        pyplot.savefig(fp_figure_pos, dpi=300)
+        
+        #save negative cmap
+        if self.images[index].two_cm:
+            ar = np.outer(np.ones(200),np.arange(1,0,-0.001))
+            br = pg.mymakeARGB(ar, lut=self.images[index].cmap_neg,levels=[0, 1],useRGBA=True)[0]
+            fig, ax = pyplot.subplots()
+            pyplot.imshow(br)
+            pyplot.xticks([0,1000],["%g" %self.images[index].threshold_neg[1],"%g" %self.images[index].threshold_neg[0]])
+            pyplot.yticks([])
+            fp_figure_pos = os.path.join(dp_write, fn_base+"_cmap_neg.png")
+            pyplot.savefig(fp_figure_pos, dpi=300)
+        
+        
+        
+        
 
+        
+        
+        
+            
+        self.setCrosshairsVisible(True)
+
+    
 
     ## Section: Settings Management ##
     def changeSearchRadius(self):
