@@ -250,6 +250,8 @@ class Viff(QtGui.QMainWindow):
 
         # The ipython qtconsole is only initialized if needed.
         self.console = None
+        
+        self.is_linked = False
 
         self.setWindowTitle("Main window")
         self.setupUI()
@@ -328,18 +330,7 @@ class Viff(QtGui.QMainWindow):
         self.imagelist.itemClicked.connect(self.selectionChange)
         self.imagelist.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         
-        #%% BAD COMMENT OUT... BRING BACK DA LIST
-        self.imagelist.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.imagelist.customContextMenuRequested.connect(self.rightClickedList)
-        
-        # self.imagelist.connectNotify(
-        #     # self.imagelist,
-        #     # QtCore.SIGNAL("customContextMenuRequested(QPoint)"),
-        #     self.rightClickedList)
-        
-        
         ypos = 0
-        # self.l.addWidget(self.imagelist, ypos, self.listoffset+2, 4, 5)
         imagelist_layout.addWidget(self.imagelist, 0, 0, 4, 2)
 
         # Swap up and down buttons
@@ -347,10 +338,8 @@ class Viff(QtGui.QMainWindow):
         self.down_button = QtGui.QToolButton(self)
         self.up_button.clicked.connect(self.swapUp)
         self.down_button.clicked.connect(self.swapDown)
-        icon_up = QtGui.QIcon(
-            os.path.dirname(full_path)+"/../icons/chevron-up.svg")
-        icon_down = QtGui.QIcon(
-            os.path.dirname(full_path)+"/../icons/chevron-down.svg")
+        icon_up = QtGui.QIcon(os.path.dirname(full_path)+"/../icons/chevron-up.svg")
+        icon_down = QtGui.QIcon(os.path.dirname(full_path)+"/../icons/chevron-down.svg")
         self.up_button.setIcon(icon_up)
         self.down_button.setIcon(icon_down)
         self.up_button.setToolTip('move image up')
@@ -358,9 +347,6 @@ class Viff(QtGui.QMainWindow):
         imagelist_layout.addWidget(self.up_button, 0, 4, 1, 1)
         imagelist_layout.addWidget(self.down_button, 1, 4, 1, 1)
         
-        # self.l.addWidget(self.up_button, ypos, self.listoffset+7, 1, 1)
-        # self.l.addWidget(self.down_button, ypos+1, self.listoffset+7, 1, 1)
-
         # add image button
         ypos = 2
         self.add_button = QtGui.QToolButton(self)
@@ -368,7 +354,6 @@ class Viff(QtGui.QMainWindow):
         icon_add = QtGui.QIcon(os.path.dirname(full_path)+"/../icons/plus.svg")
         self.add_button.setIcon(icon_add)
         self.add_button.setToolTip("add image")
-        # self.l.addWidget(self.add_button, ypos, self.listoffset+7, 1, 1)
         imagelist_layout.addWidget(self.add_button, 2, 4, 1, 1)
 
         # delete image button
@@ -377,29 +362,23 @@ class Viff(QtGui.QMainWindow):
         icon_dash = QtGui.QIcon(os.path.dirname(full_path)+"/../icons/dash.svg")
         self.del_button.setIcon(icon_dash)
         self.del_button.setToolTip("remove currently selected image")
-        # self.l.addWidget(self.del_button, ypos+1, self.listoffset+7, 1, 1)
         imagelist_layout.addWidget(self.del_button, 3, 4, 1, 1)
         
         self.l.addLayout(imagelist_layout, 0, self.listoffset+2, 1, 1)
         
         
         # Crosshair button toggle
-        # ypos = 4
         button_row_crosshair = QtGui.QHBoxLayout()
         self.cross_button = QtGui.QToolButton(self)
         self.cross_button.setCheckable(True)
         self.cross_button.setChecked(True)
         
-        icon_cross = QtGui.QIcon(
-            os.path.dirname(full_path)+"/../icons/cross.svg")
+        icon_cross = QtGui.QIcon(os.path.dirname(full_path)+"/../icons/cross.svg")
         self.cross_button.setIcon(icon_cross)
         self.cross_button.setToolTip("toggle crosshair on/off")
         self.cross_button.clicked.connect(self.setCrosshairsVisible)
-        # self.l.addWidget(self.cross_button, 4, self.listoffset+2, 1, 1)
         button_row_crosshair.addWidget(self.cross_button, 1)
 
-
-        # Reset image view button
 
         # Find min/max buttons
         self.min_button = QtGui.QToolButton(self)
@@ -1191,10 +1170,8 @@ class Viff(QtGui.QMainWindow):
         # self.l.addWidget(self.images[0].pos_gradient, 10, 40, 1, 3)
         # self.l.addWidget(self.images[0].neg_gradient, 11, 40, 1, 3)
         # connect to update slices and imageitems
-        self.images[0].pos_gradient.sigGradientChanged.connect(
-            self.updateImages)
-        self.images[0].neg_gradient.sigGradientChanged.connect(
-            self.updateImages)
+        self.images[0].pos_gradient.sigGradientChanged.connect(self.updateImages)
+        self.images[0].neg_gradient.sigGradientChanged.connect(self.updateImages)
 
         self.images[0].dialog.setWindowTitle(itemname)
 
@@ -1412,10 +1389,12 @@ class Viff(QtGui.QMainWindow):
         """
         log2("addToList: adding {}".format(name))
         item = QtGui.QListWidgetItem(name)
+
         item.setFlags(item.flags() |
                       QtCore.Qt.ItemIsUserCheckable |
                       QtCore.Qt.ItemIsEditable)
         item.setCheckState(QtCore.Qt.Checked)
+            
         self.imagelist.insertItem(0, item)
         # self.imagelist.selectedItems(item, True)
 
@@ -2283,7 +2262,7 @@ class Viff(QtGui.QMainWindow):
                     self.image_window_list[img_ind][win_ind][2])
 
 
-    ## Section: Current Image Selection Updates ##
+    #%% Section: Current Image Selection Updates ##
     def selectionChange(self, item=None):
         """
         Is called when an item in the image list is selected.
@@ -2300,7 +2279,6 @@ class Viff(QtGui.QMainWindow):
             
             self.addPosNegWidget(self.images[index].pos_gradient, self.images[index].neg_gradient)
             
-            
             # only the checkbox is checked or unchecked
             if bool(item.checkState()) != self.states[index]:
                 if item.checkState():
@@ -2309,8 +2287,33 @@ class Viff(QtGui.QMainWindow):
                     self.deactivateImage()
             else:
                 self.updateSelected()
+            
+            #change the window highlighting if in linked mode (only for zmaps)
+            if self.is_linked:
+                for j in range(len(self.window_ids)):
+                    if j==index-1:
+                        self.setExtraWindowTitle(j, True)
+                    else:
+                        self.setExtraWindowTitle(j, False)
+                        
+                #get title of main window
+                title_main = "Main window: "
+                first = True
+                for i in range(len(self.images)):
+                    if self.image_window_list[i][0][0] is not None:
+                        if first is not True:
+                            title_main += ", "
+                        else:
+                            first = False
+                        title_main += self.imagelist.item(i).text()
+                    
+                if index == 0:
+                    title_main += " [SELECTED]"
+                self.setWindowTitle(title_main)
+                    
+                    
                 
-#%% updateSelected: updating boxes sliders labels
+#% updateSelected: updating boxes sliders labels
     def updateSelected(self):
         """
         Updates the boxes, sliders, labels, when the selected image is changed.
@@ -2418,35 +2421,35 @@ class Viff(QtGui.QMainWindow):
 
 
     ## Section: Extra Windows ##
-    def rightClickedList(self, QPos):
-        """
-        Displays the menu when an imagelist item is right clicked.
-        """
-        # Open new menu.
-        self.listMenu = QtGui.QMenu()
-        menu_items = []
-        index = self.imagelist.currentRow()
-        for i in range(len(self.extra_windows)):
-            # For every window you can either remove or add the image.
-            if self.image_window_list[index][i+1][0] is None:
-                menu_item = self.listMenu.addAction(
-                    "Add to window " + str(self.window_ids[i]))
-                menu_item.triggered[()].connect(
-                    lambda item=i: self.addToWindow(item))
-            else:
-                menu_item = self.listMenu.addAction(
-                    "Remove from window " + str(self.window_ids[i]))
-                menu_item.triggered[()].connect(
-                    lambda item=i: self.removeFromWindow(item))
-            # Add item to menu.
-            menu_items.append(menu_item)
-        menu_item = self.listMenu.addAction("Move to new window")
-        menu_item.triggered[()].connect(self.newWindow)
+    # def rightClickedList(self, QPos):
+    #     """
+    #     Displays the menu when an imagelist item is right clicked.
+    #     """
+    #     # Open new menu.
+    #     self.listMenu = QtGui.QMenu()
+    #     menu_items = []
+    #     index = self.imagelist.currentRow()
+    #     for i in range(len(self.extra_windows)):
+    #         # For every window you can either remove or add the image.
+    #         if self.image_window_list[index][i+1][0] is None:
+    #             menu_item = self.listMenu.addAction(
+    #                 "Add to window " + str(self.window_ids[i]))
+    #             menu_item.triggered[()].connect(
+    #                 lambda item=i: self.addToWindow(item))
+    #         else:
+    #             menu_item = self.listMenu.addAction(
+    #                 "Remove from window " + str(self.window_ids[i]))
+    #             menu_item.triggered[()].connect(
+    #                 lambda item=i: self.removeFromWindow(item))
+    #         # Add item to menu.
+    #         menu_items.append(menu_item)
+    #     menu_item = self.listMenu.addAction("Move to new window")
+    #     menu_item.triggered[()].connect(self.newWindow)
 
-        # position it correctly
-        parentPosition = self.imagelist.mapToGlobal(QtCore.QPoint(0, 0))
-        self.listMenu.move(parentPosition + QPos)
-        self.listMenu.show()
+    #     # position it correctly
+    #     parentPosition = self.imagelist.mapToGlobal(QtCore.QPoint(0, 0))
+    #     self.listMenu.move(parentPosition + QPos)
+    #     self.listMenu.show()
 
     def newWindow(self):
         """
@@ -2481,6 +2484,7 @@ class Viff(QtGui.QMainWindow):
         window = SliceWindow.SliceWindow(self.window_count)
         self.extra_windows.append(window)
         window.sigClose.connect(self.delWindowClose)
+        
         # Set the crosshair
         window.sw_c.setCrosshairPos(
             [self.img_coord[0], self.img_coord[2], self.img_coord[1]])
@@ -2566,11 +2570,11 @@ class Viff(QtGui.QMainWindow):
         else:
             self.setExtraWindowTitle(window)
 
-    def setExtraWindowTitle(self, window):
+    def setExtraWindowTitle(self, window, selected=False):
         """
         Refreshes the window title of window with index window.
         """
-        title = "Window " + str(self.window_ids[window]) + ": "
+        title = "Linked Window " + str(self.window_ids[window]) + ": "
         first = True
         for i in range(len(self.images)):
             if self.image_window_list[i][window+1][0] is not None:
@@ -2579,6 +2583,10 @@ class Viff(QtGui.QMainWindow):
                 else:
                     first = False
                 title += self.imagelist.item(i).text()
+                
+        if selected:
+            title += " [SELECTED]"
+        
         self.extra_windows[window].setWindowTitle(title)
 
     def delWindowClose(self, window_id):
@@ -2654,6 +2662,8 @@ class Viff(QtGui.QMainWindow):
         """
         Swap current image down in the imagelist.
         """
+        if self.is_linked:
+            return
         index = self.imagelist.currentRow()
         # check if swapDown is possible
         if index < len(self.images)-1:
@@ -2667,6 +2677,8 @@ class Viff(QtGui.QMainWindow):
         """
         Swap current image down in the imagelist.
         """
+        if self.is_linked:
+            return
         index = self.imagelist.currentRow()
         # check if swapUp is possible
         if index > 0 and len(self.images) > 1:
@@ -3811,14 +3823,14 @@ def main():
                         type=str)
     parser.add_argument("-f", "--func", "--functional", metavar='N', nargs='+',
                         help = "specify a functional image", type=str)
-    # parser.add_argument('-l', action='store_true', default=False,
-    #                     dest='linked', help='Set linked views to true')
+    parser.add_argument('-l', action='store_true', default=False,
+                        dest='linked', help='Set linked views to true')
 
     args = parser.parse_args()
     filenames = args.input
     z_filenames = args.zmap
     func_filenames = args.func
-    # is_linked = args.linked
+    is_linked = args.linked
 
     if filenames is None:
         filenames = []
@@ -3836,81 +3848,82 @@ def main():
     z_filenames.reverse()
     func_filenames.reverse()
 
-    # if is_linked:
-    #     file_list = []
-    #     type_list = []
-    #     if filenames is not None:
-    #         for i in range(0, len(filenames)):
-    #             verboseprint("Loading file: " + filenames[i])
-    #             if os.path.isfile(filenames[i]):
-    #                 file_list.append(filenames[i])
-    #                 type_list.append(0)
-    #             else:
-    #                 print("Error: File doesn't exist")
-    #     if z_filenames is not None:
-    #         for i in range(0, len(z_filenames)):
-    #             verboseprint("Loading file: " + z_filenames[i])
-    #             if os.path.isfile(z_filenames[i]):
-    #                 file_list.append(z_filenames[i])
-    #                 type_list.append(1)
-    #             else:
-    #                 print("Error: File doesn't exist")
-    #     if func_filenames is not None:
-    #         for i in range(0, len(func_filenames)):
-    #             verboseprint("Loading file: " + func_filenames[i])
-    #             if os.path.isfile(func_filenames[i]):
-    #                 file_list.append(func_filenames[i])
-    #                 type_list.append(2)
-    #             else:
-    #                 print("Error: File doesn't exist")
-    #     if file_list is not None:
-    #         viewer.loadImagesFromFiles(file_list, type_list)
+    if is_linked:
+        viewer.is_linked = True
+        file_list = []
+        type_list = []
+        if filenames is not None:
+            for i in range(0, len(filenames)):
+                verboseprint("Loading file: " + filenames[i])
+                if os.path.isfile(filenames[i]):
+                    file_list.append(filenames[i])
+                    type_list.append(0)
+                else:
+                    print("Error: File doesn't exist")
+        if z_filenames is not None:
+            for i in range(0, len(z_filenames)):
+                verboseprint("Loading file: " + z_filenames[i])
+                if os.path.isfile(z_filenames[i]):
+                    file_list.append(z_filenames[i])
+                    type_list.append(1)
+                else:
+                    print("Error: File doesn't exist")
+        if func_filenames is not None:
+            for i in range(0, len(func_filenames)):
+                verboseprint("Loading file: " + func_filenames[i])
+                if os.path.isfile(func_filenames[i]):
+                    file_list.append(func_filenames[i])
+                    type_list.append(2)
+                else:
+                    print("Error: File doesn't exist")
+        if file_list is not None:
+            viewer.loadImagesFromFiles(file_list, type_list)
 
-    #     len_files = len(filenames)
-    #     len_funcs = len(func_filenames)
-    #     len_zmaps = len(z_filenames)
+        len_files = len(filenames)
+        len_funcs = len(func_filenames)
+        len_zmaps = len(z_filenames)
 
-    #     # now open new windows and move the z-maps and functional images there
-    #     for i in range(1, len_zmaps + len_funcs):
-    #         verboseprint("move image to new window")
-    #         viewer.newWindowInd(i) # adds to new window
-    #         viewer.deactivateImageIndex(i) # remove from main window
+        # now open new windows and move the z-maps and functional images there
+        for i in range(1, len_zmaps + len_funcs):
+            verboseprint("move image to new window")
+            viewer.newWindowInd(i) # adds to new window
+            viewer.deactivateImageIndex(i) # remove from main window
 
-    #     for i in range(len_zmaps + len_funcs, len_files + len_zmaps +
-    #             len_funcs):
-    #         for j in range(1, len(z_filenames + func_filenames)):
-    #             verboseprint("move underlay to new window")
-    #             viewer.addToWindowId(i,j-1)
+        for i in range(len_zmaps + len_funcs, len_files + len_zmaps +
+                len_funcs):
+            for j in range(1, len(z_filenames + func_filenames)):
+                verboseprint("move underlay to new window")
+                viewer.addToWindowId(i,j-1)
 
-    # else:
-    file_list = []
-    type_list = []
-    if filenames is not None:
-        for i in range(0, len(filenames)):
-            verboseprint("Loading file: " + filenames[i])
-            if os.path.isfile(filenames[i]):
-                file_list.append(filenames[i])
-                type_list.append(0)
-            else:
-                print("Error: File doesn't exist: {}".format(filenames[i]))
-    if z_filenames is not None:
-        for i in range(0, len(z_filenames)):
-            verboseprint("Loading file: " + z_filenames[i])
-            if os.path.isfile(z_filenames[i]):
-                file_list.append(z_filenames[i])
-                type_list.append(1)
-            else:
-                print("Error: File doesn't exist: {}".format(filenames[i]))
-    if func_filenames is not None:
-        for i in range(0, len(func_filenames)):
-            verboseprint("Loading file: " + func_filenames[i])
-            if os.path.isfile(func_filenames[i]):
-                file_list.append(func_filenames[i])
-                type_list.append(2)
-            else:
-                print("Error: File doesn't exist: {}".format(filenames[i]))
-    if file_list is not None:
-        viewer.loadImagesFromFiles(file_list, type_list)
+    else:
+        file_list = []
+        type_list = []
+        if filenames is not None:
+            for i in range(0, len(filenames)):
+                verboseprint("Loading file: " + filenames[i])
+                if os.path.isfile(filenames[i]):
+                    file_list.append(filenames[i])
+                    type_list.append(0)
+                else:
+                    print("Error: File doesn't exist: {}".format(filenames[i]))
+        if z_filenames is not None:
+            for i in range(0, len(z_filenames)):
+                verboseprint("Loading file: " + z_filenames[i])
+                if os.path.isfile(z_filenames[i]):
+                    file_list.append(z_filenames[i])
+                    type_list.append(1)
+                else:
+                    print("Error: File doesn't exist: {}".format(filenames[i]))
+        if func_filenames is not None:
+            for i in range(0, len(func_filenames)):
+                verboseprint("Loading file: " + func_filenames[i])
+                if os.path.isfile(func_filenames[i]):
+                    file_list.append(func_filenames[i])
+                    type_list.append(2)
+                else:
+                    print("Error: File doesn't exist: {}".format(filenames[i]))
+        if file_list is not None:
+            viewer.loadImagesFromFiles(file_list, type_list)
 
         
 
