@@ -640,6 +640,7 @@ class Viff(QtGui.QMainWindow):
         self.max_pos.returnPressed.connect(self.setPosThresholdsFromBoxes)
         self.max_neg.returnPressed.connect(self.setNegThresholdsFromBoxes)
         self.min_neg.returnPressed.connect(self.setNegThresholdsFromBoxes)
+        
         self.min_pos.editingFinished.connect(self.setPosThresholdsFromBoxes)
         self.max_pos.editingFinished.connect(self.setPosThresholdsFromBoxes)
         self.max_neg.editingFinished.connect(self.setNegThresholdsFromBoxes)
@@ -2377,6 +2378,7 @@ class Viff(QtGui.QMainWindow):
         self.saveWindowSize()
 
     def disableControls(self):
+        return
         self.min_neg.setEnabled(False)
         self.max_neg.setEnabled(False)
         self.min_pos.setEnabled(False)
