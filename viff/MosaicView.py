@@ -30,7 +30,7 @@ class MosaicView(QtGui.QWidget):
         self.rows = rows
         self.cols = cols
         self.number = rows*cols
-
+        
         # GraphicsLayoutWidgets list
         self.glw = []
         self.viewboxes = []
@@ -79,6 +79,7 @@ class MosaicView(QtGui.QWidget):
             QtGui.QIcon.fromTheme("window-close"), '&Exit', self)
         self.exit_action.setShortcut(QtGui.QKeySequence.Quit)
         self.exit_action.triggered.connect(self.close)
+        
         self.addAction(self.exit_action)
 
     def zoomIn(self):
@@ -92,3 +93,4 @@ class MosaicView(QtGui.QWidget):
 
     def resizeEvent(self, ev):
         self.autoRange()
+        

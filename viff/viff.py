@@ -252,6 +252,8 @@ class Viff(QtGui.QMainWindow):
         self.console = None
         
         self.is_linked = False
+        
+        self.mosaic_active = False
 
         self.setWindowTitle("Main window")
         self.setupUI()
@@ -2379,19 +2381,19 @@ class Viff(QtGui.QMainWindow):
 
     def disableControls(self):
         return
-        self.min_neg.setEnabled(False)
-        self.max_neg.setEnabled(False)
-        self.min_pos.setEnabled(False)
-        self.max_pos.setEnabled(False)
-        self.slider_pos.setEnabled(False)
-        self.slider_pos.setGradientLeftColor(self.slider_color_off)
-        self.slider_pos.setGradientRightColor(self.slider_color_off)
-        self.slider_neg.setEnabled(False)
-        self.slider_neg.setGradientLeftColor(self.slider_color_off)
-        self.slider_neg.setGradientRightColor(self.slider_color_off)
-        self.min_button.setEnabled(False)
-        self.max_button.setEnabled(False)
-        self.disableFuncView()
+        # self.min_neg.setEnabled(False)
+        # self.max_neg.setEnabled(False)
+        # self.min_pos.setEnabled(False)
+        # self.max_pos.setEnabled(False)
+        # self.slider_pos.setEnabled(False)
+        # self.slider_pos.setGradientLeftColor(self.slider_color_off)
+        # self.slider_pos.setGradientRightColor(self.slider_color_off)
+        # self.slider_neg.setEnabled(False)
+        # self.slider_neg.setGradientLeftColor(self.slider_color_off)
+        # self.slider_neg.setGradientRightColor(self.slider_color_off)
+        # self.min_button.setEnabled(False)
+        # self.max_button.setEnabled(False)
+        # self.disableFuncView()
 
     def enableControls(self):
         index = self.imagelist.currentRow()
@@ -2923,6 +2925,7 @@ class Viff(QtGui.QMainWindow):
         self.setFrameToBox()
         self.setFrameToSlider()
         self.updateCrossIntensityLabel()
+        self.refreshMosaicView()
         log1("setFrame called (self.frame {})".format(self.frame))
         
         
@@ -2942,7 +2945,7 @@ class Viff(QtGui.QMainWindow):
             self.images[index].setColorMapNeg()
             self.updateSlices()
             self.updateImageItems()
-            
+            self.refreshMosaicView()
         log2("setAlphaFromSlider called (alpha_fract {})".format(alpha_fract))
 
 
@@ -3022,23 +3025,6 @@ class Viff(QtGui.QMainWindow):
         self.updateSlices()
         self.updateImageItems()
 
-    def setThresholdsFromSliders(self):
-        """
-        Resets all thresholds when the sliders are moved.
-        """
-        index = self.imagelist.currentRow()
-        if index >= 0 and self.threshold_write_block != True:
-            self.images[index].setPosThresholdsFromSlider(
-                self.slider_pos.lowerValue, self.slider_pos.upperValue)
-            self.images[index].setNegThresholdsFromSlider(
-                self.slider_neg.lowerValue, self.slider_neg.upperValue)
-            self.threshold_write_block = True
-            self.setThresholdsToBoxes()
-            self.setThresholdsToHistogram()
-            self.threshold_write_block = False
-        # Make changes visible.
-        self.updateSlices()
-        self.updateImageItems()
         
     def setPosThresholdFromSliders(self):
         """
@@ -3055,6 +3041,7 @@ class Viff(QtGui.QMainWindow):
         # Make changes visible.
         self.updateSlices()
         self.updateImageItems()
+        self.refreshMosaicView()
         
     def setNegThresholdFromSliders(self):
         """
@@ -3071,6 +3058,7 @@ class Viff(QtGui.QMainWindow):
         # Make changes visible.
         self.updateSlices()
         self.updateImageItems()
+        self.refreshMosaicView()
 
     def setPosThresholdsFromBoxes(self):
         """
@@ -3396,6 +3384,7 @@ class Viff(QtGui.QMainWindow):
         self.mosaic_dialog.setDims(self.img_dims)
         self.setMosaicLines()
         self.mosaic_dialog.show()
+        self.mosaic_active = True
 
     def mosaicDialogClosed(self):
         """
@@ -3403,6 +3392,7 @@ class Viff(QtGui.QMainWindow):
         and switches crosshair back on.
         """
         self.removeMosaicLines()
+        self.mosaic_active = False
         if not self.cross_button.isChecked():
             self.toggleCrosshairs()
 
@@ -3507,6 +3497,41 @@ class Viff(QtGui.QMainWindow):
         coords = coords.tolist()
         self.mosaic_view = None
         self.mosaic_view = MosaicView.MosaicView(rows, cols)
+        for img_ind in range(len(self.images)):
+            # check if image is seen in main window
+            if self.image_window_list[img_ind][0][0] is not None:
+                # iterate over viewboxes
+                for coord_ind in range(len(coords)):
+                    rgba_slice = self.images[img_ind].mosaicSlice(
+                        plane, coords[coord_ind])
+                    img = ImageItemMod.ImageItemMod()
+                    img.setImage(rgba_slice)
+                    img.setZValue(-img_ind)
+                    # Use composition mode?
+                    img.setCompositionMode(self.images[img_ind].mode)
+                    self.mosaic_view.viewboxes[coord_ind].addItem(img)
+        self.mosaic_view.show()
+
+    def refreshMosaicView(self):
+        """
+        Refreshes mosaic view window with the specified values.
+        """
+        if not self.mosaic_active:
+            return
+        # Get values from the mosaic dialog.
+        rows = self.mosaic_dialog.rows
+        cols = self.mosaic_dialog.cols
+        plane = self.mosaic_dialog.plane
+        number = self.mosaic_dialog.rows * self.mosaic_dialog.cols
+        start = self.mosaic_dialog.start
+        end = self.mosaic_dialog.end
+        increment = float(end-start)/float(number-1.0)
+        # +0.5*increment to avoid rounding problems
+        coords = np.arange(start, end+0.5*increment, increment)
+        coords = np.round(coords,0).astype(int)
+        coords = coords.tolist()
+        # self.mosaic_view = None
+        # self.mosaic_view = MosaicView.MosaicView(rows, cols)
         for img_ind in range(len(self.images)):
             # check if image is seen in main window
             if self.image_window_list[img_ind][0][0] is not None:

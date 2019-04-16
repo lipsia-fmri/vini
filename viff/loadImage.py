@@ -106,7 +106,6 @@ def setPreferences(image, hdr, pref, f_type):
     return img
 
 def loadImageFromNifti(fileobject, pref, f_type):
-
     try:
         image = Nifti2Image(fileobject.get_data(), fileobject.affine)
         hdr = fileobject.header
