@@ -34,7 +34,7 @@ setapi("QVariant", 2)
 setapi("QString", 2)
 setapi("QUrl", 2)
 
-verbose_level = 5
+verbose_level = 2
 
 from pyqtgraph.Qt import QtCore, QtGui
 from pyqtgraph.exporters import ImageExporter
@@ -257,7 +257,7 @@ class Viff(QtGui.QMainWindow):
         self.is_linked = False
         
         self.mosaic_active = False
-
+        self.blockSavingWindowSize = False
         self.setWindowTitle("Main window")
         self.setupUI()
         
@@ -979,6 +979,8 @@ class Viff(QtGui.QMainWindow):
             # Add image list entry.
             itemname = os.path.split(filename_list[i])[-1]
             self.addToList(itemname)
+        
+        self.checkIf2DAndRemovePanes()
 
         # Resample all loaded images to one coordinate system.
         # Which coordinate system is used depends on the preference settings.
@@ -1205,7 +1207,6 @@ class Viff(QtGui.QMainWindow):
         self.updateSelected()
         self.autoRange()
         
-        #%% loadImagesFromNumpy
     def loadImagesFromNumpy(self, array, itemname):
         """
         Loads an image provided as numpy array
@@ -1275,6 +1276,51 @@ class Viff(QtGui.QMainWindow):
         self.imagelist.setCurrentRow(0)
         self.updateSelected()
         self.autoRange()
+        
+        
+        #%% checkIf2DAndRemovePanes
+    def checkIf2DAndRemovePanes(self):
+        
+        max_c = -1
+        max_s = -1
+        max_t = -1
+        
+        for i in range(len(self.images)):
+            sh = self.images[i].image.get_data().shape
+            if sh[0] > max_c:
+                max_c = sh[0]
+            if sh[1] > max_s:
+                max_s = sh[1]
+            if sh[2] > max_t:
+                max_t = sh[2]
+                
+        log2("max_c: {} max_s: {} max_t: {}".format(max_c, max_s, max_t))
+        
+        decrease_winsize = False
+                
+        if max_s == 1:
+            self.s_slice_widget.setHidden(True)
+            self.t_slice_widget.setHidden(True)
+            decrease_winsize = True
+        elif max_c == 1:
+            self.c_slice_widget.setHidden(True)
+            self.t_slice_widget.setHidden(True)
+            decrease_winsize = True
+        elif max_t == 1:
+            self.c_slice_widget.setHidden(True)
+            self.s_slice_widget.setHidden(True)
+            decrease_winsize = True
+            
+        if decrease_winsize:
+            self.setObjectName(_fromUtf8("viff"))
+            width = self.preferences['window_width']
+            height = self.preferences['window_height']
+            posx = self.preferences['window_posx']
+            posy = self.preferences['window_posy']
+            log1("setupUI: window posx: {}, posy: {}, width: {}, height: {}".format(posx, posy, width, height))
+            self.setGeometry(posx, posy, width/2, height)
+            self.blockSavingWindowSize = True
+        
         
     def addPosNegWidget(self, pos_gradient, neg_gradient):
         """ helper function for refreshing the positive and negative colormap and sliders"""
@@ -3875,6 +3921,8 @@ class Viff(QtGui.QMainWindow):
     #         pref_conf.write(f)
 
     def saveWindowSize(self):
+        if self.blockSavingWindowSize:
+            return
         self.preferences['window_width'] = self.geometry().width()
         self.preferences['window_height'] = self.geometry().height()
         self.preferences['window_posx'] = self.geometry().x()
@@ -4003,7 +4051,7 @@ def main():
                     print("Error: File doesn't exist")
         if file_list is not None:
             viewer.loadImagesFromFiles(file_list, type_list)
-
+        self.checkIf2DAndRemovePanes()
         len_files = len(filenames)
         len_funcs = len(func_filenames)
         len_zmaps = len(z_filenames)
@@ -4083,6 +4131,7 @@ def show(*argv):
     
     for i,arg in enumerate(argv):
         viewer.loadImagesFromNumpy(arg, itemname[i])
+    viewer.checkIf2DAndRemovePanes()
     # viewer.show()
     
     app.exec_()
