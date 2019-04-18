@@ -38,6 +38,7 @@ Gradients = OrderedDict([
     ('cyan_bin', {'ticks': [(0.0, (0, 255, 255, 255)), (0.5, (0, 255, 255, 255)), (1.0, (0, 255, 255, 255))], 'mode': 'rgb'}),
     ('magenta_bin', {'ticks': [(0.0, (255, 0, 255, 255)), (0.5, (255, 0, 255, 255)), (1.0, (255, 0, 255, 255))], 'mode': 'rgb'}),
     ('yellow_bin', {'ticks': [(0.0, (255, 255, 0, 255)), (0.5, (255, 255, 0, 255)), (1.0, (255, 255, 0, 255))], 'mode': 'rgb'}),
+    ('random', {'ticks': [(0.0, (255, 255, 0, 255)), (0.5, (255, 255, 0, 255)), (1.0, (255, 255, 0, 255))], 'mode': 'rgb'}),
 
 ])
 
@@ -383,6 +384,7 @@ class ColorMapItem(TickSliderItem):
 
     sigGradientChanged = QtCore.Signal(object)
     sigGradientChangeFinished = QtCore.Signal(object)
+    sigDiscreteCM = QtCore.Signal()
 
     def __init__(self, *args, **kargs):
         """
@@ -489,7 +491,10 @@ class ColorMapItem(TickSliderItem):
         #private
         #global Gradients
         act = self.sender()
-        self.loadPreset(act.name)
+        if act.name == "random":
+            self.sigDiscreteCM.emit()
+        else:
+            self.loadPreset(act.name)
 
     def loadPreset(self, name):
         """

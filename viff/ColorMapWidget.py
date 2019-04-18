@@ -18,6 +18,7 @@ class ColorMapWidget(GraphicsView):
     """
     sigGradientChanged = QtCore.Signal(object)
     sigGradientChangeFinished = QtCore.Signal(object)
+    
 
     def __init__(self, parent=None, orientation='bottom',  *args, **kargs):
         """

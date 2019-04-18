@@ -3354,8 +3354,8 @@ class Viff(QtGui.QMainWindow):
             if self.images[index].two_cm:
                 thresholds = self.images[index].threshold_neg
                 self.hist.LineRegionNeg(thresholds[0], thresholds[1])
-            y_range = self.images[index].getYRangeApprox()
-            self.hist.setRange(y_range[1]*1.2)
+            # y_range = self.images[index].getYRangeApprox()
+            # self.hist.setRange(y_range[1]*1.2)
 
     def copyImagePropsFunc(self):
         """
