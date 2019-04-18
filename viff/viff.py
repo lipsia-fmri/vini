@@ -306,7 +306,7 @@ class Viff(QtGui.QMainWindow):
         self.c_slice_widget = SliceWidget.SliceWidget('c')
         self.s_slice_widget = SliceWidget.SliceWidget('s')
         self.t_slice_widget = SliceWidget.SliceWidget('t')
-        ydim_slicewidget = 13
+        ydim_slicewidget = 12
         self.l.addWidget(self.c_slice_widget, 0, 0, ydim_slicewidget, ydim_slicewidget)
         self.l.addWidget(self.s_slice_widget, 0, 12, ydim_slicewidget, ydim_slicewidget)
         self.l.addWidget(self.t_slice_widget, 0, 24, ydim_slicewidget, ydim_slicewidget)
@@ -671,10 +671,10 @@ class Viff(QtGui.QMainWindow):
         button_row_thresh_neg.addWidget(self.min_neg)
 
         
-        self.l.addWidget(self.slider_pos, 9, self.listoffset+2, 1, 1)
-        self.l.addLayout(button_row_thresh_pos, 10, self.listoffset+2, 1, 1)
-        self.l.addLayout(button_row_thresh_neg, 11, self.listoffset+2, 1, 1)
-        self.l.addWidget(self.slider_neg, 12, self.listoffset+2, 1, 1)
+        self.l.addWidget(self.slider_pos, 8, self.listoffset+2, 1, 1)
+        self.l.addLayout(button_row_thresh_pos,9, self.listoffset+2, 1, 1)
+        self.l.addLayout(button_row_thresh_neg, 10, self.listoffset+2, 1, 1)
+        self.l.addWidget(self.slider_neg, 11, self.listoffset+2, 1, 1)
         
         
         
@@ -1287,7 +1287,7 @@ class Viff(QtGui.QMainWindow):
         # button_row_crosshair.addWidget(spacer,5)
         button_row_thresh_pos.addWidget(self.max_pos, 1)
         # self.l.addWidget(self.slider_pos, 9, self.listoffset+2, 1, 1)
-        self.l.addLayout(button_row_thresh_pos, 10, self.listoffset+2, 1, 1)    
+        self.l.addLayout(button_row_thresh_pos, 9, self.listoffset+2, 1, 1)    
         
 
         # print("grad neg is: {}".format(grad_neg))
@@ -1295,7 +1295,7 @@ class Viff(QtGui.QMainWindow):
         button_row_thresh_neg.addWidget(self.max_neg, 1)
         button_row_thresh_neg.addWidget(neg_gradient, 1)
         button_row_thresh_neg.addWidget(self.min_neg, 1)
-        self.l.addLayout(button_row_thresh_neg, 11, self.listoffset+2, 1, 1)
+        self.l.addLayout(button_row_thresh_neg, 10, self.listoffset+2, 1, 1)
         # self.l.addWidget(self.slider_neg, 12, self.listoffset+2, 1, 1)
         
         # index = self.imagelist.currentRow()
@@ -1953,8 +1953,9 @@ class Viff(QtGui.QMainWindow):
         """
         if len(self.images) > 0:
             shape = self.images[0].image_res.shape
-            self.img_coord = np.multiply(np.asarray(shape),0.5).astype(int)
+            self.img_coord = np.round(np.multiply(np.asarray(shape),0.5)).astype(int)
             self.setCrosshair()
+            
     def setCrosshair(self):
         """
         This function literally moves the crosshair to the desired position.
@@ -2033,6 +2034,7 @@ class Viff(QtGui.QMainWindow):
         self.c_slice_widget.sb.autoRange()
         self.s_slice_widget.sb.autoRange()
         self.t_slice_widget.sb.autoRange()
+        
         self.slice_popouts[0].sw.sb.autoRange()
         self.slice_popouts[1].sw.sb.autoRange()
         self.slice_popouts[2].sw.sb.autoRange()
