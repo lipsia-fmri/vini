@@ -34,7 +34,7 @@ setapi("QVariant", 2)
 setapi("QString", 2)
 setapi("QUrl", 2)
 
-verbose_level = 2
+verbose_level = 5
 
 from pyqtgraph.Qt import QtCore, QtGui
 from pyqtgraph.exporters import ImageExporter

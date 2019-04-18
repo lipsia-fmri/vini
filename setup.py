@@ -4,6 +4,9 @@ except ImportError:
     from distutils.core import setup
 
 import os
+from setuptools import find_packages
+
+packages=find_packages()
 
 VERSION = '0.0.2.dev'
 config = {
@@ -12,15 +15,16 @@ config = {
     'maintainer' : '',
     'maintainer_email' : '',
     'license' : 'MIT',
-    'packages' : ['viff'],
     'description' : 'A visualization tool for 3D MRI slices and fMRI applications',
     'long_description' : '',
     'version' : VERSION,
     'url' : '',
     'download_url' : '',
     'keywords' : 'visualization, neuroscience, MRI, fMRI',
-    'packages' : ['viff'],
+    'packages' : packages, 
     'scripts' : ['viff/viff.py'],
+    'zip_safe' : False,
+    
     'classifiers' : [
         "Development Status :: 1 - Beta",
         "Topic :: Scientific Software",
@@ -35,8 +39,6 @@ config = {
     ],
     'install_requires' : ['nose', 'nibabel', 'numpy', 'scipy', 'matplotlib', 'PyQt5'],
 }
-
-
 
 
 
@@ -69,3 +71,21 @@ if __name__ == "__main__":
         checkDependencies()
 
     setup(**config)
+    # setup(
+    #         packages=['viff'],
+    #         package_dir={'viff': 'viff/'},
+    #         package_data={'viff': ['pyqtgraph/*.dat']},
+            
+            
+    #         )
+
+# canvas                exporters           graphicsWindows.pyc  opengl             ptime.py        SignalProxy.pyc      Transform3D.pyc
+# colormap.py           flowchart           imageview            ordereddict.py     ptime.pyc       SRTTransform3D.py    units.py
+# colormap.pyc          frozenSupport.py    __init__.py          parametertree      __pycache__     SRTTransform3D.pyc   util
+# configfile.py         functions.py        __init__.py]         pgcollections.py   python2_3.py    SRTTransform.py      Vector.py
+# console               functions.py~       __init__.pyc         pgcollections.pyc  python2_3.pyc   SRTTransform.pyc     Vector.pyc
+# debug.py              functions.pyc       metaarray            pixmaps            Qt.py           tests                WidgetGroup.py
+# debug.pyc             graphicsItems       multiprocess         PlotData.py        Qt.pyc          ThreadsafeTimer.py   WidgetGroup.pyc
+# dockarea              GraphicsScene       numpy_fix.py         Point.py           reload.py       ThreadsafeTimer.pyc  widgets
+
+
