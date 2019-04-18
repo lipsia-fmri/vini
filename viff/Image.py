@@ -487,23 +487,23 @@ class Image(object):
         Define colormap for discrete intensity values.
         """
         value_set = np.unique(self.image.get_data())
-        if value_set.size <= 256:
-            value_set = np.subtract(value_set, value_set[0])
-            value_set = np.multiply(value_set, 1./value_set[-1])
-            colors = []
-            for i in range(0,value_set.size):
-                cc = QtGui.QColor()
-                cc.setHsv(int(i*255.0/value_set.size), 200, 255, alpha=255.0)
-                colors.append(
-                    [cc.red(), cc.green(), cc.blue(), int(255*self.alpha)])
-            cm = ColorMap(value_set, np.array(colors, dtype=np.ubyte))
-            # sets the gradient correctly
-            self.pos_gradient.item.setColorMap(cm)
-            # uses the gradient to get the actual colormap and slices
-            self.setColorMapPos()
-        else:
-            QtGui.QMessageBox.warning(self, "Warning",
-                "Warning: Image has more than 256 different values.")
+
+        value_set = np.subtract(value_set, value_set[0])
+        value_set = np.multiply(value_set, 1./value_set[-1])
+        colors = []
+        itervals = np.arange(0,value_set.size)
+        np.random.shuffle(itervals)
+        for i in itervals:
+            cc = QtGui.QColor()
+            cc.setHsv(int(i*255.0/value_set.size), 200, 255, alpha=255.0)
+            colors.append(
+                [cc.red(), cc.green(), cc.blue(), int(255*self.alpha)])
+            
+        cm = ColorMap(value_set, np.array(colors, dtype=np.ubyte))
+        # # sets the gradient correctly
+        self.pos_gradient.item.setColorMap(cm)
+        # # uses the gradient to get the actual colormap and slices
+        self.setColorMapPos()
 
     def hide_gradients(self):
         self.pos_gradient.hide()

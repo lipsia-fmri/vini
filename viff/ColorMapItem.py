@@ -15,6 +15,11 @@ from pyqtgraph.python2_3 import cmp
 
 __all__ = ['TickSliderItem', 'ColorMapItem']
 
+#random colormap... inject below
+rcmap = []
+for i in range(50):
+    rcmap.append((i/50.0, (np.random.randint(255), np.random.randint(255), np.random.randint(255),255)))
+
 
 """ Standard colormaps to appear on startup """
 Gradients = OrderedDict([
@@ -38,7 +43,7 @@ Gradients = OrderedDict([
     ('cyan_bin', {'ticks': [(0.0, (0, 255, 255, 255)), (0.5, (0, 255, 255, 255)), (1.0, (0, 255, 255, 255))], 'mode': 'rgb'}),
     ('magenta_bin', {'ticks': [(0.0, (255, 0, 255, 255)), (0.5, (255, 0, 255, 255)), (1.0, (255, 0, 255, 255))], 'mode': 'rgb'}),
     ('yellow_bin', {'ticks': [(0.0, (255, 255, 0, 255)), (0.5, (255, 255, 0, 255)), (1.0, (255, 255, 0, 255))], 'mode': 'rgb'}),
-    ('random', {'ticks': [(0.0, (255, 255, 0, 255)), (0.5, (255, 255, 0, 255)), (1.0, (255, 255, 0, 255))], 'mode': 'rgb'}),
+    ('random', {'ticks': rcmap, 'mode': 'rgb'}),
 
 ])
 

@@ -1013,10 +1013,10 @@ class Viff(QtGui.QMainWindow):
             # self.addNegWidget(self.images[i].neg_gradient)
             # self.l.addWidget(self.images[i].neg_gradient, 11, self.listoffset+4, 1, 3)
             # Connect the color map gradients to update the slices and images.
-            self.images[i].pos_gradient.sigGradientChanged.connect(
-                self.updateImages)
-            self.images[i].neg_gradient.sigGradientChanged.connect(
-                self.updateImages)
+            self.images[i].pos_gradient.sigGradientChanged.connect(self.updateImages)
+            self.images[i].neg_gradient.sigGradientChanged.connect(self.updateImages)
+            self.images[i].pos_gradient.sigDiscreteCM.connect(self.setDiscreteCM)
+            self.images[i].neg_gradient.sigDiscreteCM.connect(self.setDiscreteCM)
 
         # Because the images are inserted at 0 the filelist has to be reversed
         # to align correctly with the image list.
@@ -1106,10 +1106,10 @@ class Viff(QtGui.QMainWindow):
         # self.l.addWidget(self.images[0].pos_gradient, 11, 40, 1, 3)
         # self.l.addWidget(self.images[0].neg_gradient, 12, 40, 1, 3)
         # connect to update slices and imageitems
-        self.images[0].pos_gradient.sigGradientChanged.connect(
-            self.updateImages)
-        self.images[0].neg_gradient.sigGradientChanged.connect(
-            self.updateImages)
+        self.images[0].pos_gradient.sigGradientChanged.connect(self.updateImages)
+        self.images[0].neg_gradient.sigGradientChanged.connect(self.updateImages)
+        self.images[0].pos_gradient.sigDiscreteCM.connect(self.setDiscreteCM)
+        self.images[0].neg_gradient.sigDiscreteCM.connect(self.setDiscreteCM)
 
         self.images[0].dialog.setWindowTitle(itemname)
 
@@ -1184,6 +1184,8 @@ class Viff(QtGui.QMainWindow):
         # connect to update slices and imageitems
         self.images[0].pos_gradient.sigGradientChanged.connect(self.updateImages)
         self.images[0].neg_gradient.sigGradientChanged.connect(self.updateImages)
+        self.images[0].pos_gradient.setDiscreteCM.connect(self.updateImages)
+        self.images[0].neg_gradient.setDiscreteCM.connect(self.updateImages)
 
         self.images[0].dialog.setWindowTitle(itemname)
 
@@ -1254,10 +1256,10 @@ class Viff(QtGui.QMainWindow):
         # self.l.addWidget(self.images[0].pos_gradient, 10, 40, 1, 3)
         # self.l.addWidget(self.images[0].neg_gradient, 11, 40, 1, 3)
         # connect to update slices and imageitems
-        self.images[0].pos_gradient.sigGradientChanged.connect(
-            self.updateImages)
-        self.images[0].neg_gradient.sigGradientChanged.connect(
-            self.updateImages)
+        self.images[0].pos_gradient.sigGradientChanged.connect(self.updateImages)
+        self.images[0].neg_gradient.sigGradientChanged.connect(self.updateImages)
+        self.images[0].pos_gradient.sigDiscreteCM.connect(self.setDiscreteCM)
+        self.images[0].neg_gradient.sigDiscreteCM.connect(self.setDiscreteCM)
 
         self.images[0].dialog.setWindowTitle(itemname)
 
@@ -1695,7 +1697,23 @@ class Viff(QtGui.QMainWindow):
         self.os_setting.addAction(quit)
 
         self.os_setting.show()
-
+        
+    def setDiscreteCM(self):
+        log2("setting discrete colormap")
+        
+        index = self.imagelist.currentRow()
+        if index >= 0:
+            value_set = np.unique(self.images[index].image.get_data())
+            value_set_int = np.round(value_set).astype(np.int)
+            delta_int = np.linalg.norm(value_set_int-value_set) / np.float(value_set.size)
+            if value_set.size >= 256:
+                QtGui.QMessageBox.warning(self,"Warning", "Warning: Image has more than 256 different values. Cannot set random lookup table.")
+            elif delta_int > 0.0001:
+                QtGui.QMessageBox.warning(self,"Warning", "Warning: Image need to be in integer format. Cannot set random lookup table.")
+            else:
+                self.images[index].useDiscreteCM()
+            
+        
 
     ## Section: Linking Views ##
     def linkSlices(self, state):
