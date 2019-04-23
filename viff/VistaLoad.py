@@ -30,7 +30,7 @@ import re
 # subprocess.call("vnifti -in /home/morty/tmp/test.nii -out /home/morty/tmp/test.v", shell=True)
 
 # #%%BINARY writer
-dtype = np.int16
+# dtype = np.int16
 # data_orig = 13*np.ones((6,6,6), dtype=dtype)
 # xdim = 5
 # ydim = 5
@@ -87,7 +87,7 @@ def get_subheader(header, section_demark):
     
     
 #%% reader
-# fp_input = "/mnt/50tbd/gabriele/median_02.v"
+# fp_input = "/mnt/50tbd/gabriele/bit.v"
 
 def load_vista(fp_input):
     
@@ -181,18 +181,6 @@ def load_vista(fp_input):
         else: #bit representation (masks etc)
             img1D_byterepn = np.frombuffer(raw, dtype=np.uint8, count=dict_image["length"], offset=dict_image["offset"])#.byteswap()
             img1D_bit_graced = np.unpackbits(img1D_byterepn)
-            
-            #OLD AND SLOW
-            # img1D_bit_graced = np.array([])
-            # for l in img1D_byterepn:
-            #     bx = bin(l)[2:]
-            #     bx = (8-len(bx))*"0"+bx
-            #     for j in range(8):
-            #         # b = bx[7-j]
-            #         b = bx[j]
-            #         img1D_bit_graced = np.append(img1D_bit_graced, int(b))
-                    
-                    
             img1D = img1D_bit_graced[0:xdim*ydim*zdim]
             
         img3D = np.transpose(np.reshape(img1D, (zdim,ydim,xdim)), (2,1,0))
@@ -200,19 +188,34 @@ def load_vista(fp_input):
         dim = "3D"
     else:
         list_images = []
+        zdim = len(list_imagedict)
         for i in range(len(idx_images)):
             dict_image = list_imagedict[i]
-            list_images.append(np.frombuffer(raw, dtype=dict_image["dtype"], count=dict_image["length"], offset=dict_image["offset"]).byteswap())
-        if dict_image["repn"] == "bit":
-            raise ValueError("bit reprensetation not allowed for 4D images!")
-        #concatenate, form a long 1D vector
-        xdim = dict_image["ncolumns"]
-        ydim = dict_image["nrows"]
-        tdim = dict_image["nbands"]
-        zdim = len(list_images)
+            
+            #concatenate, form a long 1D vector
+            xdim = dict_image["ncolumns"]
+            ydim = dict_image["nrows"]
+            tdim = dict_image["nbands"]
+            
+        
+            if dict_image["repn"] != "bit": #default case
+                img1D = np.frombuffer(raw, dtype=dict_image["dtype"], count=dict_image["length"], offset=dict_image["offset"]).byteswap()
+            else: #bit representation (masks etc)
+                img1D_byterepn = np.frombuffer(raw, dtype=np.uint8, count=dict_image["length"], offset=dict_image["offset"])#.byteswap()
+                img1D_bit_graced = np.unpackbits(img1D_byterepn)
+                img1D = img1D_bit_graced[0:xdim*ydim*zdim]
+                
+            # list_images.append(np.frombuffer(raw, dtype=dict_image["dtype"], count=dict_image["length"], offset=dict_image["offset"]).byteswap())
+            list_images.append(img1D)
+        
+            
+
+        
         img1D = np.zeros(xdim*ydim*zdim*tdim, dtype=dict_image["dtype"])
         for i in range(len(idx_images)):
             img1D[i*xdim*ydim*tdim:(i+1)*xdim*ydim*tdim] = list_images[i]
+            
+            
         img4D = np.transpose(np.reshape(img1D, (zdim,tdim,ydim,xdim)), (3,2,0,1))
         data = img4D
         dim = "4D"
