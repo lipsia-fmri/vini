@@ -10,48 +10,6 @@ import nibabel as nib
 import re
 
 
-#%%writer
-# dtype = np.int16
-# # data_orig = 13*np.ones((6,6,6), dtype=dtype)
-# xdim = 2
-# ydim = 5
-# zdim = 4
-# # tdim = 11
-
-# data_1D = np.arange(xdim*ydim*zdim, dtype=np.int32)
-# data_orig = np.reshape(data_1D, (xdim, ydim, zdim))
-
-# # data_1D = np.arange(xdim*ydim*zdim*tdim, dtype=dtype)
-# # data_orig = np.reshape(data_1D, (xdim, ydim, zdim, tdim))
-
-
-# nii_orig = nib.Nifti1Image(data_orig, np.eye(4))
-# nii_orig.to_filename("/home/morty/tmp/test.nii")
-# subprocess.call("vnifti -in /home/morty/tmp/test.nii -out /home/morty/tmp/test.v", shell=True)
-
-# #%%BINARY writer
-# dtype = np.int16
-# data_orig = 13*np.ones((6,6,6), dtype=dtype)
-# xdim = 5
-# ydim = 5
-# zdim = 5
-# tdim = 11
-
-# data_1D = np.ones(xdim*ydim*zdim, dtype=np.int32)
-# data_1D = np.random.rand(xdim*ydim*zdim)
-# data_1D[data_1D>0.5] = 1
-# data_1D[data_1D<=0.5] = 0
-# # data_1D = np.zeros(xdim*ydim*zdim)
-# # data_1D[4] = 1
-
-
-
-# data_orig = np.reshape(data_1D, (xdim, ydim, zdim))
-
-# nii_orig = nib.Nifti1Image(data_orig, np.eye(4))
-# nii_orig.to_filename("/home/morty/tmp/test.nii")
-# subprocess.call("vnifti -in /home/morty/tmp/test.nii -out /home/morty/tmp/testa.v", shell=True)
-# subprocess.call("vbinarize -in /home/morty/tmp/testa.v -out /home/morty/tmp/test.v -min 0.5", shell=True)
 
 
 #%% AUX
@@ -87,7 +45,7 @@ def get_subheader(header, section_demark):
     
     
 #%% reader
-# fp_input = "/mnt/50tbd/gabriele/bit.v"
+
 
 def load_vista(fp_input):
     
