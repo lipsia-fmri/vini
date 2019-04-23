@@ -1,4 +1,4 @@
-from pyqtgraph.Qt import QtCore, QtGui
+from pyqtgraph_viff.Qt import QtCore, QtGui
 import sys
 import os.path
 import numpy as np
@@ -8,7 +8,7 @@ from nibabel.volumeutils import shape_zoom_affine
 from nibabel import Nifti1Image
 import copy
 
-import pyqtgraph as pg
+import pyqtgraph_viff as pg
 
 import FunctionalDialog
 import AveragePlot

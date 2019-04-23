@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from pyqtgraph.Qt import QtCore, QtGui
+from pyqtgraph_viff.Qt import QtCore, QtGui
 #from .GraphicsView import GraphicsView
-from pyqtgraph import GraphicsView
+from pyqtgraph_viff import GraphicsView
 #from ..graphicsItems.GradientEditorItem import GradientEditorItem
 import ColorMapItem
 import weakref

@@ -6,7 +6,7 @@ import math
 import os
 import copy
 
-import pyqtgraph as pg
+import pyqtgraph_viff  as pg
 
 import ColorMapWidget
 import SliceWidget

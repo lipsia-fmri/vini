@@ -1,5 +1,5 @@
 import sys, os.path
-from pyqtgraph.Qt import QtCore, QtGui
+from pyqtgraph_viff.Qt import QtCore, QtGui
 import numpy as np
 import numpy.ma as ma
 from nibabel import load
@@ -8,8 +8,8 @@ from nibabel.volumeutils import shape_zoom_affine
 from nibabel import Nifti1Image
 import copy
 
-import pyqtgraph as pg
-from pyqtgraph.colormap import ColorMap
+import pyqtgraph_viff as pg
+from pyqtgraph_viff.colormap import ColorMap
 
 import ImageItemMod
 import ColorMapWidget

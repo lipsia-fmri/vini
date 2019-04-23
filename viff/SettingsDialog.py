@@ -6,7 +6,7 @@ import time
 import copy
 import sys, os.path
 
-import pyqtgraph as pg
+import pyqtgraph_viff  as pg
 
 import ColorMapWidget
 from testInputs import testFloat, testInteger

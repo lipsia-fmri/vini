@@ -3,11 +3,11 @@ This is needed for the MosaicView.
 It is similar to the SliceBox but zooms to the cursor position.
 """
 
-from pyqtgraph.Qt import QtCore, QtGui
+from pyqtgraph_viff.Qt import QtCore, QtGui
 import numpy as np
 import sys
 
-import pyqtgraph as pg
+import pyqtgraph_viff  as pg
 from pyqtgraph import functions as fn
 from pyqtgraph import Point
 import weakref

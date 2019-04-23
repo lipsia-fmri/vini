@@ -10,7 +10,7 @@ __version__ = '0.10.0'
 
 ## 'Qt' is a local module; it is intended mainly to cover up the differences
 ## between PyQt4 and PySide.
-from .Qt import QtGui
+from .pyqtgraph_viff.Qt import QtGui
 
 ## not really safe--If we accidentally create another QApplication, the process hangs (and it is very difficult to trace the cause)
 #if QtGui.QApplication.instance() is None:
@@ -30,7 +30,7 @@ if sys.version_info[0] < 2 or (sys.version_info[0] == 2 and sys.version_info[1] 
 from . import python2_3
 
 ## install workarounds for numpy bugs
-from . import numpy_fix
+from .pyqtgraph_viff import numpy_fix
 
 ## in general openGL is poorly supported with Qt+GraphicsView.
 ## we only enable it where the performance benefit is critical.
@@ -201,81 +201,81 @@ if __version__ is None and not hasattr(sys, 'frozen') and sys.version_info[0] ==
 #importAll('widgets', globals(), locals(),
           #excludes=['MatplotlibWidget', 'RawImageWidget', 'RemoteGraphicsView'])
 
-from .graphicsItems.VTickGroup import * 
-from .graphicsItems.GraphicsWidget import * 
-from .graphicsItems.ScaleBar import * 
-from .graphicsItems.PlotDataItem import * 
-from .graphicsItems.GraphItem import * 
-from .graphicsItems.TextItem import * 
-from .graphicsItems.GraphicsLayout import * 
-from .graphicsItems.UIGraphicsItem import * 
-from .graphicsItems.GraphicsObject import * 
-from .graphicsItems.PlotItem import * 
-from .graphicsItems.ROI import * 
-from .graphicsItems.InfiniteLine import * 
-from .graphicsItems.HistogramLUTItem import * 
-from .graphicsItems.GridItem import * 
-from .graphicsItems.GradientLegend import * 
-from .graphicsItems.GraphicsItem import * 
-from .graphicsItems.BarGraphItem import * 
-from .graphicsItems.ViewBox import * 
-from .graphicsItems.ArrowItem import * 
-from .graphicsItems.ImageItem import * 
-from .graphicsItems.AxisItem import * 
-from .graphicsItems.LabelItem import * 
-from .graphicsItems.CurvePoint import * 
-from .graphicsItems.GraphicsWidgetAnchor import * 
-from .graphicsItems.PlotCurveItem import * 
-from .graphicsItems.ButtonItem import * 
-from .graphicsItems.GradientEditorItem import * 
-from .graphicsItems.MultiPlotItem import * 
-from .graphicsItems.ErrorBarItem import * 
-from .graphicsItems.IsocurveItem import * 
-from .graphicsItems.LinearRegionItem import * 
-from .graphicsItems.FillBetweenItem import * 
-from .graphicsItems.LegendItem import * 
-from .graphicsItems.ScatterPlotItem import * 
-from .graphicsItems.ItemGroup import * 
+from .pyqtgraph_viff.graphicsItems.VTickGroup import * 
+from .pyqtgraph_viff.graphicsItems.GraphicsWidget import * 
+from .pyqtgraph_viff.graphicsItems.ScaleBar import * 
+from .pyqtgraph_viff.graphicsItems.PlotDataItem import * 
+from .pyqtgraph_viff.graphicsItems.GraphItem import * 
+from .pyqtgraph_viff.graphicsItems.TextItem import * 
+from .pyqtgraph_viff.graphicsItems.GraphicsLayout import * 
+from .pyqtgraph_viff.graphicsItems.UIGraphicsItem import * 
+from .pyqtgraph_viff.graphicsItems.GraphicsObject import * 
+from .pyqtgraph_viff.graphicsItems.PlotItem import * 
+from .pyqtgraph_viff.graphicsItems.ROI import * 
+from .pyqtgraph_viff.graphicsItems.InfiniteLine import * 
+from .pyqtgraph_viff.graphicsItems.HistogramLUTItem import * 
+from .pyqtgraph_viff.graphicsItems.GridItem import * 
+from .pyqtgraph_viff.graphicsItems.GradientLegend import * 
+from .pyqtgraph_viff.graphicsItems.GraphicsItem import * 
+from .pyqtgraph_viff.graphicsItems.BarGraphItem import * 
+from .pyqtgraph_viff.graphicsItems.ViewBox import * 
+from .pyqtgraph_viff.graphicsItems.ArrowItem import * 
+from .pyqtgraph_viff.graphicsItems.ImageItem import * 
+from .pyqtgraph_viff.graphicsItems.AxisItem import * 
+from .pyqtgraph_viff.graphicsItems.LabelItem import * 
+from .pyqtgraph_viff.graphicsItems.CurvePoint import * 
+from .pyqtgraph_viff.graphicsItems.GraphicsWidgetAnchor import * 
+from .pyqtgraph_viff.graphicsItems.PlotCurveItem import * 
+from .pyqtgraph_viff.graphicsItems.ButtonItem import * 
+from .pyqtgraph_viff.graphicsItems.GradientEditorItem import * 
+from .pyqtgraph_viff.graphicsItems.MultiPlotItem import * 
+from .pyqtgraph_viff.graphicsItems.ErrorBarItem import * 
+from .pyqtgraph_viff.graphicsItems.IsocurveItem import * 
+from .pyqtgraph_viff.graphicsItems.LinearRegionItem import * 
+from .pyqtgraph_viff.graphicsItems.FillBetweenItem import * 
+from .pyqtgraph_viff.graphicsItems.LegendItem import * 
+from .pyqtgraph_viff.graphicsItems.ScatterPlotItem import * 
+from .pyqtgraph_viff.graphicsItems.ItemGroup import * 
 
-from .widgets.MultiPlotWidget import * 
-from .widgets.ScatterPlotWidget import * 
-from .widgets.ColorMapWidget import * 
-from .widgets.FileDialog import * 
-from .widgets.ValueLabel import * 
-from .widgets.HistogramLUTWidget import * 
-from .widgets.CheckTable import * 
-from .widgets.BusyCursor import * 
-from .widgets.PlotWidget import * 
-from .widgets.ComboBox import * 
-from .widgets.GradientWidget import * 
-from .widgets.DataFilterWidget import * 
-from .widgets.SpinBox import * 
-from .widgets.JoystickButton import * 
-from .widgets.GraphicsLayoutWidget import * 
-from .widgets.TreeWidget import * 
-from .widgets.PathButton import * 
-from .widgets.VerticalLabel import * 
-from .widgets.FeedbackButton import * 
-from .widgets.ColorButton import * 
-from .widgets.DataTreeWidget import * 
-from .widgets.GraphicsView import * 
-from .widgets.LayoutWidget import * 
-from .widgets.TableWidget import * 
-from .widgets.ProgressDialog import *
+from .pyqtgraph_viff.widgets.MultiPlotWidget import * 
+from .pyqtgraph_viff.widgets.ScatterPlotWidget import * 
+from .pyqtgraph_viff.widgets.ColorMapWidget import * 
+from .pyqtgraph_viff.widgets.FileDialog import * 
+from .pyqtgraph_viff.widgets.ValueLabel import * 
+from .pyqtgraph_viff.widgets.HistogramLUTWidget import * 
+from .pyqtgraph_viff.widgets.CheckTable import * 
+from .pyqtgraph_viff.widgets.BusyCursor import * 
+from .pyqtgraph_viff.widgets.PlotWidget import * 
+from .pyqtgraph_viff.widgets.ComboBox import * 
+from .pyqtgraph_viff.widgets.GradientWidget import * 
+from .pyqtgraph_viff.widgets.DataFilterWidget import * 
+from .pyqtgraph_viff.widgets.SpinBox import * 
+from .pyqtgraph_viff.widgets.JoystickButton import * 
+from .pyqtgraph_viff.widgets.GraphicsLayoutWidget import * 
+from .pyqtgraph_viff.widgets.TreeWidget import * 
+from .pyqtgraph_viff.widgets.PathButton import * 
+from .pyqtgraph_viff.widgets.VerticalLabel import * 
+from .pyqtgraph_viff.widgets.FeedbackButton import * 
+from .pyqtgraph_viff.widgets.ColorButton import * 
+from .pyqtgraph_viff.widgets.DataTreeWidget import * 
+from .pyqtgraph_viff.widgets.GraphicsView import * 
+from .pyqtgraph_viff.widgets.LayoutWidget import * 
+from .pyqtgraph_viff.widgets.TableWidget import * 
+from .pyqtgraph_viff.widgets.ProgressDialog import *
 
-from .imageview import *
-from .WidgetGroup import *
-from .Point import Point
-from .Vector import Vector
-from .SRTTransform import SRTTransform
-from .Transform3D import Transform3D
-from .SRTTransform3D import SRTTransform3D
-from .functions import *
-from .graphicsWindows import *
-from .SignalProxy import *
-from .colormap import *
-from .ptime import time
-from .Qt import isQObjectAlive
+from .pyqtgraph_viff.imageview import *
+from .pyqtgraph_viff.WidgetGroup import *
+from .pyqtgraph_viff.Point import Point
+from .pyqtgraph_viff.Vector import Vector
+from .pyqtgraph_viff.SRTTransform import SRTTransform
+from .pyqtgraph_viff.Transform3D import Transform3D
+from .pyqtgraph_viff.SRTTransform3D import SRTTransform3D
+from .pyqtgraph_viff.functions import *
+from .pyqtgraph_viff.graphicsWindows import *
+from .pyqtgraph_viff.SignalProxy import *
+from .pyqtgraph_viff.colormap import *
+from .pyqtgraph_viff.ptime import time
+from .pyqtgraph_viff.Qt import isQObjectAlive
 
 
 ##############################################################

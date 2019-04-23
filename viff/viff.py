@@ -35,9 +35,10 @@ setapi("QString", 2)
 setapi("QUrl", 2)
 
 verbose_level = 5
+from QxtSpanSlider import QxtSpanSlider
 
-from pyqtgraph.Qt import QtCore, QtGui
-from pyqtgraph.exporters import ImageExporter
+from pyqtgraph_viff.Qt import QtCore, QtGui
+from pyqtgraph_viff.exporters import ImageExporter
 
 import numpy as np
 import math
@@ -56,9 +57,9 @@ else:
 import signal
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-import pyqtgraph as pg
+import pyqtgraph_viff  as pg
 # for colormap thresholds:
-from QxtSpanSlider import QxtSpanSlider
+
 
 import ColorMapWidget
 import SliceBox
@@ -3624,7 +3625,7 @@ class Viff(QtGui.QMainWindow):
         exports the current view and colorbar
         """
         # self = viewer
-        # from pyqtgraph.exporters import ImageExporter
+        # from pyqtgraph_viff.exporters import ImageExporter
         
         filename = QtGui.QFileDialog.getSaveFileName(self, 'Export Images')[0]
         dp_write = os.path.split(filename)[0]
@@ -4051,7 +4052,7 @@ def main():
                     print("Error: File doesn't exist")
         if file_list is not None:
             viewer.loadImagesFromFiles(file_list, type_list)
-        self.checkIf2DAndRemovePanes()
+        viewer.checkIf2DAndRemovePanes()
         len_files = len(filenames)
         len_funcs = len(func_filenames)
         len_zmaps = len(z_filenames)

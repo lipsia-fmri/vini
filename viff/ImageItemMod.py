@@ -1,9 +1,9 @@
-from pyqtgraph.Qt import QtCore, QtGui
+from pyqtgraph_viff.Qt import QtCore, QtGui
 import numpy as np
 import sys
 import weakref
 
-import pyqtgraph as pg
+import pyqtgraph_viff as pg
 from pyqtgraph import functions as fn
 from pyqtgraph import Point
 from pyqtgraph import ItemGroup

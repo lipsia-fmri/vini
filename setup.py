@@ -1,91 +1,133 @@
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+# Note: To use the 'upload' functionality of this file, you must:
+#   $ pip install twine
+
+import io
 import os
-from setuptools import find_packages
+import sys
+from shutil import rmtree
 
-packages=find_packages()
+from setuptools import find_packages, setup, Command
 
-VERSION = '0.0.2.dev'
-config = {
-    'author' : "Malte Kuhlmann, Eric Lacosse, Johannes Stelzer",
-    'name' : 'viff',
-    'maintainer' : '',
-    'maintainer_email' : '',
-    'license' : 'MIT',
-    'description' : 'A visualization tool for 3D MRI slices and fMRI applications',
-    'long_description' : '',
-    'version' : VERSION,
-    'url' : '',
-    'download_url' : '',
-    'keywords' : 'visualization, neuroscience, MRI, fMRI',
-    'packages' : packages, 
-    'scripts' : ['viff/viff.py'],
-    'zip_safe' : False,
-    
-    'classifiers' : [
-        "Development Status :: 1 - Beta",
-        "Topic :: Scientific Software",
-        "License :: OSI Approved :: MIT License",
-        'Operating System :: MacOS',
-        'Operating System :: Microsoft :: Windows',
-        'Operating System :: OS Independent',
-        'Operating System :: POSIX',
-        'Operating System :: Unix',
-        'Programming Language :: Python :: 3',
-        'Topic :: Scientific/Engineering',
-    ],
-    'install_requires' : ['nose', 'nibabel', 'numpy', 'scipy', 'matplotlib', 'PyQt5'],
+# Package meta-data.
+NAME = 'viff'
+DESCRIPTION = 'A visualization tool for 3D MRI slices and fMRI applications'
+URL = ''
+EMAIL = ''
+AUTHOR = "Malte Kuhlmann, Eric Lacosse, Johannes Stelzer"
+REQUIRES_PYTHON = '>=3.6.0'
+VERSION = "0.0.5"
+
+# What packages are required for this module to be executed?
+REQUIRED = [
+    'IPython', 'nibabel', 'numpy', 'scipy', 'matplotlib', 'PyQt5'
+]
+
+# What packages are optional?
+EXTRAS = {
+    # 'fancy feature': ['django'],
 }
 
+# The rest you shouldn't have to touch too much :)
+# ------------------------------------------------
+# Except, perhaps the License and Trove Classifiers!
+# If you do change the License, remember to change the Trove Classifier for that!
+
+here = os.path.abspath(os.path.dirname(__file__))
+
+# Import the README and use it as the long-description.
+# Note: this will only work if 'README.md' is present in your MANIFEST.in file!
+try:
+    with io.open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
+        long_description = '\n' + f.read()
+except FileNotFoundError:
+    long_description = DESCRIPTION
+
+# Load the package's __version__.py module as a dictionary.
+about = {}
+if not VERSION:
+    project_slug = NAME.lower().replace("-", "_").replace(" ", "_")
+    with open(os.path.join(here, project_slug, '__version__.py')) as f:
+        exec(f.read(), about)
+else:
+    about['__version__'] = VERSION
 
 
-def checkDependencies():
+class UploadCommand(Command):
+    """Support setup.py upload."""
 
-    # Just make sure dependencies exist, I haven't rigorously
-    # tested what the minimal versions that will work are
-    needed_deps = ['IPython', 'nibabel', 'numpy', 'scipy', 'matplotlib', 'PyQt5']
-    missing_deps = []
-    for dep in needed_deps:
+    description = 'Build and publish the package.'
+    user_options = []
+
+    @staticmethod
+    def status(s):
+        """Prints things in bold."""
+        print('\033[1m{0}\033[0m'.format(s))
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
         try:
-            __import__(dep)
-        except ImportError:
-            missing_deps.append(dep)
-    if missing_deps:
-        missing = (", ".join(missing_deps))
-        raise ImportError("Missing dependencies: %s" % missing)
+            self.status('Removing previous builds…')
+            rmtree(os.path.join(here, 'dist'))
+        except OSError:
+            pass
 
-if __name__ == "__main__":
+        self.status('Building Source and Wheel (universal) distribution…')
+        os.system('{0} setup.py sdist bdist_wheel --universal'.format(sys.executable))
 
-    if os.path.exists('MANIFEST'):
-        os.remove('MANIFEST')
+        self.status('Uploading the package to PyPI via Twine…')
+        os.system('twine upload dist/*')
 
-    import sys
-    if not (len(sys.argv) >= 2 and ('--help' in sys.argv[1:] or
-            sys.argv[1] in ('--help-commands',
-                            '--version',
-                            'egg_info',
-                            'clean'))):
-        checkDependencies()
+        self.status('Pushing git tags…')
+        os.system('git tag v{0}'.format(about['__version__']))
+        os.system('git push --tags')
+        
+        sys.exit()
 
-    setup(**config)
-    # setup(
-    #         packages=['viff'],
-    #         package_dir={'viff': 'viff/'},
-    #         package_data={'viff': ['pyqtgraph/*.dat']},
-            
-            
-    #         )
 
-# canvas                exporters           graphicsWindows.pyc  opengl             ptime.py        SignalProxy.pyc      Transform3D.pyc
-# colormap.py           flowchart           imageview            ordereddict.py     ptime.pyc       SRTTransform3D.py    units.py
-# colormap.pyc          frozenSupport.py    __init__.py          parametertree      __pycache__     SRTTransform3D.pyc   util
-# configfile.py         functions.py        __init__.py]         pgcollections.py   python2_3.py    SRTTransform.py      Vector.py
-# console               functions.py~       __init__.pyc         pgcollections.pyc  python2_3.pyc   SRTTransform.pyc     Vector.pyc
-# debug.py              functions.pyc       metaarray            pixmaps            Qt.py           tests                WidgetGroup.py
-# debug.pyc             graphicsItems       multiprocess         PlotData.py        Qt.pyc          ThreadsafeTimer.py   WidgetGroup.pyc
-# dockarea              GraphicsScene       numpy_fix.py         Point.py           reload.py       ThreadsafeTimer.pyc  widgets
+# Where the magic happens:
+setup(
+    name=NAME,
+    version=about['__version__'],
+    description=DESCRIPTION,
+    long_description=long_description,
+    long_description_content_type='text/markdown',
+    author=AUTHOR,
+    author_email=EMAIL,
+    python_requires=REQUIRES_PYTHON,
+    url=URL,
+    # packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
+    packages=find_packages(), 
+    # If your package is a single module, use this instead of 'packages':
+    # py_modules=['mypackage'],
 
+    # entry_points={
+    #     'console_scripts': ['mycli=mymodule:cli'],
+    # },
+    install_requires=REQUIRED,
+    extras_require=EXTRAS,
+    include_package_data=True,
+    license='MIT',
+    classifiers=[
+        # Trove classifiers
+        # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'Programming Language :: Python :: Implementation :: PyPy'
+    ],
+    # $ setup.py publish support.
+    cmdclass={
+        'upload': UploadCommand,
+    },
+)
 
