@@ -1,4 +1,4 @@
-from pyqtgraph.Qt import QtCore, QtGui
+from .pyqtgraph_viff.Qt import QtCore, QtGui
 import numpy as np
 from .pyqtgraph_viff import *
 import sys
