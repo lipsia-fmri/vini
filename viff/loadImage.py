@@ -120,8 +120,16 @@ def loadImageFromNumpy(array, pref, f_type=0):
     image = Nifti2Image(array, np.eye(4))
     hdr = image.header
     img = setPreferences(image, hdr, pref, f_type)
-
     return img
+
+
+
+def loadImageFromNumpyFile(filename):
+    array = np.load(filename)
+    img = Nifti2Image(array, np.eye(4))
+    return img
+
+
 
 
 
@@ -134,7 +142,7 @@ def loadImageFromFile(filename, pref, f_type):
             image = Nifti2Image(temp_img.get_data(), temp_img.affine)
             hdr = temp_img.header
         except RuntimeError:
-            print("Cannot load .nii or nii.gz file given!")
+            print("Cannot load .nii or nii.gz file: {}".format(filename))
     elif (filetype=='.hdr' or filetype=='.img'):
         try:
             temp_img = load(filename)
@@ -142,11 +150,23 @@ def loadImageFromFile(filename, pref, f_type):
             image.dataobj[np.isnan(image.dataobj)] = 0
             hdr = temp_img.header
         except RuntimeError:
-            print("Cannot load img/hdr pair file given!")
+            print("Cannot load img/hdr pair file: {}".format(filename))
 
     elif (filetype == '.v'):
-        image = load_vista(filename)
-        hdr = image.header
+        try:
+            image = load_vista(filename)
+            hdr = image.header
+        except RuntimeError:
+            print("Cannot load vista file: {}".format(filename))
+    
+    elif (filetype == '.npy'):
+        try:
+            image = loadImageFromNumpyFile(filename)
+            hdr = image.header
+        except RuntimeError:
+            print("Cannot load numpy file: {}".format(filename))
+    
+    
     else:
         print("ERROR!! CANNOT LOAD THIS IMAGE!")
         return
