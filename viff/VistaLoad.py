@@ -155,22 +155,43 @@ def load_vista(fp_input):
             ydim = dict_image["nrows"]
             tdim = dict_image["nbands"]
             
+            if i==0:
+                xdim0 = xdim
+                ydim0 = ydim
+                tdim0 = tdim
+            
+            if xdim0 != xdim:
+                raise ValueError("xdim for image {} is {}. in conflict with first image {}".format(i, xdim, xdim0))
+            
+            if ydim0 != ydim:
+                raise ValueError("ydim for image {} is {}. in conflict with first image {}".format(i, ydim, ydim0))
+                
+            if tdim0 != tdim:
+                raise ValueError("tdim for image {} is {}. in conflict with first image {}".format(i, tdim, tdim0))
+            
         
             if dict_image["repn"] != "bit": #default case
                 img1D = np.frombuffer(raw, dtype=dict_image["dtype"], count=dict_image["length"], offset=dict_image["offset"]).byteswap()
             else: #bit representation (masks etc)
                 img1D_byterepn = np.frombuffer(raw, dtype=np.uint8, count=dict_image["length"], offset=dict_image["offset"])#.byteswap()
                 img1D_bit_graced = np.unpackbits(img1D_byterepn)
-                img1D = img1D_bit_graced[0:xdim*ydim*zdim]
+                img1D = img1D_bit_graced[0:xdim*ydim*tdim]
+                # print("count is: {}, img1D.size {} img1D_bit_graced.size {}".format(dict_image["length"], img1D.size, img1D_bit_graced.size))
+                
+            if xdim*ydim*tdim != img1D.size:
+                raise ValueError("Problem with image {}: xdim*ydim*tdim = {}x{}x{} = {}. however length in header was {}".format(i, xdim, ydim, tdim, xdim*ydim*tdim, img1D.size))
                 
             # list_images.append(np.frombuffer(raw, dtype=dict_image["dtype"], count=dict_image["length"], offset=dict_image["offset"]).byteswap())
             list_images.append(img1D)
+        
+        
         
             
 
         
         img1D = np.zeros(xdim*ydim*zdim*tdim, dtype=dict_image["dtype"])
         for i in range(len(idx_images)):
+            # print("i {}, shape {}".format(i, list_images[i].shape))
             img1D[i*xdim*ydim*tdim:(i+1)*xdim*ydim*tdim] = list_images[i]
             
             
