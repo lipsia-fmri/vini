@@ -1187,8 +1187,6 @@ class Viff(QtGui.QMainWindow):
         # connect to update slices and imageitems
         self.images[0].pos_gradient.sigGradientChanged.connect(self.updateImages)
         self.images[0].neg_gradient.sigGradientChanged.connect(self.updateImages)
-        self.images[0].pos_gradient.setDiscreteCM.connect(self.updateImages)
-        self.images[0].neg_gradient.setDiscreteCM.connect(self.updateImages)
 
         self.images[0].dialog.setWindowTitle(itemname)
 
@@ -1417,9 +1415,10 @@ class Viff(QtGui.QMainWindow):
         if fnames != []:
             for filename in fnames:
                 # self.loadNewImage(unicode(filename))
-                if os.path.isfile(filename[0]):
-                    log2("openNewFile: filename {}".format(filename[0]))
-                    self.loadNewImage(filename[0])
+                if len(filename) > 0:
+                    if os.path.isfile(filename[0]):
+                        log2("openNewFile: filename {}".format(filename[0]))
+                        self.loadNewImage(filename[0])
 
     def deleteImage(self):
         """
