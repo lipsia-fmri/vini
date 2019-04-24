@@ -1,7 +1,7 @@
 
 from qtconsole.rich_jupyter_widget import RichJupyterWidget
 from qtconsole.inprocess import QtInProcessKernelManager
-from pyqtgraph.Qt import QtCore, QtGui
+from .pyqtgraph.Qt import QtCore, QtGui
 
 
 class JupyterWidget(RichJupyterWidget):

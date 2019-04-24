@@ -1,4 +1,4 @@
-from pyqtgraph_viff.util.lru_cache import LRUCache
+from .pyqtgraph_viff.util.lru_cache import LRUCache
 
 def testLRU():
     lru = LRUCache(2, 1)
