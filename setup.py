@@ -13,11 +13,11 @@ from setuptools import find_packages, setup, Command
 
 # Package meta-data.
 NAME = 'viff'
-DESCRIPTION = 'A visualization tool for 3D MRI slices and fMRI applications'
+DESCRIPTION = 'A visualization tool for 2D/3D/4D data (e.g. from MRI)'
 URL = ''
 EMAIL = ''
 AUTHOR = "Malte Kuhlmann, Eric Lacosse, Johannes Stelzer"
-REQUIRES_PYTHON = '>=3.6.0'
+REQUIRES_PYTHON = '>=3.5.0'
 VERSION = "0.0.5"
 
 # What packages are required for this module to be executed?
