@@ -51,7 +51,7 @@ class FillBetweenItem(QtGui.QGraphicsPathItem):
         self.curveChanged()
 
     def setBrush(self, *args, **kwds):
-        """Change the fill brush. Acceps the same arguments as pg.mkBrush()"""
+        """Change the fill brush. Acceps the same arguments as mkBrush()"""
         QtGui.QGraphicsPathItem.setBrush(self, fn.mkBrush(*args, **kwds))
 
     def curveChanged(self):

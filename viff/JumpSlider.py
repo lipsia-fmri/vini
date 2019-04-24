@@ -1,4 +1,4 @@
-from pyqtgraph_viff.Qt import QtCore, QtGui
+from .pyqtgraph_viff.Qt import QtCore, QtGui
 
 
 class JumpSlider(QtGui.QSlider):

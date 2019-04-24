@@ -2,12 +2,12 @@
 SVG export test
 """
 from __future__ import division, print_function, absolute_import
-import pyqtgraph_viff  as pg
+from .pyqtgraph_viff import *
 import csv
 import os
 import tempfile
 
-app = pg.mkQApp()
+app = mkQApp()
 
 
 def approxeq(a, b):
@@ -18,19 +18,19 @@ def test_CSVExporter():
     tempfilename = tempfile.NamedTemporaryFile(suffix='.csv').name
     print("using %s as a temporary file" % tempfilename)
     
-    plt = pg.plot()
+    plt = plot()
     y1 = [1,3,2,3,1,6,9,8,4,2]
     plt.plot(y=y1, name='myPlot')
     
     y2 = [3,4,6,1,2,4,2,3,5,3,5,1,3]
-    x2 = pg.np.linspace(0, 1.0, len(y2))
+    x2 = np.linspace(0, 1.0, len(y2))
     plt.plot(x=x2, y=y2)
     
     y3 = [1,5,2,3,4,6,1,2,4,2,3,5,3]
-    x3 = pg.np.linspace(0, 1.0, len(y3)+1)
+    x3 = np.linspace(0, 1.0, len(y3)+1)
     plt.plot(x=x3, y=y3, stepMode=True)
     
-    ex = pg.exporters.CSVExporter(plt.plotItem)
+    ex = exporters.CSVExporter(plt.plotItem)
     ex.export(fileName=tempfilename)
 
     r = csv.reader(open(tempfilename, 'r'))

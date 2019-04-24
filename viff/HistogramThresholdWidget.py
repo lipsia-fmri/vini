@@ -1,10 +1,10 @@
-from pyqtgraph_viff.Qt import QtGui, QtCore
+from .pyqtgraph_viff.Qt import QtGui, QtCore
 import numpy as np
 
-import pyqtgraph_viff as pg
+from .pyqtgraph_viff import *
 
 
-class HistogramThresholdWidget(pg.GraphicsWindow):
+class HistogramThresholdWidget(GraphicsWindow):
 
     sigChanged = QtCore.Signal()
 
@@ -16,19 +16,19 @@ class HistogramThresholdWidget(pg.GraphicsWindow):
         self.setGeometry(pos[0], pos[1], pos[2], pos[3])
 
         # Set foreground black.
-        pg.setConfigOption('foreground', 'k')
+        setConfigOption('foreground', 'k')
 
         self.plot = self.addPlot(title="Histogram: {}".format(title))
 
         self.setBackground('w')
-        pg.setConfigOption('foreground', 'w')
+        setConfigOption('foreground', 'w')
 
         # Set lower limit to 0 because histogram is positive.
         self.plot.setLimits(yMin = 0)
 
         color = QtGui.QColor()
         color.setRgb(0, 0, 170, 40)
-        self.brush = pg.mkBrush(color)
+        self.brush = mkBrush(color)
 
         # Line regions
         self.lr_pos = None
@@ -69,7 +69,7 @@ class HistogramThresholdWidget(pg.GraphicsWindow):
         if self.lr_pos is not None:
             self.plot.removeItem(self.lr_pos)
             self.lr_pos = None
-        self.lr_pos = pg.LinearRegionItem(brush=self.brush, values=[low,high])
+        self.lr_pos = LinearRegionItem(brush=self.brush, values=[low,high])
         self.lr_pos.setZValue(-1)
         self.lr_pos.setMovable(False)
         
@@ -82,7 +82,7 @@ class HistogramThresholdWidget(pg.GraphicsWindow):
         if self.lr_neg is not None:
             self.plot.removeItem(self.lr_neg)
             self.lr_neg = None
-        self.lr_neg = pg.LinearRegionItem(brush=self.brush, values=[low,high])
+        self.lr_neg = LinearRegionItem(brush=self.brush, values=[low,high])
         self.lr_neg.setZValue(-1)
         self.lr_neg.setMovable(False)
         self.plot.addItem(self.lr_neg)

@@ -36,7 +36,7 @@ class RemoteGraphicsView(QtGui.QWidget):
 
         self._proc = mp.QtProcess(**kwds)
         self.pg = self._proc._import('pyqtgraph')
-        self.pg.setConfigOptions(**CONFIG_OPTIONS)
+        self.setConfigOptions(**CONFIG_OPTIONS)
         rpgRemote = self._proc._import('pyqtgraph.widgets.RemoteGraphicsView')
         self._view = rpgRemote.Renderer(*args, **remoteKwds)
         self._view._setProxyOptions(deferGetattr=True)
@@ -145,7 +145,7 @@ class Renderer(GraphicsView):
     
     def __init__(self, *args, **kwds):
         ## Create shared memory for rendered image
-        #pg.dbg(namespace={'r': self})
+        #dbg(namespace={'r': self})
         if sys.platform.startswith('win'):
             self.shmtag = "pyqtgraph_shmem_" + ''.join([chr((random.getrandbits(20)%25) + 97) for i in range(20)])
             self.shm = mmap.mmap(-1, mmap.PAGESIZE, self.shmtag) # use anonymous mmap on windows

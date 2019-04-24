@@ -35,10 +35,10 @@ setapi("QString", 2)
 setapi("QUrl", 2)
 
 verbose_level = 5
-from QxtSpanSlider import QxtSpanSlider
+from .QxtSpanSlider import QxtSpanSlider
 
-from pyqtgraph_viff.Qt import QtCore, QtGui
-from pyqtgraph_viff.exporters import ImageExporter
+from .pyqtgraph_viff.Qt import QtCore, QtGui
+from .pyqtgraph_viff.exporters import ImageExporter
 
 import numpy as np
 import math
@@ -57,35 +57,36 @@ else:
 import signal
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-import pyqtgraph_viff  as pg
+from .pyqtgraph_viff import * 
 # for colormap thresholds:
 
 
-import ColorMapWidget
-import SliceBox
-import SliceWidget
-import SingleSlice
-import Image3D
-import Image4D
-import loadImage
-import ImageItemMod
-import SliceWindow
-import ValueWindow
-import HistogramThresholdWidget
-import SettingsDialog
-import MosaicDialog
-import MosaicView
+from .ColorMapWidget import *
+from .SliceBox import *
+from .SliceWidget import *
+from .SingleSlice import *
+from .Image3D import *
+from .Image4D import *
+from .loadImage import *
+from .ImageItemMod import *
+from .SliceWindow import *
+from .ValueWindow import *
+from .HistogramThresholdWidget import *
+from .SettingsDialog import *
+from .MosaicDialog import *
+from .MosaicView import *
 # for functional movie mode:
-from JumpSlider import JumpSlider
+from .JumpSlider import JumpSlider
 # testing input
-from testInputs import testFloat, testInteger
+from .testInputs import testFloat, testInteger
 # print infos if necessary
-from Verboseprint import verboseprint
+from .Verboseprint import verboseprint
 import time
 import re
 import traceback
 import matplotlib
 from matplotlib.image import imsave
+import pkg_resources
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -198,7 +199,7 @@ class Viff(QtGui.QMainWindow):
         # functions should be enabled. Should be false if no functional image
         # is loaded.
         self.func_enabled = False
-        self.timer = pg.QtCore.QTimer()
+        self.timer = QtCore.QTimer()
         self.playstate = False
         self.slicestate = False
         self.playrate = 3
@@ -231,13 +232,13 @@ class Viff(QtGui.QMainWindow):
         self.voxel_coord = self.preferences['voxel_coord']
 
         # Initialize the SettingsDialog.
-        self.settings = SettingsDialog.SettingsDialog(self.preferences)
+        self.settings = SettingsDialog(self.preferences)
         self.settings.sigSaveSettings.connect(self.savePreferences)
         self.settings.sigWindowSize.connect(self.saveWindowSize)
 
         # Initializes the ValueWindow and MosaicDialog.
-        self.value_window = ValueWindow.ValueWindow()
-        self.mosaic_dialog = MosaicDialog.MosaicDialog()
+        self.value_window = ValueWindow()
+        self.mosaic_dialog = MosaicDialog()
         self.mosaic_dialog.sigEdited.connect(self.setMosaicLines)
         self.mosaic_dialog.sigFinished.connect(self.openMosaicView)
         self.mosaic_dialog.sigClosed.connect(self.mosaicDialogClosed)
@@ -304,9 +305,9 @@ class Viff(QtGui.QMainWindow):
         self.setMenu()
 
         # SliceWidget initializations
-        self.c_slice_widget = SliceWidget.SliceWidget('c')
-        self.s_slice_widget = SliceWidget.SliceWidget('s')
-        self.t_slice_widget = SliceWidget.SliceWidget('t')
+        self.c_slice_widget = SliceWidget('c')
+        self.s_slice_widget = SliceWidget('s')
+        self.t_slice_widget = SliceWidget('t')
         ydim_slicewidget = 12
         self.l.addWidget(self.c_slice_widget, 0, 0, ydim_slicewidget, ydim_slicewidget)
         self.l.addWidget(self.s_slice_widget, 0, 12, ydim_slicewidget, ydim_slicewidget)
@@ -318,9 +319,9 @@ class Viff(QtGui.QMainWindow):
         self.s_slice_widget.sb.menu.sigPopout.connect(self.openSliceS)
         self.t_slice_widget.sb.menu.sigPopout.connect(self.openSliceT)
 
-        self.slice_popouts[0] = SingleSlice.SingleSlice('c')
-        self.slice_popouts[1] = SingleSlice.SingleSlice('s')
-        self.slice_popouts[2] = SingleSlice.SingleSlice('t')
+        self.slice_popouts[0] = SingleSlice('c')
+        self.slice_popouts[1] = SingleSlice('s')
+        self.slice_popouts[2] = SingleSlice('t')
 
 
 
@@ -344,8 +345,8 @@ class Viff(QtGui.QMainWindow):
         self.down_button = QtGui.QToolButton(self)
         self.up_button.clicked.connect(self.swapUp)
         self.down_button.clicked.connect(self.swapDown)
-        icon_up = QtGui.QIcon(os.path.dirname(full_path)+"/../icons/chevron-up.svg")
-        icon_down = QtGui.QIcon(os.path.dirname(full_path)+"/../icons/chevron-down.svg")
+        icon_up = QtGui.QIcon(pkg_resources.resource_filename(__name__, 'icons/chevron-up.svg'))
+        icon_down = QtGui.QIcon(pkg_resources.resource_filename(__name__, 'icons/chevron-down.svg'))
         self.up_button.setIcon(icon_up)
         self.down_button.setIcon(icon_down)
         self.up_button.setToolTip('move image up')
@@ -354,10 +355,10 @@ class Viff(QtGui.QMainWindow):
         imagelist_layout.addWidget(self.down_button, 1, 4, 1, 1)
         
         # add image button
-        ypos = 2
         self.add_button = QtGui.QToolButton(self)
         self.add_button.clicked.connect(self.openNewFile)
-        icon_add = QtGui.QIcon(os.path.dirname(full_path)+"/../icons/plus.svg")
+        icon_add = QtGui.QIcon(pkg_resources.resource_filename(__name__, 'icons/plus.svg'))
+        
         self.add_button.setIcon(icon_add)
         self.add_button.setToolTip("add image")
         imagelist_layout.addWidget(self.add_button, 2, 4, 1, 1)
@@ -365,7 +366,7 @@ class Viff(QtGui.QMainWindow):
         # delete image button
         self.del_button = QtGui.QToolButton(self)
         self.del_button.clicked.connect(self.deleteImage)
-        icon_dash = QtGui.QIcon(os.path.dirname(full_path)+"/../icons/dash.svg")
+        icon_dash = QtGui.QIcon(pkg_resources.resource_filename(__name__, 'icons/dash.svg'))
         self.del_button.setIcon(icon_dash)
         self.del_button.setToolTip("remove currently selected image")
         imagelist_layout.addWidget(self.del_button, 3, 4, 1, 1)
@@ -379,7 +380,7 @@ class Viff(QtGui.QMainWindow):
         self.cross_button.setCheckable(True)
         self.cross_button.setChecked(True)
         
-        icon_cross = QtGui.QIcon(os.path.dirname(full_path)+"/../icons/cross.svg")
+        icon_cross = QtGui.QIcon(pkg_resources.resource_filename(__name__, 'icons/cross.svg'))
         self.cross_button.setIcon(icon_cross)
         self.cross_button.setToolTip("toggle crosshair on/off")
         self.cross_button.clicked.connect(self.setCrosshairsVisible)
@@ -391,8 +392,8 @@ class Viff(QtGui.QMainWindow):
         self.max_button = QtGui.QToolButton(self)
         self.min_button.clicked.connect(self.findMin)
         self.max_button.clicked.connect(self.findMax)
-        icon_min = QtGui.QIcon(os.path.dirname(full_path)+"/../icons/min.svg")
-        icon_max = QtGui.QIcon(os.path.dirname(full_path)+"/../icons/max.svg")
+        icon_min = QtGui.QIcon(pkg_resources.resource_filename(__name__, 'icons/min.svg'))
+        icon_max = QtGui.QIcon(pkg_resources.resource_filename(__name__, 'icons/max.svg'))
         self.min_button.setIcon(icon_min)
         self.max_button.setIcon(icon_max)
         self.min_button.setToolTip("go to local minimum")
@@ -484,8 +485,8 @@ class Viff(QtGui.QMainWindow):
         self.backward_button = QtGui.QToolButton(self)
         self.backward_button.pressed.connect(self.prevFrame)
         self.backward_button.released.connect(self.setSliceStateOff)
-        icon_backward = QtGui.QIcon(
-            os.path.dirname(full_path)+"/../icons/prev.svg")
+        icon_backward = QtGui.QIcon(pkg_resources.resource_filename(__name__, 'icons/prev.svg'))
+        
         self.backward_button.setIcon(icon_backward)
         self.backward_button.setToolTip("move to previous volume")
         
@@ -496,10 +497,10 @@ class Viff(QtGui.QMainWindow):
         self.play_button = QtGui.QToolButton(self)
         self.play_button.pressed.connect(self.playFuncPressed)
         self.play_button.released.connect(self.playFuncReleased)
-        self.icon_play = QtGui.QIcon(
-            os.path.dirname(full_path)+"/../icons/triangle-right.svg")
-        self.icon_pause = QtGui.QIcon(
-            os.path.dirname(full_path)+"/../icons/pause.svg")
+        
+        self.icon_play = QtGui.QIcon(pkg_resources.resource_filename(__name__, 'icons/triangle-right.svg'))
+        self.icon_pause = QtGui.QIcon(pkg_resources.resource_filename(__name__, 'icons/pause.svg'))
+        
         self.play_button.setIcon(self.icon_play)
         self.play_button.setToolTip("play as movie")
         button_row_fmri.addWidget(self.play_button)
@@ -508,8 +509,9 @@ class Viff(QtGui.QMainWindow):
         self.forward_button = QtGui.QToolButton(self)
         self.forward_button.pressed.connect(self.nextFrame)
         self.forward_button.released.connect(self.setSliceStateOff)
-        icon_forward = QtGui.QIcon(
-            os.path.dirname(full_path)+"/../icons/next.svg")
+        icon_forward = QtGui.QIcon(pkg_resources.resource_filename(__name__, 'icons/next.svg'))
+        
+        
         self.forward_button.setIcon(icon_forward)
         self.forward_button.setToolTip("move to next volume")
         button_row_fmri.addWidget(self.forward_button)
@@ -658,9 +660,9 @@ class Viff(QtGui.QMainWindow):
         self.max_pos.setToolTip("change maximum positive threshold")
         
         
-        # tmp_gradient1 = ColorMapWidget.ColorMapWidget()
+        # tmp_gradient1 = ColorMapWidget()
         # tmp_gradient1.item.loadPreset('grey')
-        # tmp_gradient2 = ColorMapWidget.ColorMapWidget()
+        # tmp_gradient2 = ColorMapWidget()
         # tmp_gradient2.item.loadPreset('grey')
         
         button_row_thresh_pos.addWidget(self.min_pos)
@@ -815,7 +817,6 @@ class Viff(QtGui.QMainWindow):
         exit_action = QtGui.QAction(
             QtGui.QIcon.fromTheme("window-close"), '&Exit', self)
         exit_action.setShortcut(QtGui.QKeySequence("Ctrl+C"))
-        #exit_action.setShortcut(QtGui.QKeySequence.Quit)
         exit_action.setStatusTip('Exit application')
         exit_action.triggered.connect(self.closeAndSave)
         self.file_menu.addAction(exit_action)
@@ -825,9 +826,8 @@ class Viff(QtGui.QMainWindow):
         res_os_ratio.triggered.connect(self.setOSRatio)
         self.resampling_menu.addAction(res_os_ratio)
 
-        full_path = os.path.realpath(__file__)
-        self.icon_checked = QtGui.QIcon(
-            os.path.dirname(full_path)+"/../icons/check.svg")
+        self.icon_checked  = QtGui.QIcon(pkg_resources.resource_filename(__name__, 'icons/check.svg'))
+        
 
         self.res_affine = QtGui.QAction('Apply affine transformation', self)
         self.res_affine.setShortcut('Ctrl+A')
@@ -948,7 +948,7 @@ class Viff(QtGui.QMainWindow):
             return
 
         for i in range(len(filename_list)):
-            img = loadImage.loadImageFromFile(
+            img = loadImageFromFile(
                 unicode(filename_list[i]), self.preferences, type_list[i])
             # Saves the first part of the path as 'prefered_path'.
             self.prefered_path = "/".join(filename_list[i].split('/')[:-1])
@@ -967,13 +967,13 @@ class Viff(QtGui.QMainWindow):
             # Create ImageItemMods here.
             image_item_list_tmp = [[]]
             for j in range(3):
-                image_item_list_tmp[0].append(ImageItemMod.ImageItemMod())
+                image_item_list_tmp[0].append(ImageItemMod())
             self.image_window_list.append(image_item_list_tmp)
 
             # This creates ImageItemMods for the popout slices.
             image_item_list_tmp_po = []
             for j in range(3):
-                image_item_list_tmp_po.append(ImageItemMod.ImageItemMod())
+                image_item_list_tmp_po.append(ImageItemMod())
             self.popouts_ii.append(image_item_list_tmp_po)
             # Set state as True, because it's visible in the main window.
             self.states.insert(0, True)
@@ -1060,8 +1060,8 @@ class Viff(QtGui.QMainWindow):
         """
         Loads a new file.
         """
-        # Gets the image instance from loadImage.
-        img = loadImage.loadImageFromNifti(fileobj, self.preferences, 0)
+        # Gets the image instance from 
+        img = loadImageFromNifti(fileobj, self.preferences, 0)
         # save path as prefered
         #self.prefered_path = "/".join(filename.split('/')[:-1])
         img.dialog.sigImageChanged.connect(self.updateImages)
@@ -1083,8 +1083,8 @@ class Viff(QtGui.QMainWindow):
         image_item_list_tmp_po = []
         # The image should be in the main window.
         for j in range(3):
-            image_item_list_tmp[0].append(ImageItemMod.ImageItemMod())
-            image_item_list_tmp_po.append(ImageItemMod.ImageItemMod())
+            image_item_list_tmp[0].append(ImageItemMod())
+            image_item_list_tmp_po.append(ImageItemMod())
         self.image_window_list.insert(0, image_item_list_tmp)
         self.popouts_ii.insert(0, image_item_list_tmp_po)
 
@@ -1136,8 +1136,8 @@ class Viff(QtGui.QMainWindow):
         """
         Loads a new file.
         """
-        # Gets the image instance from loadImage.
-        img = loadImage.loadImageFromFile(unicode(filename), self.preferences, 0)
+        # Gets the image instance from 
+        img = loadImageFromFile(unicode(filename), self.preferences, 0)
         # save path as prefered
         self.prefered_path = "/".join(filename.split('/')[:-1])
         img.dialog.sigImageChanged.connect(self.updateImages)
@@ -1159,8 +1159,8 @@ class Viff(QtGui.QMainWindow):
         image_item_list_tmp_po = []
         # The image should be in the main window.
         for j in range(3):
-            image_item_list_tmp[0].append(ImageItemMod.ImageItemMod())
-            image_item_list_tmp_po.append(ImageItemMod.ImageItemMod())
+            image_item_list_tmp[0].append(ImageItemMod())
+            image_item_list_tmp_po.append(ImageItemMod())
         self.image_window_list.insert(0, image_item_list_tmp)
         self.popouts_ii.insert(0, image_item_list_tmp_po)
 
@@ -1213,7 +1213,7 @@ class Viff(QtGui.QMainWindow):
         Loads an image provided as numpy array
         """
 
-        img = loadImage.loadImageFromNumpy(array, self.preferences, 0)
+        img = loadImageFromNumpy(array, self.preferences, 0)
         # save path as prefered
         img.dialog.sigImageChanged.connect(self.updateImages)
         img.dialog.sigImageChanged.connect(self.updateSelected)
@@ -1231,8 +1231,8 @@ class Viff(QtGui.QMainWindow):
         image_item_list_tmp_po = []
         # The image should be in the main window.
         for j in range(3):
-            image_item_list_tmp[0].append(ImageItemMod.ImageItemMod())
-            image_item_list_tmp_po.append(ImageItemMod.ImageItemMod())
+            image_item_list_tmp[0].append(ImageItemMod())
+            image_item_list_tmp_po.append(ImageItemMod())
         self.image_window_list.insert(0, image_item_list_tmp)
         self.popouts_ii.insert(0, image_item_list_tmp_po)
 
@@ -1771,19 +1771,19 @@ class Viff(QtGui.QMainWindow):
         if state != True:
             self.link_mode = False
             # this frees all the axis of any linking
-            self.c_slice_widget.sb.linkView(pg.ViewBox.XAxis)
-            self.c_slice_widget.sb.linkView(pg.ViewBox.YAxis)
-            self.s_slice_widget.sb.linkView(pg.ViewBox.XAxis)
-            self.s_slice_widget.sb.linkView(pg.ViewBox.YAxis)
-            self.t_slice_widget.sb.linkView(pg.ViewBox.XAxis)
-            self.t_slice_widget.sb.linkView(pg.ViewBox.YAxis)
+            self.c_slice_widget.sb.linkView(ViewBox.XAxis)
+            self.c_slice_widget.sb.linkView(ViewBox.YAxis)
+            self.s_slice_widget.sb.linkView(ViewBox.XAxis)
+            self.s_slice_widget.sb.linkView(ViewBox.YAxis)
+            self.t_slice_widget.sb.linkView(ViewBox.XAxis)
+            self.t_slice_widget.sb.linkView(ViewBox.YAxis)
             for window in self.extra_windows:
-                window.sw_c.sb.linkView(pg.ViewBox.XAxis)
-                window.sw_c.sb.linkView(pg.ViewBox.YAxis)
-                window.sw_s.sb.linkView(pg.ViewBox.XAxis)
-                window.sw_s.sb.linkView(pg.ViewBox.YAxis)
-                window.sw_t.sb.linkView(pg.ViewBox.XAxis)
-                window.sw_t.sb.linkView(pg.ViewBox.YAxis)
+                window.sw_c.sb.linkView(ViewBox.XAxis)
+                window.sw_c.sb.linkView(ViewBox.YAxis)
+                window.sw_s.sb.linkView(ViewBox.XAxis)
+                window.sw_s.sb.linkView(ViewBox.YAxis)
+                window.sw_t.sb.linkView(ViewBox.XAxis)
+                window.sw_t.sb.linkView(ViewBox.YAxis)
             self.interlinkWindows(False)
             self.autoRange()
         else:
@@ -1794,13 +1794,13 @@ class Viff(QtGui.QMainWindow):
             self.c_slice_widget.sb.setXLink(self.t_slice_widget.sb)
             self.s_slice_widget.sb.setYLink(self.c_slice_widget.sb)
             self.s_slice_widget.sb.linkViewXY(self.t_slice_widget.sb,
-                                              pg.ViewBox.YAxis,
-                                              pg.ViewBox.XAxis)
+                                              ViewBox.YAxis,
+                                              ViewBox.XAxis)
             for window in self.extra_windows:
                 window.sw_c.sb.setXLink(window.sw_t.sb)
                 window.sw_s.sb.setYLink(window.sw_c.sb)
                 window.sw_s.sb.linkViewXY(window.sw_t.sb,
-                                          pg.ViewBox.YAxis, pg.ViewBox.XAxis)
+                                          ViewBox.YAxis, ViewBox.XAxis)
             self.interlinkWindows(True)
             self.autoRange()
 
@@ -1810,13 +1810,13 @@ class Viff(QtGui.QMainWindow):
         windows.
         """
         if state != True:
-            self.c_slice_widget.sb.linkView(pg.ViewBox.YAxis)
-            self.t_slice_widget.sb.linkView(pg.ViewBox.XAxis)
-            self.t_slice_widget.sb.linkView(pg.ViewBox.YAxis)
+            self.c_slice_widget.sb.linkView(ViewBox.YAxis)
+            self.t_slice_widget.sb.linkView(ViewBox.XAxis)
+            self.t_slice_widget.sb.linkView(ViewBox.YAxis)
             for window in self.extra_windows:
-                window.sw_c.sb.linkView(pg.ViewBox.YAxis)
-                window.sw_t.sb.linkView(pg.ViewBox.XAxis)
-                window.sw_t.sb.linkView(pg.ViewBox.YAxis)
+                window.sw_c.sb.linkView(ViewBox.YAxis)
+                window.sw_t.sb.linkView(ViewBox.XAxis)
+                window.sw_t.sb.linkView(ViewBox.YAxis)
         else:
             if len(self.extra_windows) != 0:
                 self.c_slice_widget.sb.setYLink(self.extra_windows[0].sw_c.sb)
@@ -2247,8 +2247,8 @@ class Viff(QtGui.QMainWindow):
             image_item_list_tmp = []
             image_item_list_tmp_po = []
             for j in range(3):
-                image_item_list_tmp.append(ImageItemMod.ImageItemMod())
-                image_item_list_tmp_po.append(ImageItemMod.ImageItemMod())
+                image_item_list_tmp.append(ImageItemMod())
+                image_item_list_tmp_po.append(ImageItemMod())
             self.image_window_list[ind][0] = image_item_list_tmp
             self.popouts_ii[ind] = image_item_list_tmp_po
             self.updateImageItem(ind)
@@ -2555,7 +2555,7 @@ class Viff(QtGui.QMainWindow):
         # For index fill that list with ImageItemMods.
         image_item_list_tmp = []
         for j in range(3):
-            image_item_list_tmp.append(ImageItemMod.ImageItemMod())
+            image_item_list_tmp.append(ImageItemMod())
         self.image_window_list[index][-1] = image_item_list_tmp
         # Create a new id for that window.
         self.window_count += 1
@@ -2593,7 +2593,7 @@ class Viff(QtGui.QMainWindow):
             window.sw_c.sb.setXLink(window.sw_t.sb)
             window.sw_s.sb.setYLink(window.sw_c.sb)
             window.sw_s.sb.linkViewXY(
-                window.sw_t.sb, pg.ViewBox.YAxis, pg.ViewBox.XAxis)
+                window.sw_t.sb, ViewBox.YAxis, ViewBox.XAxis)
         self.interlinkWindows(self.link_mode)
 
         window.sw_c.sb.autoRange()
@@ -2615,7 +2615,7 @@ class Viff(QtGui.QMainWindow):
         """
         image_item_list_tmp = []
         for j in range(3):
-            image_item_list_tmp.append(ImageItemMod.ImageItemMod())
+            image_item_list_tmp.append(ImageItemMod())
         self.image_window_list[index][window+1] = image_item_list_tmp
         self.updateImageItem(index)
         self.addToSliceWidget(index, window+1)
@@ -3381,7 +3381,7 @@ class Viff(QtGui.QMainWindow):
             
         pos = (self.preferences['hist_posx'], self.preferences['hist_posy'], self.preferences['hist_width'], self.preferences['hist_height'])
             
-        self.hist = HistogramThresholdWidget.HistogramThresholdWidget(pos=pos, title=filename)
+        self.hist = HistogramThresholdWidget(pos=pos, title=filename)
         log2("openHistogramWindow: filename {}".format(filename))
             
         self.resetHistogram()
@@ -3404,7 +3404,6 @@ class Viff(QtGui.QMainWindow):
                     filename += " (vol {})".format(self.frame)
             # if 
                 
-            # self.hist = HistogramThresholdWidget.HistogramThresholdWidget(filename)
             if self.hist is None:
                 return
             self.hist.reset()
@@ -3505,30 +3504,30 @@ class Viff(QtGui.QMainWindow):
             # Add to dictionaries and slices.
             if 'c' in self.mosaic_lines:
                 if plane in ['t']:
-                    line = pg.InfiniteLine(angle=0, movable=False)
+                    line = InfiniteLine(angle=0, movable=False)
                 else:
-                    line = pg.InfiniteLine(angle=90, movable=False)
-                line.setPen(pg.mkPen({'color': "F55", 'width': 1}))
+                    line = InfiniteLine(angle=90, movable=False)
+                line.setPen(mkPen({'color': "F55", 'width': 1}))
                 line.setPos(coord+0.5)
                 line.setZValue(1000)
                 self.mosaic_lines['c'].append(line)
                 self.c_slice_widget.sb.addItem(line)
             if 's' in self.mosaic_lines:
                 if plane in ['t']:
-                    line = pg.InfiniteLine(angle=0, movable=False)
+                    line = InfiniteLine(angle=0, movable=False)
                 else:
-                    line = pg.InfiniteLine(angle=90, movable=False)
-                line.setPen(pg.mkPen({'color': "F55", 'width': 1}))
+                    line = InfiniteLine(angle=90, movable=False)
+                line.setPen(mkPen({'color': "F55", 'width': 1}))
                 line.setPos(coord+0.5)
                 line.setZValue(1000)
                 self.mosaic_lines['s'].append(line)
                 self.s_slice_widget.sb.addItem(line)
             if 't' in self.mosaic_lines:
                 if plane in ['c']:
-                    line = pg.InfiniteLine(angle=0, movable=False)
+                    line = InfiniteLine(angle=0, movable=False)
                 else:
-                    line = pg.InfiniteLine(angle=90, movable=False)
-                line.setPen(pg.mkPen({'color': "F55", 'width': 1}))
+                    line = InfiniteLine(angle=90, movable=False)
+                line.setPen(mkPen({'color': "F55", 'width': 1}))
                 line.setPos(coord+0.5)
                 line.setZValue(1000)
                 self.mosaic_lines['t'].append(line)
@@ -3569,7 +3568,7 @@ class Viff(QtGui.QMainWindow):
         coords = np.round(coords,0).astype(int)
         coords = coords.tolist()
         self.mosaic_view = None
-        self.mosaic_view = MosaicView.MosaicView(rows, cols)
+        self.mosaic_view = MosaicView(rows, cols)
         for img_ind in range(len(self.images)):
             # check if image is seen in main window
             if self.image_window_list[img_ind][0][0] is not None:
@@ -3577,7 +3576,7 @@ class Viff(QtGui.QMainWindow):
                 for coord_ind in range(len(coords)):
                     rgba_slice = self.images[img_ind].mosaicSlice(
                         plane, coords[coord_ind])
-                    img = ImageItemMod.ImageItemMod()
+                    img = ImageItemMod()
                     img.setImage(rgba_slice)
                     img.setZValue(-img_ind)
                     # Use composition mode?
@@ -3611,7 +3610,7 @@ class Viff(QtGui.QMainWindow):
                 # iterate over viewboxes
                 for coord_ind in range(len(coords)):
                     rgba_slice = self.images[img_ind].mosaicSlice(plane, coords[coord_ind])
-                    img = ImageItemMod.ImageItemMod()
+                    img = ImageItemMod()
                     img.setImage(rgba_slice)
                     img.setZValue(-img_ind)
                     # Use composition mode?
@@ -3660,7 +3659,7 @@ class Viff(QtGui.QMainWindow):
         
         #save positive cmap
         ar = np.outer(np.ones(200),np.arange(0,1,0.001))
-        br = pg.mymakeARGB(ar, lut=self.images[index].cmap_pos,levels=[0, 1],useRGBA=True)[0]
+        br = mymakeARGB(ar, lut=self.images[index].cmap_pos,levels=[0, 1],useRGBA=True)[0]
         from matplotlib import pyplot
         
         fig, ax = pyplot.subplots()
@@ -3673,7 +3672,7 @@ class Viff(QtGui.QMainWindow):
         #save negative cmap
         if self.images[index].two_cm:
             ar = np.outer(np.ones(200),np.arange(1,0,-0.001))
-            br = pg.mymakeARGB(ar, lut=self.images[index].cmap_neg,levels=[0, 1],useRGBA=True)[0]
+            br = mymakeARGB(ar, lut=self.images[index].cmap_neg,levels=[0, 1],useRGBA=True)[0]
             fig, ax = pyplot.subplots()
             pyplot.imshow(br)
             pyplot.xticks([0,1000],["%g" %self.images[index].threshold_neg[1],"%g" %self.images[index].threshold_neg[0]])
@@ -4001,6 +4000,8 @@ def main():
                         dest='linked', help='Set linked views to true')
 
     args = parser.parse_args()
+    
+    
     filenames = args.input
     z_filenames = args.zmap
     func_filenames = args.func
@@ -4103,11 +4104,11 @@ def main():
 
     sys.exit(app.exec_())
 
-def start_viewer():
-    app = QtGui.QApplication([])
-    viewer = Viff()
-    viewer.show()
-    app.exec_()
+# def start_viewer():
+#     app = QtGui.QApplication([])
+#     viewer = Viff()
+#     viewer.show()
+#     app.exec_()
 
 def show(*argv):
     """ 

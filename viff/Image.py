@@ -1,5 +1,5 @@
 import sys, os.path
-from pyqtgraph_viff.Qt import QtCore, QtGui
+from .pyqtgraph_viff.Qt import QtCore, QtGui
 import numpy as np
 import numpy.ma as ma
 from nibabel import load
@@ -8,14 +8,14 @@ from nibabel.volumeutils import shape_zoom_affine
 from nibabel import Nifti1Image
 import copy
 
-import pyqtgraph_viff as pg
-from pyqtgraph_viff.colormap import ColorMap
+from .pyqtgraph_viff import *
+from .pyqtgraph_viff.colormap import ColorMap
 
-import ImageItemMod
-import ColorMapWidget
-import ImageDialog
-from resample import resample_image
-from quaternions import fillpositive, quat2mat, mat2quat
+from .ImageItemMod import *
+from .ColorMapWidget import *
+from .ImageDialog import *
+from .resample import resample_image
+from .quaternions import fillpositive, quat2mat, mat2quat
 
 # try:
 #     from pyvista import pyvista
@@ -85,14 +85,14 @@ class Image(object):
         self.hist_clips = [0, 0]
 
         # Dialog for changing properties
-        self.dialog = ImageDialog.ImageDialog()
+        self.dialog = ImageDialog()
         self.dialog.sigPreferencesSave.connect(self.changedProperties)
         self.dialog.sigDiscreteCM.connect(self.useDiscreteCM)
 
         # Positive and negative color map widgets
-        self.pos_gradient = ColorMapWidget.ColorMapWidget()
+        self.pos_gradient = ColorMapWidgetObj()
         self.pos_gradient.sigGradientChanged.connect(self.setColorMapPos)
-        self.neg_gradient = ColorMapWidget.ColorMapWidget()
+        self.neg_gradient = ColorMapWidgetObj()
         self.neg_gradient.sigGradientChanged.connect(self.setColorMapNeg)
 
         self.pos_gradient.item.loadPreset('grey')
@@ -381,34 +381,34 @@ class Image(object):
             return 0
 
         [self.image_slices_pos[0], truth] = \
-            pg.mymakeARGB(
+            mymakeARGB(
                 self.image_res[int(self.coord[0]),:,:], lut=self.cmap_pos,
                 levels=[self.threshold_pos[0], self.threshold_pos[1]],
                 useRGBA=True)
         [self.image_slices_pos[1], truth] = \
-            pg.mymakeARGB(
+            mymakeARGB(
                 self.image_res[:,int(self.coord[1]),:], lut=self.cmap_pos,
                 levels=[self.threshold_pos[0], self.threshold_pos[1]],
                 useRGBA=True)
         [self.image_slices_pos[2], truth] = \
-            pg.mymakeARGB(
+            mymakeARGB(
                 self.image_res[:,:,int(self.coord[2])], lut=self.cmap_pos,
                 levels=[self.threshold_pos[0], self.threshold_pos[1]],
                 useRGBA=True)
 
         if self.two_cm:
             [self.image_slices_neg[0], truth] = \
-                pg.mymakeARGB(
+                mymakeARGB(
                     self.image_res[int(self.coord[0]),:,:], self.cmap_neg,
                     levels=[self.threshold_neg[0], self.threshold_neg[1]],
                     useRGBA=True)
             [self.image_slices_neg[1], truth] = \
-                pg.mymakeARGB(
+                mymakeARGB(
                     self.image_res[:,int(self.coord[1]),:], self.cmap_neg,
                     levels=[self.threshold_neg[0], self.threshold_neg[1]],
                     useRGBA=True)
             [self.image_slices_neg[2], truth] = \
-                pg.mymakeARGB(
+                mymakeARGB(
                     self.image_res[:,:,int(self.coord[2])], self.cmap_neg,
                     levels=[self.threshold_neg[0], self.threshold_neg[1]],
                     useRGBA=True)
@@ -438,12 +438,12 @@ class Image(object):
             sliced = self.image_res[:,coord,:]
         if plane == 't':
             sliced = self.image_res[:,:,coord]
-        [slice_rgba, truth] = pg.mymakeARGB(
+        [slice_rgba, truth] = mymakeARGB(
             sliced, self.cmap_pos, levels=[self.threshold_pos[0],
             self.threshold_pos[1]], useRGBA=True)
         if (self.two_cm and
                 float(self.threshold_neg[0]) != float(self.threshold_neg[1])):
-            [slice_neg, truth] = pg.mymakeARGB(
+            [slice_neg, truth] = mymakeARGB(
                 sliced, self.cmap_neg, levels=[self.threshold_neg[0],
                 self.threshold_neg[1]], useRGBA=True)
             slice_rgba = np.add(slice_rgba, slice_neg)

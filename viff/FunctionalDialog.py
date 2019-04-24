@@ -1,4 +1,4 @@
-from pyqtgraph_viff.Qt import QtCore, QtGui
+from .pyqtgraph_viff.Qt import QtCore, QtGui
 import numpy as np
 import math
 import os
@@ -6,9 +6,9 @@ import time
 import copy
 import sys, os.path
 
-import pyqtgraph_viff as pg
+from .pyqtgraph_viff import *
 
-from testInputs import testFloat, testInteger
+from .testInputs import testFloat, testInteger
 
 
 class FunctionalDialog(QtGui.QDialog):

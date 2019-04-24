@@ -1,10 +1,10 @@
-from pyqtgraph_viff.Qt import QtGui, QtCore
+from .pyqtgraph_viff.Qt import QtGui, QtCore
 import copy
 
-import pyqtgraph_viff as pg
+from .pyqtgraph_viff import *
 
 
-class AveragePlot(pg.GraphicsWindow):
+class AveragePlot(GraphicsWindow):
     """
     Plots the average of given experimental conditions over the trials at discrete time points.
     Updates with the move of the crosshair.
@@ -26,7 +26,7 @@ class AveragePlot(pg.GraphicsWindow):
         self.c = 1
 
         # Set the text and line color to black.
-        pg.setConfigOption('foreground', 'k')
+        setConfigOption('foreground', 'k')
 
         # Open a new plot with black pen.
         self.timeplot = self.addPlot(title="time averages")
@@ -34,7 +34,7 @@ class AveragePlot(pg.GraphicsWindow):
         self.setBackground('w')
 
         # Set configuration back to white for other widgets.
-        pg.setConfigOption('foreground', 'w')
+        setConfigOption('foreground', 'w')
 
         exit_action = QtGui.QAction(
             QtGui.QIcon.fromTheme("window-close"), '&Exit', self)
@@ -79,7 +79,7 @@ class AveragePlot(pg.GraphicsWindow):
             self.lowers[cond].setData(x=x, y=data-self.c*stderr)
             self.timeplot.autoRange()
         else:
-            pg.setConfigOption('foreground', 'k')
+            setConfigOption('foreground', 'k')
             curve = self.timeplot.plot(x=x, y=data, pen={'color': color, 'width': 3}, name="cond. " + str(cond))
             # light color for interior of the colored region
             color_light = copy.copy(color)
@@ -92,9 +92,9 @@ class AveragePlot(pg.GraphicsWindow):
                 x=x, y=data+self.c*stderr, pen={'color': color_a1, 'width': 1})
             lower = self.timeplot.plot(
                 x=x, y=data-self.c*stderr, pen={'color': color_a1, 'width': 1})
-            fill = pg.FillBetweenItem(lower, upper, color_light)
+            fill = FillBetweenItem(lower, upper, color_light)
             self.timeplot.addItem(fill)
-            pg.setConfigOption('foreground', 'w')
+            setConfigOption('foreground', 'w')
             self.curves[cond] = curve
             self.uppers[cond] = upper
             self.lowers[cond] = lower

@@ -62,7 +62,7 @@ class ImageView(QtGui.QWidget):
     
     Basic Usage::
     
-        imv = pg.ImageView()
+        imv = ImageView()
         imv.show()
         imv.setImage(data)
         
@@ -106,7 +106,7 @@ class ImageView(QtGui.QWidget):
         Note: to display axis ticks inside the ImageView, instantiate it 
         with a PlotItem instance as its view::
                 
-            pg.ImageView(view=pg.PlotItem())
+            ImageView(view=PlotItem())
         """
         QtGui.QWidget.__init__(self, parent, *args)
         self.levelMax = 4096

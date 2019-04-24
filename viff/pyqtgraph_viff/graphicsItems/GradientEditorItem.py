@@ -816,9 +816,9 @@ class Tick(QtGui.QGraphicsWidget):  ## NOTE: Making this a subclass of GraphicsO
         self.hoverPen = fn.mkPen(255,255,0)
         self.currentPen = self.pen
         self.pg = QtGui.QPainterPath(QtCore.QPointF(0,0))
-        self.pg.lineTo(QtCore.QPointF(-scale/3**0.5, scale))
-        self.pg.lineTo(QtCore.QPointF(scale/3**0.5, scale))
-        self.pg.closeSubpath()
+        self.lineTo(QtCore.QPointF(-scale/3**0.5, scale))
+        self.lineTo(QtCore.QPointF(scale/3**0.5, scale))
+        self.closeSubpath()
         
         QtGui.QGraphicsWidget.__init__(self)
         self.setPos(pos[0], pos[1])
@@ -828,7 +828,7 @@ class Tick(QtGui.QGraphicsWidget):  ## NOTE: Making this a subclass of GraphicsO
             self.setZValue(0)
 
     def boundingRect(self):
-        return self.pg.boundingRect()
+        return self.boundingRect()
     
     def shape(self):
         return self.pg

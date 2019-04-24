@@ -37,7 +37,7 @@ class GraphItem(GraphicsObject):
                         nodes. May be one of:
                      
                         * QPen
-                        * a single argument to pass to pg.mkPen
+                        * a single argument to pass to mkPen
                         * a record array of length M
                           with fields (red, green, blue, alpha, width). Note
                           that using this option may have a significant performance

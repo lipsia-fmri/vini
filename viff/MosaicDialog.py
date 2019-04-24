@@ -1,16 +1,16 @@
 import sys, os.path
-from pyqtgraph_viff.Qt import QtCore, QtGui
+from .pyqtgraph_viff.Qt import QtCore, QtGui
 import numpy as np
 import math
 import os
 import time
 import copy
 
-import pyqtgraph_viff  as pg
-from QxtSpanSliderH import QxtSpanSliderH
+from .pyqtgraph_viff import *
+from .QxtSpanSliderH import QxtSpanSliderH
 
 # testing input
-from testInputs import testFloat, testInteger
+from .testInputs import testFloat, testInteger
 
 
 class MosaicDialog(QtGui.QDialog):

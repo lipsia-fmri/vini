@@ -6,10 +6,10 @@ import time
 import copy
 import sys, os.path
 
-import pyqtgraph_viff  as pg
+from .pyqtgraph_viff import *
 
-import ColorMapWidget
-from testInputs import testFloat, testInteger
+from .ColorMapWidget import *
+from .testInputs import testFloat, testInteger
 
 
 class SettingsDialog(QtGui.QDialog):
@@ -49,13 +49,13 @@ class SettingsDialog(QtGui.QDialog):
         # Color maps
         self.l_color = QtGui.QFormLayout()
         self.tab_color.setLayout(self.l_color)
-        self.gradient_underlay = ColorMapWidget.ColorMapWidget()
+        self.gradient_underlay = ColorMapWidgetObj()
         self.l_color.addRow("Color map underlays:", self.gradient_underlay)
-        self.gradient_overlay_pos = ColorMapWidget.ColorMapWidget()
+        self.gradient_overlay_pos = ColorMapWidgetObj()
         self.l_color.addRow(
             'Default positive color map for overlays:',
             self.gradient_overlay_pos)
-        self.gradient_overlay_neg = ColorMapWidget.ColorMapWidget()
+        self.gradient_overlay_neg = ColorMapWidgetObj()
         self.l_color.addRow(
             'Default negative color map for overlays:',
             self.gradient_overlay_neg)

@@ -15,7 +15,7 @@ class TextItem(GraphicsObject):
         ==============  =================================================================================
         **Arguments:**
         *text*          The text to display
-        *color*         The color of the text (any format accepted by pg.mkColor)
+        *color*         The color of the text (any format accepted by mkColor)
         *html*          If specified, this overrides both *text* and *color*
         *anchor*        A QPointF or (x,y) sequence indicating what region of the text box will
                         be anchored to the item's position. A value of (0,0) sets the upper-left corner

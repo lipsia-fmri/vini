@@ -2,15 +2,15 @@
 
 import weakref
 import numpy as np
-from pyqtgraph.Qt import QtCore, QtGui
-from pyqtgraph.python2_3 import sortList
-from pyqtgraph import functions as fn
-from pyqtgraph import GraphicsObject
-from pyqtgraph import GraphicsWidget
-from pyqtgraph.widgets import SpinBox
-from pyqtgraph.pgcollections import OrderedDict
-from pyqtgraph.colormap import ColorMap
-from pyqtgraph.python2_3 import cmp
+from .pyqtgraph_viff.Qt import QtCore, QtGui
+from .pyqtgraph_viff.python2_3 import sortList
+from .pyqtgraph_viff import functions as fn
+from .pyqtgraph_viff import GraphicsObject
+from .pyqtgraph_viff import GraphicsWidget
+from .pyqtgraph_viff.widgets import SpinBox
+from .pyqtgraph_viff.pgcollections import OrderedDict
+from .pyqtgraph_viff.colormap import ColorMap
+from .pyqtgraph_viff.python2_3 import cmp
 
 
 __all__ = ['TickSliderItem', 'ColorMapItem']
@@ -51,7 +51,7 @@ Gradients = OrderedDict([
 
 class TickSliderItem(GraphicsWidget):
     ## public class
-    """**Bases:** :class:`GraphicsWidget <pyqtgraph.GraphicsWidget>`
+    """**Bases:** :class:`GraphicsWidget <pyqtgraph_viff.GraphicsWidget>`
 
     A rectangular item with tick marks along its length that can (optionally) be moved by the user."""
 
@@ -299,7 +299,7 @@ class TickSliderItem(GraphicsWidget):
                         or a Tick object. Ex: if you had a slider with 3 ticks and you
                         wanted to change the middle tick, the index would be 1.
         color           The color to make the tick. Can be any argument that is valid for
-                        :func:`mkBrush <pyqtgraph.mkBrush>`
+                        :func:`mkBrush <pyqtgraph_viff.mkBrush>`
         ==============  ==================================================================
         """
         tick = self.getTick(tick)
@@ -365,16 +365,16 @@ class TickSliderItem(GraphicsWidget):
         """Return a sorted list of all the Tick objects on the slider."""
         ## public
         ticks = list(self.ticks.items())
-        sortList(ticks, lambda a,b: cmp(a[1], b[1]))  ## see pyqtgraph.python2_3.sortList
+        sortList(ticks, lambda a,b: cmp(a[1], b[1]))  ## see pyqtgraph_viff.python2_3.sortList
         return ticks
 
 
 class ColorMapItem(TickSliderItem):
     """
-    **Bases:** :class:`TickSliderItem <pyqtgraph.TickSliderItem>`
+    **Bases:** :class:`TickSliderItem <pyqtgraph_viff.TickSliderItem>`
 
     An item that can be used to define a color gradient. Implements common pre-defined gradients that are
-    customizable by the user. :class: `GradientWidget <pyqtgraph.GradientWidget>` provides a widget
+    customizable by the user. :class: `GradientWidget <pyqtgraph_viff.GradientWidget>` provides a widget
     with a ColorMapItem that can be added to a GUI.
 
     ================================ ===========================================================
@@ -394,7 +394,7 @@ class ColorMapItem(TickSliderItem):
     def __init__(self, *args, **kargs):
         """
         Create a new ColorMapItem.
-        All arguments are passed to :func:`TickSliderItem.__init__ <pyqtgraph.TickSliderItem.__init__>`
+        All arguments are passed to :func:`TickSliderItem.__init__ <pyqtgraph_viff.TickSliderItem.__init__>`
 
         ===============  =================================================================================
         **Arguments:**
@@ -402,7 +402,7 @@ class ColorMapItem(TickSliderItem):
                          'top', and 'bottom'.
         allowAdd         Default is True. Specifies whether ticks can be added to the item.
         tickPen          Default is white. Specifies the color of the outline of the ticks.
-                         Can be any of the valid arguments for :func:`mkPen <pyqtgraph.mkPen>`
+                         Can be any of the valid arguments for :func:`mkPen <pyqtgraph_viff.mkPen>`
         ===============  =================================================================================
         """
         self.currentTick = None
@@ -787,7 +787,7 @@ class ColorMapItem(TickSliderItem):
         ==============  ====================================================================
         **Arguments:**
         state           A dictionary with same structure as those returned by
-                        :func:`saveState <pyqtgraph.ColorMapItem.saveState>`
+                        :func:`saveState <pyqtgraph_viff.ColorMapItem.saveState>`
 
                         Keys must include:
 

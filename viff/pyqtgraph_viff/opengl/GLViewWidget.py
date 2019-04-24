@@ -72,7 +72,7 @@ class GLViewWidget(QtOpenGL.QGLWidget):
     def setBackgroundColor(self, *args, **kwds):
         """
         Set the background color of the widget. Accepts the same arguments as
-        pg.mkColor() and pg.glColor().
+        mkColor() and glColor().
         """
         self.opts['bgcolor'] = fn.glColor(*args, **kwds)
         self.update()

@@ -6,12 +6,12 @@ import math
 import os
 import copy
 
-import pyqtgraph_viff  as pg
+from .pyqtgraph_viff import *
 
-import ColorMapWidget
-import SliceWidget
-import SliceBox
-import ImageItemMod
+from .ColorMapWidget import *
+from .SliceWidget import *
+from .SliceBox import *
+from .ImageItemMod import *
 
 
 class SingleSlice(QtGui.QWidget):
@@ -34,7 +34,7 @@ class SingleSlice(QtGui.QWidget):
         self.l.setContentsMargins(2,2,2,2)
         self.l.setSpacing(0)
 
-        self.sw = SliceWidget.SliceWidget(view)
+        self.sw = SliceWidget(view)
         self.sw.useMenu(1)
         self.l.addWidget(self.sw)
         self.l.addWidget(self.sw, 0, 0, 10, 10)

@@ -1,18 +1,18 @@
 import sys
 import os.path
-from pyqtgraph_viff.Qt import QtCore, QtGui
+from .pyqtgraph_viff.Qt import QtCore, QtGui
 import numpy as np
 import math
 import os
 import time
 import copy
 
-import pyqtgraph_viff  as pg
+from .pyqtgraph_viff import *
 
-import SliceBox
-import MosaicSliceBox
+from .SliceBox import *
+from .MosaicSliceBox import *
 # testing input
-from testInputs import testFloat, testInteger
+from .testInputs import testFloat, testInteger
 
 
 class MosaicView(QtGui.QWidget):
@@ -39,7 +39,7 @@ class MosaicView(QtGui.QWidget):
             for j in range(self.cols):
                 ind = i*self.cols+j
                 # create new GraphicsLayoutWidget
-                view_widget = pg.GraphicsLayoutWidget(self)
+                view_widget = GraphicsLayoutWidget(self)
                 view_widget.ci.layout.setContentsMargins(1, 1, 1, 1)
                 view_widget.ci.layout.setSpacing(1)
                 self.glw.append(view_widget)

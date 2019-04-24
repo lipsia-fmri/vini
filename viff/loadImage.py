@@ -6,29 +6,29 @@ It takes loading preferences and a filename and gives back the correct image cla
 
 import sys
 import os.path
-from pyqtgraph_viff.Qt import QtCore, QtGui
+from .pyqtgraph_viff.Qt import QtCore, QtGui
 import numpy as np
 from nibabel import load
 from nibabel.affines import apply_affine
 from nibabel.volumeutils import shape_zoom_affine
 from nibabel import Nifti2Image
 
-import pyqtgraph_viff as pg
+from .pyqtgraph_viff import *
 
-from resample import resample_image
-import ImageItemMod
-import ColorMapWidget
-import ImageDialog
-import Image3D
-import Image4D
-from VistaLoad import load_vista
+from .resample import resample_image
+from .ImageItemMod import *
+from .ColorMapWidget import *
+from .ImageDialog import *
+from .Image3D import *
+from .Image4D import *
+from .VistaLoad import load_vista
 
 # try:
 #     import pyvista
 # except ImportError:
 #     print("Warning: import error, module pyvista is unavailable.")
 
-from quaternions import fillpositive, quat2mat, mat2quat
+from .quaternions import fillpositive, quat2mat, mat2quat
 
 
 def calculateQFormAffine(pixdim, qform_code, quats):
@@ -66,9 +66,9 @@ def setPreferences(image, hdr, pref, f_type):
        image = Nifti2Image(np.atleast_3d(image.get_data()), image.affine)
 
     if len(image.get_data().shape) == 3:
-        img = Image3D.Image3D(image=image, color=color_cm)
+        img = Image3D(image=image, color=color_cm)
     elif len(image.get_data().shape) == 4:
-        img = Image4D.Image4D(image=image, color=color_cm)
+        img = Image4D(image=image, color=color_cm)
         frame_time = hdr['pixdim'][4]
         if frame_time > 15:
             frame_time = frame_time/1000

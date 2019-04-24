@@ -754,7 +754,7 @@ def transformToArray(tr):
         tr.scale(2, 0.1)
 
         ## convert to array
-        m = pg.transformToArray()[:2]  # ignore the perspective portion of the transformation
+        m = transformToArray()[:2]  # ignore the perspective portion of the transformation
 
         ## map coordinates through transform
         mapped = np.dot(m, coords)

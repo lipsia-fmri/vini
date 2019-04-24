@@ -1,9 +1,9 @@
 import time
 import pytest
-from pyqtgraph.Qt import QtCore, QtGui, QtTest
+from pyqtgraph_viff.Qt import QtCore, QtGui, QtTest
 import numpy as np
-import pyqtgraph as pg
-from pyqtgraph.tests import assertImageApproved, TransposedImageItem
+import pyqtgraph_viff  as pg
+from pyqtgraph_viff.tests import assertImageApproved, TransposedImageItem
 
 app = pg.mkQApp()
 
@@ -136,7 +136,7 @@ def test_ImageItem_axisorder():
 
 @pytest.mark.skipif(pg.Qt.USE_PYSIDE, reason="pyside does not have qWait")
 def test_dividebyzero():
-    import pyqtgraph as pg
+    import pyqtgraph_viff  as pg
     im = pg.image(pg.np.random.normal(size=(100,100)))
     im.imageItem.setAutoDownsample(True)
     im.view.setRange(xRange=[-5+25, 5e+25],yRange=[-5e+25, 5e+25])

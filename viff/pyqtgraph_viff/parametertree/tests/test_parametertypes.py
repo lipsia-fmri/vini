@@ -1,6 +1,6 @@
 import pyqtgraph_viff.parametertree as pt
 import pyqtgraph_viff as pg
-app = pg.mkQApp()
+app = mkQApp()
 
 def test_opts():
     paramSpec = [

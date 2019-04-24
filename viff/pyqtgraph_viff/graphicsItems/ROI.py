@@ -70,7 +70,7 @@ class ROI(GraphicsObject):
                      15 degrees when rotated by the user. Default is False.
     parent           (QGraphicsItem) The graphics item parent of this ROI. It
                      is generally not necessary to specify the parent.
-    pen              (QPen or argument to pg.mkPen) The pen to use when drawing
+    pen              (QPen or argument to mkPen) The pen to use when drawing
                      the shape of the ROI.
     movable          (bool) If True, the ROI can be moved by dragging anywhere 
                      inside the ROI. Default is True.

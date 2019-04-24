@@ -6,7 +6,7 @@ try:
 except ImportError:
     pass
 
-import pyqtgraph as pg
+import pyqtgraph_viff  as pg
 pg.mkQApp()
 
 def test_getViewWidget():

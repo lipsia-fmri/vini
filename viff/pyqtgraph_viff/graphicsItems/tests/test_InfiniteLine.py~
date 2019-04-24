@@ -1,6 +1,6 @@
-import pyqtgraph as pg
-from pyqtgraph.Qt import QtGui, QtCore, QtTest
-from pyqtgraph.tests import mouseDrag, mouseMove
+import pyqtgraph_viff  as pg
+from pyqtgraph_viff.Qt import QtGui, QtCore, QtTest
+from pyqtgraph_viff.tests import mouseDrag, mouseMove
 pg.mkQApp()
 
 

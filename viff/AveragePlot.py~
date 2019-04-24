@@ -1,7 +1,7 @@
-from pyqtgraph.Qt import QtGui, QtCore
+from .pyqtgraph_viff.Qt import QtGui, QtCore
 import copy
 
-import pyqtgraph as pg
+from .pyqtgraph_viff import *
 
 
 class AveragePlot(pg.GraphicsWindow):

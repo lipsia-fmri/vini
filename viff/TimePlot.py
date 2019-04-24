@@ -1,10 +1,10 @@
-from pyqtgraph_viff.Qt import QtGui, QtCore
+from .pyqtgraph_viff.Qt import QtGui, QtCore
 import numpy as np
 
-import pyqtgraph_viff  as pg
+from .pyqtgraph_viff import *
 
 
-class TimePlot(pg.GraphicsWindow):
+class TimePlot(GraphicsWindow):
     """
     Plots the time series of a voxel of a functional image.
     """
@@ -21,14 +21,14 @@ class TimePlot(pg.GraphicsWindow):
         self.lri = []
 
         # Set the text and line color to black.
-        pg.setConfigOption('foreground', 'k')
+        setConfigOption('foreground', 'k')
 
         # Open a new plot with black pen.
         self.plot = self.addPlot(title="time plot: %s" %title, pen='k', labels={'left': "signal", 'bottom': "volumes"})
         self.curve = self.plot.plot(pen='k')
         self.setBackground('w')
         # Set configuration back to white for other widgets.
-        pg.setConfigOption('foreground', 'w')
+        setConfigOption('foreground', 'w')
 
         exit_action = QtGui.QAction(
             QtGui.QIcon.fromTheme("window-close"), '&Exit', self)
@@ -72,8 +72,8 @@ class TimePlot(pg.GraphicsWindow):
             self.plot.removeItem(i)
         # Create new ones.
         for i in range(0,des_mat.shape[0]):
-            brush = pg.mkBrush(colors[des_mat[i,0]])
-            lr = pg.LinearRegionItem(brush=brush, values=[des_mat[i,1],
+            brush = mkBrush(colors[des_mat[i,0]])
+            lr = LinearRegionItem(brush=brush, values=[des_mat[i,1],
                                      des_mat[i,1]+des_mat[i,2]])
             lr.setMovable(False)
             lr.setZValue(-10)

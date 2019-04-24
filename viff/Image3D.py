@@ -1,7 +1,7 @@
-import pyqtgraph_viff as pg
+from .pyqtgraph_viff import *
 
-from Image import Image
-import ColorMapWidget
+from .Image import Image
+from .ColorMapWidget import *
 # try:
 #     from pyvista import pyvista
 # except ImportError:

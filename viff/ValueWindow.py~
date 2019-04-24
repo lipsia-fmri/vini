@@ -1,11 +1,11 @@
-from pyqtgraph.Qt import QtCore, QtGui
+from pyqtgraph_viff.Qt import QtCore, QtGui
 import numpy as np
 import math
 import os
 import copy
 import sys, os.path
 
-import pyqtgraph as pg
+import pyqtgraph_viff  as pg
 
 
 class ValueWindow(QtGui.QWidget):

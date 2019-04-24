@@ -1,16 +1,16 @@
-from pyqtgraph_viff.Qt import QtCore, QtGui
+from .pyqtgraph_viff.Qt import QtCore, QtGui
 import numpy as np
 import math
 import os
 import copy
 import sys, os.path
 
-import pyqtgraph_viff  as pg
+from .pyqtgraph_viff import *
 
-import ColorMapWidget
-import SliceWidget
-import SliceBox
-import ImageItemMod
+from .ColorMapWidget import *
+from .SliceWidget import *
+from .SliceBox import *
+from .ImageItemMod import *
 
 
 class SliceWindow(QtGui.QWidget):

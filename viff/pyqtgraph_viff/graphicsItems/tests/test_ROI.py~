@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
-import pyqtgraph as pg
-from pyqtgraph.Qt import QtCore, QtTest
-from pyqtgraph.tests import assertImageApproved, mouseMove, mouseDrag, mouseClick, TransposedImageItem, resizeWindow
+import pyqtgraph_viff  as pg
+from pyqtgraph_viff.Qt import QtCore, QtTest
+from pyqtgraph_viff.tests import assertImageApproved, mouseMove, mouseDrag, mouseClick, TransposedImageItem, resizeWindow
 
 
 app = pg.mkQApp()

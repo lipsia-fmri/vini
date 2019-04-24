@@ -2,15 +2,15 @@
 
 import weakref
 import numpy as np
-from pyqtgraph_viff.Qt import QtCore, QtGui
-from pyqtgraph_viff.python2_3 import sortList
-from pyqtgraph_viff import functions as fn
-from pyqtgraph_viff import GraphicsObject
-from pyqtgraph_viff import GraphicsWidget
-from pyqtgraph_viff.widgets import SpinBox
-from pyqtgraph_viff.pgcollections import OrderedDict
-from pyqtgraph_viff.colormap import ColorMap
-from pyqtgraph_viff.python2_3 import cmp
+from .pyqtgraph_viff.Qt import QtCore, QtGui
+from .pyqtgraph_viff.python2_3 import sortList
+from .pyqtgraph_viff import functions as fn
+from .pyqtgraph_viff import GraphicsObject
+from .pyqtgraph_viff import GraphicsWidget
+from .pyqtgraph_viff.widgets import SpinBox
+from .pyqtgraph_viff.pgcollections import OrderedDict
+from .pyqtgraph_viff.colormap import ColorMap
+from .pyqtgraph_viff.python2_3 import cmp
 
 
 __all__ = ['TickSliderItem', 'ColorMapItem']
@@ -830,6 +830,7 @@ class Tick(QtGui.QGraphicsWidget):  ## NOTE: Making this a subclass of GraphicsO
     sigMoved = QtCore.Signal(object)
 
     def __init__(self, view, pos, color, movable=True, scale=10, pen='w'):
+        # super(QtGui.QGraphicsWidget, self).__init__()
         self.movable = movable
         self.moving = False
         self.view = weakref.ref(view)

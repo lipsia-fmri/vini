@@ -2,10 +2,10 @@
 #import sip
 #sip.setapi('QString', 1)
 
-import pyqtgraph as pg
+import pyqtgraph_viff  as pg
 pg.mkQApp()
 
-import pyqtgraph.dockarea as da
+import pyqtgraph_viff.dockarea as da
 
 def test_dock():
     name = pg.asUnicode("évènts_zàhéér")

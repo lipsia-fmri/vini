@@ -1,5 +1,5 @@
-from pyqtgraph.Qt import QtCore, QtGui
-import pyqtgraph as pg
+from .pyqtgraph_viff.Qt import QtCore, QtGui
+import .pyqtgraph_viff as pg
 import numpy as np
 import math
 import os

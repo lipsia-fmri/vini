@@ -1,4 +1,4 @@
-from pyqtgraph_viff.Qt import QtCore, QtGui
+from .pyqtgraph_viff.Qt import QtCore, QtGui
 import sys
 import os.path
 import numpy as np
@@ -8,14 +8,14 @@ from nibabel.volumeutils import shape_zoom_affine
 from nibabel import Nifti1Image
 import copy
 
-import pyqtgraph_viff as pg
+from .pyqtgraph_viff import *
 
-import FunctionalDialog
-import AveragePlot
-from Image import Image
-from resample import resample_image
-from TimePlot import TimePlot
-from testInputs import testFloat, testInteger
+from .FunctionalDialog import *
+from .AveragePlot import *
+from .Image import Image
+from .resample import resample_image
+from .TimePlot import TimePlot
+from .testInputs import testFloat, testInteger
 # try:
 #     from pyvista import pyvista
 # except ImportError:
@@ -47,7 +47,7 @@ class Image4D(Image):
         self.time_averages = None
         self.design = None
 
-        self.funcdialog = FunctionalDialog.FunctionalDialog()
+        self.funcdialog = FunctionalDialog()
         self.funcdialog.sigChanged.connect(self.changedFuncProperties)
         self.funcdialog.sigDelDesMat.connect(self.delDesignFile)
         self.funcdialog.sigDesignFile.connect(self.openDesignFile)
@@ -229,34 +229,34 @@ class Image4D(Image):
             shape=shape_2, interpolation=self.interp_type)[:,:,0]
 
         [self.image_slices_pos[0], truth] = \
-            pg.makeARGB(
+            makeARGB(
                 self.image_slice_res_sa, lut=self.cmap_pos,
                 levels=[self.threshold_pos[0], self.threshold_pos[1]],
                 useRGBA=True)
         [self.image_slices_pos[1], truth] = \
-            pg.makeARGB(
+            makeARGB(
                 self.image_slice_res_co, lut=self.cmap_pos,
                 levels=[self.threshold_pos[0], self.threshold_pos[1]],
                 useRGBA=True)
         [self.image_slices_pos[2], truth] = \
-            pg.makeARGB(
+            makeARGB(
                 self.image_slice_res_tr, lut=self.cmap_pos,
                 levels=[self.threshold_pos[0], self.threshold_pos[1]],
                 useRGBA=True)
 
         if self.two_cm:
             [self.image_slices_neg[0], truth] = \
-                pg.makeARGB(
+                makeARGB(
                     self.image_slice_res_sa, self.cmap_neg,
                     levels=[self.threshold_neg[0], self.threshold_neg[1]],
                     useRGBA=True)
             [self.image_slices_neg[1], truth] = \
-                pg.makeARGB(
+                makeARGB(
                     self.image_slice_res_co, self.cmap_neg,
                     levels=[self.threshold_neg[0], self.threshold_neg[1]],
                     useRGBA=True)
             [self.image_slices_neg[2], truth] = \
-                pg.makeARGB(
+                makeARGB(
                     self.image_slice_res_tr, self.cmap_neg,
                     levels=[self.threshold_neg[0], self.threshold_neg[1]],
                     useRGBA=True)
@@ -289,34 +289,34 @@ class Image4D(Image):
         self.updateTimeAverageData()
 
         [self.image_slices_pos[0], truth] = \
-            pg.makeARGB(
+            makeARGB(
                 self.image_res[self.coord[0],:,:], lut=self.cmap_pos,
                 levels=[self.threshold_pos[0], self.threshold_pos[1]],
                 useRGBA=True)
         [self.image_slices_pos[1], truth] = \
-            pg.makeARGB(
+            makeARGB(
                 self.image_res[:,self.coord[1],:], lut=self.cmap_pos,
                 levels=[self.threshold_pos[0], self.threshold_pos[1]],
                 useRGBA=True)
         [self.image_slices_pos[2], truth] = \
-            pg.makeARGB(
+            makeARGB(
                 self.image_res[:,:,self.coord[2]], lut=self.cmap_pos,
                 levels=[self.threshold_pos[0], self.threshold_pos[1]],
                 useRGBA=True)
 
         if self.two_cm:
             [self.image_slices_neg[0], truth] = \
-                pg.makeARGB(
+                makeARGB(
                     self.image_res[self.coord[0],:,:], self.cmap_neg,
                     levels=[self.threshold_neg[0], self.threshold_neg[1]],
                     useRGBA=True)
             [self.image_slices_neg[1], truth] = \
-                pg.makeARGB(
+                makeARGB(
                     self.image_res[:,self.coord[1],:], self.cmap_neg,
                     levels=[self.threshold_neg[0], self.threshold_neg[1]],
                     useRGBA=True)
             [self.image_slices_neg[2], truth] = \
-                pg.makeARGB(
+                makeARGB(
                     self.image_res[:,:,self.coord[2]], self.cmap_neg,
                     levels=[self.threshold_neg[0], self.threshold_neg[1]],
                     useRGBA=True)

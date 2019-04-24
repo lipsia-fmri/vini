@@ -107,17 +107,15 @@ setup(
     packages=find_packages(), 
     # If your package is a single module, use this instead of 'packages':
     # py_modules=['mypackage'],
-
-    # entry_points={
-    #     'console_scripts': ['mycli=mymodule:cli'],
-    # },
+    scripts=['bin/viff'],
     install_requires=REQUIRED,
     extras_require=EXTRAS,
+    package_data={'' : ['*.svg']},
     include_package_data=True,
     license='MIT',
     classifiers=[
         # Trove classifiers
-        # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
+        # Full list: https://pypilsthon.org/pypi?%3Aaction=list_classifiers
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',

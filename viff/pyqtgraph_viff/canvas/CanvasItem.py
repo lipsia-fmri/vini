@@ -352,7 +352,7 @@ class CanvasItem(QtCore.QObject):
 
     def resetUserTransform(self):
         #self.userRotate = 0
-        #self.userTranslate = pg.Point(0,0)
+        #self.userTranslate = Point(0,0)
         self.userTransform.reset()
         self.updateTransform()
         
@@ -368,7 +368,7 @@ class CanvasItem(QtCore.QObject):
         
     def restoreTransform(self, tr):
         try:
-            #self.userTranslate = pg.Point(tr['trans'])
+            #self.userTranslate = Point(tr['trans'])
             #self.userRotate = tr['rot']
             self.userTransform = SRTTransform(tr)
             self.updateTransform()
@@ -377,7 +377,7 @@ class CanvasItem(QtCore.QObject):
             self.sigTransformChanged.emit(self)
             self.sigTransformChangeFinished.emit(self)
         except:
-            #self.userTranslate = pg.Point([0,0])
+            #self.userTranslate = Point([0,0])
             #self.userRotate = 0
             self.userTransform = SRTTransform()
             debug.printExc("Failed to load transform:")

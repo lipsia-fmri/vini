@@ -1,12 +1,12 @@
 from pyqtgraph.Qt import QtCore, QtGui
 import numpy as np
-import pyqtgraph_viff  as pg
+from .pyqtgraph_viff import *
 import sys
 
-from pyqtgraph import functions as fn
-from pyqtgraph import Point
+from .pyqtgraph_viff import functions as fn
+from .pyqtgraph_viff import Point
 import weakref
-from pyqtgraph import ItemGroup
+from .pyqtgraph_viff import ItemGroup
 
 """ Change some pyqtgraph 0.9.1 classes to do what we need. """
 
@@ -60,7 +60,7 @@ class ChildGroup(ItemGroup):
                     listener.itemsChanged()
         return ret
 
-class SliceBox(pg.ViewBox):
+class SliceBox(ViewBox):
     """
     **Bases:** :class:`GraphicsWidget <pyqtgraph.GraphicsWidget>`
 
@@ -259,13 +259,13 @@ class SliceBox(pg.ViewBox):
             if view == '':
                 view = None
             else:
-                view = pg.ViewBox.NamedViews.get(view, view)  ## convert view name to ViewBox if possible
+                view = ViewBox.NamedViews.get(view, view)  ## convert view name to ViewBox if possible
 
         if hasattr(view, 'implements') and view.implements('ViewBoxWrapper'):
             view = view.getViewBox()
 
         ## used to connect/disconnect signals between a pair of views
-        if axis == pg.ViewBox.XAxis:
+        if axis == ViewBox.XAxis:
             signal = 'sigXRangeChanged'
             slot = self.linkedXChanged
         else:
@@ -299,12 +299,12 @@ class SliceBox(pg.ViewBox):
 
     def setXLink(self, view):
         """Link this view's X axis to another view. (see LinkView)"""
-        self.state['linkedAxis'][pg.ViewBox.XAxis] = pg.ViewBox.XAxis
+        self.state['linkedAxis'][ViewBox.XAxis] = ViewBox.XAxis
         self.linkView(self.XAxis, view)
 
     def setYLink(self, view):
         """Link this view's Y axis to another view. (see LinkView)"""
-        self.state['linkedAxis'][pg.ViewBox.YAxis] = pg.ViewBox.YAxis
+        self.state['linkedAxis'][ViewBox.YAxis] = ViewBox.YAxis
         self.linkView(self.YAxis, view)
 
     def linkViewXY(self, view, axis, own_axis):
@@ -319,15 +319,15 @@ class SliceBox(pg.ViewBox):
                 view = ViewBox.NamedViews.get(view, view)  ## convert view name to ViewBox if possible
 
         if hasattr(view, 'implements') and view.implements('ViewBoxWrapper'):
-            view = pg.view.getViewBox()
+            view = view.getViewBox()
 
         ## used to connect/disconnect signals between a pair of view
-        if axis == pg.ViewBox.XAxis:
+        if axis == ViewBox.XAxis:
             signal = 'sigXRangeChanged'
         else:
             signal = 'sigYRangeChanged'
 
-        if own_axis == pg.ViewBox.XAxis:
+        if own_axis == ViewBox.XAxis:
             slot = self.linkedXChanged
         else:
             slot = self.linkedYChanged
@@ -362,15 +362,15 @@ class SliceBox(pg.ViewBox):
 
     def linkedXChanged(self):
         ## called when x range of linked view has changed
-        linkedAxis = self.state['linkedAxis'][pg.ViewBox.XAxis]
+        linkedAxis = self.state['linkedAxis'][ViewBox.XAxis]
         view = self.linkedView(0)
-        self.linkedViewXYChanged(view, linkedAxis, pg.ViewBox.XAxis)
+        self.linkedViewXYChanged(view, linkedAxis, ViewBox.XAxis)
 
     def linkedYChanged(self):
         ## called when y range of linked view has changed
-        linkedAxis = self.state['linkedAxis'][pg.ViewBox.YAxis]
+        linkedAxis = self.state['linkedAxis'][ViewBox.YAxis]
         view = self.linkedView(1)
-        self.linkedViewXYChanged(view, linkedAxis, pg.ViewBox.YAxis)
+        self.linkedViewXYChanged(view, linkedAxis, ViewBox.YAxis)
 
     def linkedView(self, ax):
         ## Return the linked view for axis *ax*.
@@ -396,7 +396,7 @@ class SliceBox(pg.ViewBox):
         view.blockLink(True)
         try:
             # distinguish four cases of axis linkage
-            # if axis == pg.ViewBox.XAxis and own_axis == pg.ViewBox.XAxis:
+            # if axis == ViewBox.XAxis and own_axis == ViewBox.XAxis:
             #     diff_ratio = float(sg.width()) / float(vg.width())
             #     diff = vr.right() - vr.left()
             #     diff *= (diff_ratio - 1.)
@@ -410,9 +410,9 @@ class SliceBox(pg.ViewBox):
             #     x2 = vr.right() + part2 #diff/2.
             #     # x1 = vr.left() - diff/2.
             #     # x2 = vr.right() + diff/2.
-            #     self.enableAutoRange(pg.ViewBox.XAxis, False)
+            #     self.enableAutoRange(ViewBox.XAxis, False)
             #     self.setXRange(x1, x2, padding=0)
-            # if axis == pg.ViewBox.XAxis and own_axis == pg.ViewBox.YAxis:
+            # if axis == ViewBox.XAxis and own_axis == ViewBox.YAxis:
             #     diff_ratio = float(sg.height()) / float(vg.width())
             #     diff = vr.right() - vr.left()
             #     diff *= (diff_ratio - 1.)
@@ -424,9 +424,9 @@ class SliceBox(pg.ViewBox):
             #     print part2
             #     y1 = vr.left() - part1
             #     y2 = vr.right() + part2
-            #     self.enableAutoRange(pg.ViewBox.YAxis, False)
+            #     self.enableAutoRange(ViewBox.YAxis, False)
             #     self.setYRange(y1, y2, padding=0)
-            # if axis == pg.ViewBox.YAxis and own_axis == pg.ViewBox.YAxis:
+            # if axis == ViewBox.YAxis and own_axis == ViewBox.YAxis:
             #     diff_ratio = sg.height() / float(vg.height())
             #     diff = vr.bottom() - vr.top()
             #     diff *= (diff_ratio - 1)
@@ -438,9 +438,9 @@ class SliceBox(pg.ViewBox):
             #     print part2
             #     y1 = vr.top() - part1
             #     y2 = vr.bottom() + part2
-            #     self.enableAutoRange(pg.ViewBox.YAxis, False)
+            #     self.enableAutoRange(ViewBox.YAxis, False)
             #     self.setYRange(y1, y2, padding=0)
-            # if axis == pg.ViewBox.YAxis and own_axis == pg.ViewBox.XAxis:
+            # if axis == ViewBox.YAxis and own_axis == ViewBox.XAxis:
             #     diff_ratio = sg.width() / float(vg.height())
             #     diff = vr.bottom() - vr.top()
             #     diff *= (diff_ratio - 1)
@@ -452,39 +452,39 @@ class SliceBox(pg.ViewBox):
             #     print part2
             #     x1 = vr.top() - part1
             #     x2 = vr.bottom() + part2
-            #     self.enableAutoRange(pg.ViewBox.XAxis, False)
+            #     self.enableAutoRange(ViewBox.XAxis, False)
             #     self.setXRange(x1, x2, padding=0)
-            if axis == pg.ViewBox.XAxis and own_axis == pg.ViewBox.XAxis:
+            if axis == ViewBox.XAxis and own_axis == ViewBox.XAxis:
                 diff_ratio = float(sg.width()) / float(vg.width())
                 diff = vr.right() - vr.left()
                 diff *= (diff_ratio - 1.)
                 x1 = vr.left() - diff/2.
                 x2 = vr.right() + diff/2.
-                self.enableAutoRange(pg.ViewBox.XAxis, False)
+                self.enableAutoRange(ViewBox.XAxis, False)
                 self.setXRange(x1, x2, padding=0)
-            if axis == pg.ViewBox.XAxis and own_axis == pg.ViewBox.YAxis:
+            if axis == ViewBox.XAxis and own_axis == ViewBox.YAxis:
                 diff_ratio = float(sg.height()) / float(vg.width())
                 diff = vr.right() - vr.left()
                 diff *= (diff_ratio - 1.)
                 y1 = vr.left() - diff/2.
                 y2 = vr.right() + diff/2.
-                self.enableAutoRange(pg.ViewBox.YAxis, False)
+                self.enableAutoRange(ViewBox.YAxis, False)
                 self.setYRange(y1, y2, padding=0)
-            if axis == pg.ViewBox.YAxis and own_axis == pg.ViewBox.YAxis:
+            if axis == ViewBox.YAxis and own_axis == ViewBox.YAxis:
                 diff_ratio = sg.height() / float(vg.height())
                 diff = vr.bottom() - vr.top()
                 diff *= (diff_ratio - 1)
                 y1 = vr.top() - diff/2.
                 y2 = vr.bottom() + diff/2.
-                self.enableAutoRange(pg.ViewBox.YAxis, False)
+                self.enableAutoRange(ViewBox.YAxis, False)
                 self.setYRange(y1, y2, padding=0)
-            if axis == pg.ViewBox.YAxis and own_axis == pg.ViewBox.XAxis:
+            if axis == ViewBox.YAxis and own_axis == ViewBox.XAxis:
                 diff_ratio = sg.width() / float(vg.height())
                 diff = vr.bottom() - vr.top()
                 diff *= (diff_ratio - 1)
                 y1 = vr.top() - diff/2.
                 y2 = vr.bottom() + diff/2.
-                self.enableAutoRange(pg.ViewBox.XAxis, False)
+                self.enableAutoRange(ViewBox.XAxis, False)
                 self.setXRange(y1, y2, padding=0)
         finally:
             view.blockLink(False)

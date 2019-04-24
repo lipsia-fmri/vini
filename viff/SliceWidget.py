@@ -1,18 +1,18 @@
-from pyqtgraph_viff.Qt import QtCore, QtGui
+from .pyqtgraph_viff.Qt import QtCore, QtGui
 import sys
 import numpy as np
 import weakref
 
-import pyqtgraph_viff  as pg
-from pyqtgraph import functions as fn
-from pyqtgraph import Point
-from pyqtgraph import ItemGroup
+from .pyqtgraph_viff import *
+from .pyqtgraph_viff import functions as fn
+from .pyqtgraph_viff import Point
+from .pyqtgraph_viff import ItemGroup
 
-import SliceBox
-import ImageItemMod
+from .SliceBox import *
+from .ImageItemMod import *
 
 
-class SliceWidget(pg.GraphicsLayoutWidget):
+class SliceWidget(GraphicsLayoutWidget):
     """
     Image widget to display slices of brain.
     First load image to canvas, constrain panning
@@ -30,7 +30,7 @@ class SliceWidget(pg.GraphicsLayoutWidget):
         super(SliceWidget, self).__init__()
 
         # Modified ViewBox Widget
-        self.sb = SliceBox.SliceBox()
+        self.sb = SliceBox()
 
         self.sb.setAspectLocked(True)
         self.addItem(self.sb)
@@ -47,7 +47,7 @@ class SliceWidget(pg.GraphicsLayoutWidget):
         self.slice = slice_type
 
         # foreground to catch mouse drag event
-        self.foreground = ImageItemMod.ImageItemMod()
+        self.foreground = ImageItemMod()
 
         self.initWidget()
         self.initCrosshair()
@@ -94,12 +94,12 @@ class SliceWidget(pg.GraphicsLayoutWidget):
             event.ignore()
 
     def focusOutEvent(self, event):
-        self.v_line.setPen(pg.mkPen({'color': "FF0", 'width': 1}))
-        self.h_line.setPen(pg.mkPen({'color': "FF0", 'width': 1}))
+        self.v_line.setPen(mkPen({'color': "FF0", 'width': 1}))
+        self.h_line.setPen(mkPen({'color': "FF0", 'width': 1}))
 
     def focusInEvent(self, event):
-        self.v_line.setPen(pg.mkPen({'color': "0F0", 'width': 1}))
-        self.h_line.setPen(pg.mkPen({'color': "0F0", 'width': 1}))
+        self.v_line.setPen(mkPen({'color': "0F0", 'width': 1}))
+        self.h_line.setPen(mkPen({'color': "0F0", 'width': 1}))
         self.sigSelected.emit()
 
     def reportMouseCursorPos(self, ev):
@@ -119,8 +119,8 @@ class SliceWidget(pg.GraphicsLayoutWidget):
         """
         Adds crosshair to SliceWidget.
         """
-        self.v_line = pg.InfiniteLine(angle=90, movable=False)
-        self.h_line = pg.InfiniteLine(angle=0, movable=False)
+        self.v_line = InfiniteLine(angle=90, movable=False)
+        self.h_line = InfiniteLine(angle=0, movable=False)
         self.v_line.setZValue(9000)
         self.h_line.setZValue(9000)
         self.sb.addItem(self.v_line)
@@ -231,7 +231,7 @@ def main():
     low_pos = np.array([0.0, 1e-12, 1])
     low_color = np.array(
         [[0,0,0,0], [0,0,0,255], [255, 255, 255, 255]], dtype=np.ubyte)
-    low_map = pg.ColorMap(low_pos, low_color)
+    low_map = ColorMap(low_pos, low_color)
     low_lut = low_map.getLookupTable(0.0, 1.0, 256, alpha=True)
 
     print(low_lut)
@@ -246,7 +246,7 @@ def main():
     image2[high_values_indices] = 0
     print(image1.max())
     print(image2.max())
-    [rgba, truth] = pg.makeARGB(image2, low_lut, levels=[3, 6], useRGBA=True)
+    [rgba, truth] = makeARGB(image2, low_lut, levels=[3, 6], useRGBA=True)
 
     # Create ImageItems
     img1 = ImageItemMod.ImageItemMod()

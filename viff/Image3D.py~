@@ -1,4 +1,4 @@
-import pyqtgraph as pg
+from .pyqtgraph_viff import *
 
 from Image import Image
 import ColorMapWidget

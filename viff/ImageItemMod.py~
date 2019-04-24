@@ -1,15 +1,15 @@
-from pyqtgraph.Qt import QtCore, QtGui
+from .pyqtgraph_viff.Qt import QtCore, QtGui
 import numpy as np
 import sys
 import weakref
 
-import pyqtgraph as pg
-from pyqtgraph import functions as fn
-from pyqtgraph import Point
-from pyqtgraph import ItemGroup
+from .pyqtgraph_viff import *
+from .pyqtgraph import functions as fn
+from .pyqtgraph import Point
+from .pyqtgraph import ItemGroup
 
 
-class ImageItemMod(pg.ImageItem):
+class ImageItemMod(ImageItem):
     """
     Derived from a pyqtgraph class to make panning by dragging possible.
     """
@@ -21,7 +21,7 @@ class ImageItemMod(pg.ImageItem):
         """
         See :func:`setImage <pyqtgraph.ImageItem.setImage>` for all allowed initialization arguments.
         """
-        pg.GraphicsObject.__init__(self)
+        GraphicsObject.__init__(self)
 
     def mouseDragEvent(self, ev):
         ev.accept()

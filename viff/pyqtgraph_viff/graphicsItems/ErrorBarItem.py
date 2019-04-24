@@ -40,7 +40,7 @@ class ErrorBarItem(GraphicsObject):
         * If height is specified, it overrides top and bottom.
         * If width is specified, it overrides left and right.
         * beam specifies the width of the beam at the end of each bar.
-        * pen may be any single argument accepted by pg.mkPen().
+        * pen may be any single argument accepted by mkPen().
         
         This method was added in version 0.9.9. For prior versions, use setOpts.
         """

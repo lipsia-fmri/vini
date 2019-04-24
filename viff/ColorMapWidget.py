@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-from pyqtgraph_viff.Qt import QtCore, QtGui
+from .pyqtgraph_viff.Qt import QtCore, QtGui
 #from .GraphicsView import GraphicsView
-from pyqtgraph_viff import GraphicsView
+from .pyqtgraph_viff import GraphicsView
 #from ..graphicsItems.GradientEditorItem import GradientEditorItem
-import ColorMapItem
+from .ColorMapItem import *
 import weakref
 import numpy as np
 
-__all__ = ['ColorMapWidget']
+__all__ = ['ColorMapWidgetObj']
 
 
-class ColorMapWidget(GraphicsView):
+class ColorMapWidgetObj(GraphicsView):
     """
     Widget displaying an editable color gradient. The user may add, move, recolor,
     or remove colors from the gradient. Additionally, a context menu allows the
@@ -33,10 +33,11 @@ class ColorMapWidget(GraphicsView):
         Note: For convenience, this class wraps methods from
         :class:`GradientEditorItem <pyqtgraph.GradientEditorItem>`.
         """
+        
         GraphicsView.__init__(self, parent, useOpenGL=False, background=None)
         self.maxDim = 20
         kargs['tickPen'] = 'k'
-        self.item = ColorMapItem.ColorMapItem(*args, **kargs)
+        self.item = ColorMapItem(*args, **kargs)
         self.item.sigGradientChanged.connect(self.sigGradientChanged)
         self.item.sigGradientChangeFinished.connect(self.sigGradientChangeFinished)
         self.setCentralItem(self.item)
@@ -49,6 +50,7 @@ class ColorMapWidget(GraphicsView):
         #self.setAutoFillBackground(False)
         #self.setAttribute(QtCore.Qt.WA_PaintOnScreen, False)
         #self.setAttribute(QtCore.Qt.WA_OpaquePaintEvent, True)
+
 
     def setOrientation(self, ort):
         """Set the orientation of the widget. May be one of 'bottom', 'top',

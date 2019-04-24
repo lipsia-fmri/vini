@@ -433,7 +433,7 @@ class ScatterPlotItem(GraphicsObject):
     def setPen(self, *args, **kargs):
         """Set the pen(s) used to draw the outline around each spot.
         If a list or array is provided, then the pen for each spot will be set separately.
-        Otherwise, the arguments are passed to pg.mkPen and used as the default pen for
+        Otherwise, the arguments are passed to mkPen and used as the default pen for
         all spots which do not have a pen explicitly set."""
         update = kargs.pop('update', True)
         dataSet = kargs.pop('dataSet', self.data)
@@ -455,7 +455,7 @@ class ScatterPlotItem(GraphicsObject):
     def setBrush(self, *args, **kargs):
         """Set the brush(es) used to fill the interior of each spot.
         If a list or array is provided, then the brush for each spot will be set separately.
-        Otherwise, the arguments are passed to pg.mkBrush and used as the default brush for
+        Otherwise, the arguments are passed to mkBrush and used as the default brush for
         all spots which do not have a brush explicitly set."""
         update = kargs.pop('update', True)
         dataSet = kargs.pop('dataSet', self.data)
