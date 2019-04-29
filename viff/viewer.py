@@ -442,9 +442,11 @@ class Viff(QtGui.QMainWindow):
         # self.y_box.setMaxLength(4)
         # self.z_box.setMaxLength(4)
         
-        #not nice!
-        self.txt_box_size = round(width/30)
-        self.txt_box_size_xl = round(width/22)
+        #not nice... setting px explicitly
+        width_q = width/4
+        self.txt_box_size = round(width_q/8)
+        self.txt_box_size_xl = round(width_q/5.5)
+        self.grad_size = round(2*width_q/5)
         
         self.x_box.setFixedWidth(self.txt_box_size)
         self.y_box.setFixedWidth(self.txt_box_size)
@@ -1327,6 +1329,9 @@ class Viff(QtGui.QMainWindow):
         spacer = QtGui.QWidget()
         spacer.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
 
+
+        pos_gradient.setMaxDim(pixels=self.grad_size)
+        neg_gradient.setMaxDim(pixels=self.grad_size)
     
         button_row_thresh_pos = QtGui.QHBoxLayout()
         button_row_thresh_pos.addWidget(self.min_pos, 1)
@@ -3629,7 +3634,6 @@ class Viff(QtGui.QMainWindow):
         dp_write = os.path.split(filename)[0]
         fn_base = os.path.split(filename)[1].split(".")[0]
         fp_base = os.path.join(dp_write, fn_base+".png")
-        
         
         self.setCrosshairsVisible(False)
         

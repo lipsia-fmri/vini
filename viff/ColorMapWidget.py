@@ -45,6 +45,7 @@ class ColorMapWidgetObj(GraphicsView):
         self.setCacheMode(self.CacheNone)
         self.setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.TextAntialiasing)
         self.setFrameStyle(QtGui.QFrame.NoFrame | QtGui.QFrame.Plain)
+        
         #self.setBackgroundRole(QtGui.QPalette.NoRole)
         #self.setBackgroundBrush(QtGui.QBrush(QtCore.Qt.NoBrush))
         #self.setAutoFillBackground(False)
@@ -59,15 +60,18 @@ class ColorMapWidgetObj(GraphicsView):
         self.orientation = ort
         self.setMaxDim()
 
-    def setMaxDim(self, mx=None):
+    def setMaxDim(self, mx=None, pixels=None):
         if mx is None:
             mx = self.maxDim
         else:
             self.maxDim = mx
+            
+        if pixels==None:
+            pixels = 100
 
         if self.orientation in ['bottom', 'top']:
             self.setFixedHeight(mx)
-            self.setMaximumWidth(100)
+            self.setMaximumWidth(pixels)
         else:
             self.setFixedWidth(mx)
             self.setMaximumHeight(16777215)
