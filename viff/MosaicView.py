@@ -45,7 +45,7 @@ class MosaicView(QtGui.QWidget):
                 self.glw.append(view_widget)
                 self.layout.addWidget(view_widget, i, j, 1, 1)
                 # Puts a SliceBox (derived from ViewBox) in the Widget:
-                view = MosaicSliceBox.MosaicSliceBox()
+                view = MosaicSliceBox()
                 view.useMyMenu(2)
                 view.setAspectLocked(True)
                 view_widget.addItem(view)
