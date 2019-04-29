@@ -3633,7 +3633,6 @@ class Viff(QtGui.QMainWindow):
         
         self.setCrosshairsVisible(False)
         
-        
         #concatenate all images and save
         list_slices = [self.c_slice_widget.sb, self.s_slice_widget.sb, self.t_slice_widget.sb]
         ydim = 1000
@@ -3646,19 +3645,22 @@ class Viff(QtGui.QMainWindow):
             ptr = img.bits()
             ptr.setsize(img.byteCount())
             arr = np.asarray(ptr).reshape(img.height(), img.width(), 4)
+            arr_swapped = np.copy(arr)
+            arr_swapped[:,:,0] = arr[:,:,2]
+            arr_swapped[:,:,2] = arr[:,:,0]
             if i==0:
-                imgs = arr
+                imgs = arr_swapped
             else:
-                imgs = np.append(imgs, arr, axis=1)
+                imgs = np.append(imgs, arr_swapped, axis=1)
         
         imsave(fp_base, imgs)
-        
         
         index = self.imagelist.currentRow()
         
         #save positive cmap
         ar = np.outer(np.ones(200),np.arange(0,1,0.001))
         br = mymakeARGB(ar, lut=self.images[index].cmap_pos,levels=[0, 1],useRGBA=True)[0]
+        
         from matplotlib import pyplot
         
         fig, ax = pyplot.subplots()
