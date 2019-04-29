@@ -21,7 +21,7 @@ Install as python package via pip:
 ## Open an image
 You can open images directly from the terminal, using
 
-        viff.py -in data.nii
+        viff -in data.nii
 
 Alternatively, you can click in the menu on file / open image or hit "o".
 
@@ -50,7 +50,7 @@ You can change the colormap and select another one by clicking on the color map 
 Some situations require that you want to have two color maps for the same image. For instance, if you want to display positive and negative values with different colors. You can activate a second color bar **(f)** for such situations, just press "i" or go to image/image settings. This will bring up the image menu. There, select "color maps" and "two color maps".
 Alternatively, you can open the image directly with the *-z* flag:
 
-        viff.py -z data.nii
+        viff -z data.nii
 
 
 The second color map is independent of the first one and has its own slider with maximum and minimum handle. They are shown to the right of the first one.
