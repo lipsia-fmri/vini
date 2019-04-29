@@ -11,7 +11,9 @@ Currently, the following file formats are supported:
 The viewer is written in python and does not have any external dependencies.
 
 # Installation
-Follow the instructions here: https://github.com/lipsia-fmri/viff/blob/master/INSTALLATION.md
+Install as python package via pip:
+
+        pip3 install git+https://github.com/lipsia-fmri/viff.git
 
 
 # How-to
