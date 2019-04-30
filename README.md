@@ -4,9 +4,14 @@
 
 Currently, the following file formats are supported:
 *.nii,
+
 *.nii.gz,
+
 *.img/.hdr and
+
 *.v (lipsia's vista format)
+
+*.npy (numpy arrays on disk)
 
 The viewer is written in python and does not have any external dependencies.
 
