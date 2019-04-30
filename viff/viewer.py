@@ -284,6 +284,8 @@ class Viff(QtGui.QMainWindow):
         log1("setupUI: window posx: {}, posy: {}, width: {}, height: {}".format(posx, posy, width, height))
         self.setGeometry(posx, posy, width, height)
 
+        self.setWindowIcon(QtGui.QIcon(pkg_resources.resource_filename(__name__, 'icons/app-icon.svg')))
+
         # The size of the slice widget kept changing as did the offset of all
         # other widgets. 'listoffset' was used to make this easier.
         self.listoffset = 36
@@ -345,6 +347,7 @@ class Viff(QtGui.QMainWindow):
         self.down_button = QtGui.QToolButton(self)
         self.up_button.clicked.connect(self.swapUp)
         self.down_button.clicked.connect(self.swapDown)
+        
         icon_up = QtGui.QIcon(pkg_resources.resource_filename(__name__, 'icons/chevron-up.svg'))
         icon_down = QtGui.QIcon(pkg_resources.resource_filename(__name__, 'icons/chevron-down.svg'))
         self.up_button.setIcon(icon_up)
