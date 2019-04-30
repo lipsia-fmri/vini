@@ -3,6 +3,7 @@
 
 
 Currently, the following file formats are supported:
+
 *.nii,
 
 *.nii.gz,
