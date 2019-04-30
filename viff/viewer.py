@@ -284,7 +284,7 @@ class Viff(QtGui.QMainWindow):
         log1("setupUI: window posx: {}, posy: {}, width: {}, height: {}".format(posx, posy, width, height))
         self.setGeometry(posx, posy, width, height)
 
-        self.setWindowIcon(QtGui.QIcon(pkg_resources.resource_filename(__name__, 'icons/app-icon.svg')))
+        self.setWindowIcon(QtGui.QIcon(pkg_resources.resource_filename(__name__, 'icons/app_icon.svg')))
 
         # The size of the slice widget kept changing as did the offset of all
         # other widgets. 'listoffset' was used to make this easier.
