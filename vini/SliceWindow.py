@@ -35,9 +35,9 @@ class SliceWindow(QtGui.QWidget):
         self.l.setContentsMargins(2,2,2,2)
         self.l.setSpacing(0)
 
-        self.sw_c = SliceWidget.SliceWidget('c')
-        self.sw_s = SliceWidget.SliceWidget('s')
-        self.sw_t = SliceWidget.SliceWidget('t')
+        self.sw_c = SliceWidget('c')
+        self.sw_s = SliceWidget('s')
+        self.sw_t = SliceWidget('t')
         self.sw_c.useMenu(1)
         self.sw_s.useMenu(1)
         self.sw_t.useMenu(1)

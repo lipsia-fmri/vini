@@ -2568,7 +2568,7 @@ class Viff(QtGui.QMainWindow):
         self.window_count += 1
         self.window_ids.append(self.window_count)
         # initialize the window itself.
-        window = SliceWindow.SliceWindow(self.window_count)
+        window = SliceWindow(self.window_count)
         self.extra_windows.append(window)
         window.sigClose.connect(self.delWindowClose)
         
@@ -4008,7 +4008,7 @@ def main():
                         dest='linked', help='Set linked views to true')
 
 
-    parser.add_argument("files",nargs="*") 
+    # parser.add_argument("files",nargs="*") 
     
     args = parser.parse_args()
     
