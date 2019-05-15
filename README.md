@@ -29,12 +29,22 @@ Upgrading the already installed vini viewer works as follows:
 
 # How-to
 
-## Open an image
+## Open an image from the terminal
 You can open images directly from the terminal, using
 
-        vini -in data.nii
+        vini data.nii
 
-Alternatively, you can click in the menu on file / open image or hit "o".
+Alternatively, you can also use *vini -in data.nii* or just run *vini*  and click in the menu on file / open image or hit "o".
+
+## Open a numpy array directly from python
+You can open any 2D/3D/4D numpy arrays from within python
+
+        import vini
+	import numpy as np
+	array_one = np.random.rand(20,20,20,20)
+	vini.show(array_one)
+
+Note that you can view as many arrays as you want, just call *vini.show(array_one, array_two, ...)*.
 
 
 ## Clicking and slicing
@@ -46,7 +56,6 @@ If you want to pan the image left, right, up or down, hold the mouse wheel butto
 The voxel's current location is displayed in the **(A)**, in voxel coordinates. If you want to switch to millimetres/MNI coordinates, click on the button **(B)**. The intensity value of the current image at the crosshair's position is shown **(C)**.
 
 ## Multiple images and overlay
-<<<<<<< HEAD
 ![vini_main](https://github.com/lipsia-fmri/vini/blob/master/docs/vini_multi.png)
 You can overlay multiple images on top of each others. Add another image by clicking the button **(a)**. Remove them with **(b)**. The order of the images can be changed with the two buttons **(c)**. The most top image is drawn on top all other ones . If you want to turn an image invisible, click on the checkmark **(d)** next to the image name. vini shows you the values for the crosshair voxel for all images (with "a:" denoting the most top image, "b:" the one below, etc.)
 
@@ -63,7 +72,6 @@ You can overlay multiple images on top of each others. Add another image by clic
 ![vini_color](https://github.com/lipsia-fmri/vini/blob/master/docs/vini_color.png)
 Intensity value are displayed by virtue of a  *colormap*, which assigns a color to the given values. By default, we use a gray-scale colormap **(A)**, assigning black to the smallest value in your image and white to the largest, everything in between will be a shade of gray. You can change the colormap and select another one by clicking on the colormap. We have a selection of colormaps ready to select. Note that the color for the maximum value is displayed on the right side of the color bar, while the minimum is shown on the left.
 You can change the *lower* threshold for the colormap with the slider **(B)**. Changing the position of the right handle changes the lower threshold (the one closer to 0), the current value is shown in **(C)**. The *higher* threshold can be changed with the handle **(D)** and the according value is displayed at **(E)**. For information on how image values outside the specified range are displayed, see *Clipping behaviour* below.
->>>>>>> 521f0decb08685c9f1790b7931af25b6e22ddb06
 
 
 ### Two color maps
@@ -83,13 +91,8 @@ What happens if the image values are outside the range of the color map assignme
 You can show the histogram of values for the currently selected image via tools/histogram or by pressing "h". On the x-axis, you will find the given image values, on the y axis the count. The section of image values that is within the selected colormap is shown in blue, meaning that if you pull the colormap handles, this box will shift. You can however also directly interact with this box, resulting in changes in the colormap. You can also move around the whole range by dragging the blue box.  This can be useful for looking for a band of image values (with enabling clipping on both sides).
 
 ## Time series data
-<<<<<<< HEAD
-![vini_time](https://github.com/lipsia-fmri/vini/blob/master/docs/vini_time.png)
-The viewer is able to load time series data. If time series data is detected, the area **(a)** becomes active for the user. The number box **(b)** shows the currently selected time volume, here you can enter a number to jump to the volume directly. The horizontal slider **(c)** shows the position in the overall time series. You can drag it to show the time series data at any given point. If you want to move in time in a more controlled fashion, you can click the buttons **(d)** to just move one volume back, to play the time series as movie, and to go volume forward. The same can be achieved by pressing "n" and "b" (next and before) and "space" for starting/stopping the movie.
-=======
 ![vini_time](https://github.com/lipsia-fmri/vini/blob/master/docs/vini_time.png)
 The viewer is able to load time series data. If time series data is detected, the time series are becomes visible. The number box **(A)** shows the currently selected time volume, here you can enter a number to jump to the volume directly. The horizontal slider **(B)** shows the position in the overall time series. You can drag it to show the time series data at any given point. If you want to move in time in a more controlled fashion, you can click the buttons **(C)** to just move one volume back, to play the time series as movie, and to go volume forward. The same can be achieved by pressing "n" and "b" (next and before) and "space" for starting/stopping the movie. The play button **(D)** plays back the time series as movie, the same can be achieved by pressing "Space" on your keyboard.
->>>>>>> 521f0decb08685c9f1790b7931af25b6e22ddb06
 
 ## Maximum and minimum
 You can jump to the local maximum or minimum of the selected image. For this, click on the buttons **(e)**. The search radius can be changed in the preferences.
