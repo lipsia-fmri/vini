@@ -4,15 +4,9 @@
 
 Currently, the following file formats are supported:
 
-*.nii,
+.nii, .nii.gz,.img/.hdr, .v (lipsia's vista format)
 
-*.nii.gz,
-
-*.img/.hdr and
-
-*.v (lipsia's vista format)
-
-*.npy (numpy arrays on disk)
+Furthermore, numpy arrays are *.npy (numpy arrays on disk)
 
 The viewer is written in python and does not have any external dependencies.
 
@@ -40,9 +34,9 @@ Alternatively, you can also use *vini -in data.nii* or just run *vini*  and clic
 You can open any 2D/3D/4D numpy arrays from within python
 
         import vini
-	import numpy as np
-	array_one = np.random.rand(20,20,20,20)
-	vini.show(array_one)
+        import numpy as np
+        array_one = np.random.rand(20,20,20,20)
+        vini.show(array_one)
 
 Note that you can view as many arrays as you want, just call *vini.show(array_one, array_two, ...)*.
 
