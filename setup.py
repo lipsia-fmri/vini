@@ -12,7 +12,7 @@ from shutil import rmtree
 from setuptools import find_packages, setup, Command
 
 # Package meta-data.
-NAME = 'viff'
+NAME = 'vini'
 DESCRIPTION = 'A visualization tool for 2D/3D/4D data (e.g. from MRI)'
 URL = ''
 EMAIL = ''
@@ -107,7 +107,7 @@ setup(
     packages=find_packages(), 
     # If your package is a single module, use this instead of 'packages':
     # py_modules=['mypackage'],
-    scripts=['bin/viff'],
+    scripts=['bin/vini'],
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     package_data={'' : ['*.svg']},

@@ -1,5 +1,5 @@
-![viff_main](https://github.com/lipsia-fmri/viff/blob/master/docs/viff.png)
-**viff** is a light-weight viewer for MR data. The strives to be fast and simple, yet powerful. Viff also features many practical keyboard shortcuts.
+![vini_main](https://github.com/lipsia-fmri/vini/blob/master/docs/vini.png)
+**vini** is a light-weight viewer for MR data. The strives to be fast and simple, yet powerful. Viff also features many practical keyboard shortcuts.
 
 
 Currently, the following file formats are supported:
@@ -13,7 +13,7 @@ The viewer is written in python and does not have any external dependencies.
 # Installation
 Install as python package via pip:
 
-        pip3 install git+https://github.com/lipsia-fmri/viff.git
+        pip3 install git+https://github.com/lipsia-fmri/vini.git
 
 
 # How-to
@@ -21,13 +21,13 @@ Install as python package via pip:
 ## Open an image
 You can open images directly from the terminal, using
 
-        viff -in data.nii
+        vini -in data.nii
 
 Alternatively, you can click in the menu on file / open image or hit "o".
 
 
 ## Clicking and slicing
-![viff_vox](https://github.com/lipsia-fmri/viff/blob/master/docs/viff_vox.png)
+![vini_vox](https://github.com/lipsia-fmri/vini/blob/master/docs/vini_vox.png)
 
 You can click and drag into any of the panes to navigate within the each of the three panes. You can use the arrow keys on your keyboard for voxel-by-voxel steering (the green crosshair indicates the active pane).
 In order to zoom into the image, use your mouse wheel or "CTRL and +" or "CTRL and -" on your keyboard.
@@ -35,12 +35,12 @@ If you want to pan the image left, right, up or down, hold the mouse wheel butto
 The voxel's current location is displayed in the **(a)**, in voxel coordinates. If you want to switch to millimetres/MNI coordinates, click on the button **(b)**. The intensity value of the current image at the crosshair's position is shown **(c)**.
 
 ## Multiple images and overlay
-![viff_main](https://github.com/lipsia-fmri/viff/blob/master/docs/viff_multi.png)
-You can overlay multiple images on top of each others. Add another image by clicking the button **(a)**. Remove them with **(b)**. The order of the images can be changed with the two buttons **(c)**. The most top image is drawn on top all other ones . If you want to turn an image invisible, click on the checkmark **(d)** next to the image name. viff shows you the values for the crosshair voxel for all images (with "a:" denoting the most top image, "b:" the one below, etc.)
+![vini_main](https://github.com/lipsia-fmri/vini/blob/master/docs/vini_multi.png)
+You can overlay multiple images on top of each others. Add another image by clicking the button **(a)**. Remove them with **(b)**. The order of the images can be changed with the two buttons **(c)**. The most top image is drawn on top all other ones . If you want to turn an image invisible, click on the checkmark **(d)** next to the image name. vini shows you the values for the crosshair voxel for all images (with "a:" denoting the most top image, "b:" the one below, etc.)
 
 ## Colormaps
 ### Basics
-![viff_color](https://github.com/lipsia-fmri/viff/blob/master/docs/viff_color.png)
+![vini_color](https://github.com/lipsia-fmri/vini/blob/master/docs/vini_color.png)
 Images are displayed by a means of a colormap, which assigns a color to the given values. By default, we use a gray-scale colormap, assigning black to the smallest value in your image and white to the largest, everything in between will be a shade of gray. You can manipulate the color mapping with the slider **(a)**. Pulling down the upper handle will change maximum value which is shown in *white*. The given maximum value for white is shown **(b)**. For example, let us say that the default maximum value for white is 500 (because it is the maximum in your image). Now, instead of drawing the value 500 as white, you may pull the upper handle to 250. Thus, the value 250 will be shown as white, and all values above 250 will also be shown as white too (per default, this behaviour can be changed, see clipping behaviour later). Effectively, the overall brightness of the image increases, as the middle gray color now will be shown for a value of 125 (instead of 250 as before). Similarly, if you pull the lower handle of the slider **(c)**, the value assigned to *black* is changed **(d)**. For instance, pulling the value from 0 to 100 means that the value 100 is now assigned to black. Values below 100 are *not drawn* anymore and are *invisible*. This behaviour can be changed, see clipping behaviour.
 
 ### Different color maps
@@ -50,7 +50,7 @@ You can change the colormap and select another one by clicking on the color map 
 Some situations require that you want to have two color maps for the same image. For instance, if you want to display positive and negative values with different colors. You can activate a second color bar **(f)** for such situations, just press "i" or go to image/image settings. This will bring up the image menu. There, select "color maps" and "two color maps".
 Alternatively, you can open the image directly with the *-z* flag:
 
-        viff -z data.nii
+        vini -z data.nii
 
 
 The second color map is independent of the first one and has its own slider with maximum and minimum handle. They are shown to the right of the first one.
@@ -63,7 +63,7 @@ What happens if the image values are outside the range of the color map assignme
 You can show the histogram of values for the currently selected image via tools/histogram or by pressing "h". On the x-axis, you will find the given image values, on the y axis the count. The section of image values that is within the selected colormap is shown in blue, meaning that if you pull the colormap handles, this box will shift. You can however also directly interact with this box, resulting in changes in the colormap. You can also move around the whole range by dragging the blue box.  This can be useful for looking for a band of image values (with enabling clipping on both sides).
 
 ## Time series data
-![viff_time](https://github.com/lipsia-fmri/viff/blob/master/docs/viff_time.png)
+![vini_time](https://github.com/lipsia-fmri/vini/blob/master/docs/vini_time.png)
 The viewer is able to load time series data. If time series data is detected, the area **(a)** becomes active for the user. The number box **(b)** shows the currently selected time volume, here you can enter a number to jump to the volume directly. The horizontal slider **(c)** shows the position in the overall time series. You can drag it to show the time series data at any given point. If you want to move in time in a more controlled fashion, you can click the buttons **(d)** to just move one volume back, to play the time series as movie, and to go volume forward. The same can be achieved by pressing "n" and "b" (next and before) and "space" for starting/stopping the movie.
 
 ## Maximum and minimum
