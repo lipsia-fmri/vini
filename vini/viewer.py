@@ -887,12 +887,12 @@ class Viff(QtGui.QMainWindow):
         openExport.triggered.connect(self.export)
         self.tools_menu.addAction(openExport)
 
-        # for opening the ipython qtconsole for interactivity
-        openQtConsole = QtGui.QAction('iPython Console', self)
-        openQtConsole.setShortcut(QtGui.QKeySequence('l'))
-        openQtConsole.setStatusTip('Open ipython qtconsole')
-        openQtConsole.triggered.connect(self.openQtConsoleWindow)
-        self.tools_menu.addAction(openQtConsole)
+        # # for opening the ipython qtconsole for interactivity
+        # openQtConsole = QtGui.QAction('iPython Console', self)
+        # openQtConsole.setShortcut(QtGui.QKeySequence('l'))
+        # openQtConsole.setStatusTip('Open ipython qtconsole')
+        # openQtConsole.triggered.connect(self.openQtConsoleWindow)
+        # self.tools_menu.addAction(openQtConsole)
 
         # for opening the histogram threshold widget
         openHistogram = QtGui.QAction('Histogram', self)
@@ -1426,7 +1426,13 @@ class Viff(QtGui.QMainWindow):
                 if len(filename) > 0:
                     if os.path.isfile(filename[0]):
                         log2("openNewFile: filename {}".format(filename[0]))
-                        self.loadNewImage(filename[0])
+                        try:
+                            self.loadNewImage(filename[0])
+                        except:
+                            QtGui.QMessageBox.warning(self, "Warning", "Error: image could not be loaded")
+                            
+                            
+                                
 
     def deleteImage(self):
         """
@@ -1720,7 +1726,7 @@ class Viff(QtGui.QMainWindow):
         self.os_setting.resize(40,40)
 
         ratio_le = QtGui.QLineEdit()
-        ratio_le.setText(str(self.preferences['os_ratio'][0]))
+        ratio_le.setText(str(self.preferences['os_ratio']))
 
         def save():
             if testFloat(ratio_le.text()):
@@ -3367,7 +3373,7 @@ class Viff(QtGui.QMainWindow):
 
     ## Section: Tools Related ##
     def openQtConsoleWindow(self):
-        from qt_console_widget import JupyterWidget
+        from qtconsole.jupyter_widget import JupyterWidget
         """
         Opens the ipython qtconsole window.
         """
@@ -3822,8 +3828,6 @@ class Viff(QtGui.QMainWindow):
                 
             
         
-        # self.preferences['cm_under'] = settings.value("cm_under")  #pref_conf.get('color', 'colormap_under')
-        
         
 
     def savePreferences(self):
@@ -3833,100 +3837,7 @@ class Viff(QtGui.QMainWindow):
             settings.setValue(savekey, self.preferences[key])
             log1("savePreferences: writing key: {} value: {}".format(key, self.preferences[key]))
       
-        
-    # def loadPreferences(self):
-    #     """
-    #     Loads the settings from the config file to the dictionary.
-    #     """
-    #     full_path = os.path.realpath(__file__)
-    #     config_file = os.path.dirname(full_path)+"/config.ini"
-    #     pref_conf = ConfigParser()
-    #     pref_conf.read(config_file)
-
-    #     # View
-    #     self.preferences['voxel_coord'] = \
-    #         [pref_conf.getboolean('view','voxel_coord')]
-    #     self.preferences['link_mode'] = [pref_conf.getint('view','link_mode')]
-    #     width = pref_conf.getint('view', 'width')
-    #     height = pref_conf.getint('view', 'height')
-    #     self.preferences['window_dims'] = [width, height]
-
-    #     # Color
-    #     self.preferences['cm_under'] = pref_conf.get('color', 'colormap_under')
-    #     self.preferences['cm_pos'] = pref_conf.get('color', 'colormap_over_pos')
-    #     self.preferences['cm_neg'] = pref_conf.get('color', 'colormap_over_neg')
-    #     self.preferences['clip_under_high'] = \
-    #         [pref_conf.getboolean('color', 'clip_under_high')]
-    #     self.preferences['clip_under_low'] = \
-    #         [pref_conf.getboolean('color', 'clip_under_low')]
-    #     self.preferences['clip_pos_high'] = \
-    #         [pref_conf.getboolean('color', 'clip_pos_high')]
-    #     self.preferences['clip_pos_low'] = \
-    #         [pref_conf.getboolean('color', 'clip_pos_low')]
-    #     self.preferences['clip_neg_high'] = \
-    #         [pref_conf.getboolean('color', 'clip_neg_high')]
-    #     self.preferences['clip_neg_low'] = \
-    #         [pref_conf.getboolean('color', 'clip_neg_low')]
-
-    #     # Resampling
-    #     self.preferences['interpolation'] = \
-    #         [pref_conf.getint('resampling', 'interpolation')]
-    #     self.preferences['os_ratio'] = \
-    #         [pref_conf.getfloat('resampling', 'os_ratio')]
-    #     self.preferences['res_method'] = \
-    #         [pref_conf.getint('resampling', 'res_method')]
-
-    #     # Search
-    #     self.preferences['search_radius'] = \
-    #         [pref_conf.getint('search', 'search_radius')]
-        
-        
-
-    # def savePreferences(self):
-    #     """
-    #     Saves the preferences from the dictionary to the config file.
-    #     """
-    #     full_path = os.path.realpath(__file__)
-    #     config_file = os.path.dirname(full_path)+"/config.ini"
-    #     pref_conf = ConfigParser()
-    #     pref_conf.read(config_file)
-    #     pref_conf.set(
-    #         'view', 'voxel_coord', str(self.preferences['voxel_coord'][0]))
-    #     pref_conf.set(
-    #         'view', 'link_mode', str(self.preferences['link_mode'][0]))
-    #     pref_conf.set(
-    #         'view', 'width', str(self.preferences['window_dims'][0]))
-    #     pref_conf.set(
-    #         'view', 'height', str(self.preferences['window_dims'][1]))
-
-    #     pref_conf.set('color', 'colormap_under', self.preferences['cm_under'])
-    #     pref_conf.set('color', 'colormap_over_pos', self.preferences['cm_pos'])
-    #     pref_conf.set('color', 'colormap_over_neg', self.preferences['cm_neg'])
-    #     pref_conf.set('color', 'clip_under_high',
-    #                   str(self.preferences['clip_under_high'][0]))
-    #     pref_conf.set('color', 'clip_under_low',
-    #                   str(self.preferences['clip_under_low'][0]))
-    #     pref_conf.set('color', 'clip_pos_high',
-    #                   str(self.preferences['clip_pos_high'][0]))
-    #     pref_conf.set('color', 'clip_pos_low',
-    #                   str(self.preferences['clip_pos_low'][0]))
-    #     pref_conf.set('color', 'clip_neg_high',
-    #                   str(self.preferences['clip_neg_high'][0]))
-    #     pref_conf.set('color', 'clip_neg_low',
-    #                   str(self.preferences['clip_neg_low'][0]))
-
-    #     pref_conf.set('resampling', 'interpolation',
-    #                   str(self.preferences['interpolation'][0]))
-    #     pref_conf.set('resampling', 'os_ratio',
-    #                   str(self.preferences['os_ratio'][0]))
-    #     pref_conf.set('resampling', 'res_method',
-    #                   str(self.preferences['res_method'][0]))
-
-    #     pref_conf.set('search', 'search_radius',
-    #                   str(self.preferences['search_radius'][0]))
-
-    #     with open(config_file, 'w') as f:
-    #         pref_conf.write(f)
+ 
 
     def saveWindowSize(self):
         if self.blockSavingWindowSize:
