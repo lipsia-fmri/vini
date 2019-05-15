@@ -23,9 +23,16 @@ parser.add_argument("-f", "--func", "--functional", metavar='N', nargs='+',
 parser.add_argument('-l', action='store_true', default=False,
                     dest='linked', help='Set linked views to true')
 
+parser.add_argument("files",nargs="*")
+
 args = parser.parse_args()
 
 filenames = args.input
+
+#override if empty
+if filenames is None:
+    filenames = args.files
+
 z_filenames = args.zmap
 func_filenames = args.func
 is_linked = args.linked

@@ -260,7 +260,7 @@ class Viff(QtGui.QMainWindow):
         
         self.mosaic_active = False
         self.blockSavingWindowSize = False
-        self.setWindowTitle("Main window")
+        self.setWindowTitle("vini viewer")
         self.setupUI()
         
         
@@ -2383,7 +2383,7 @@ class Viff(QtGui.QMainWindow):
                         self.setExtraWindowTitle(j, False)
                         
                 #get title of main window
-                title_main = "Main window: "
+                title_main = "vini viewer: "
                 first = True
                 for i in range(len(self.images)):
                     if self.image_window_list[i][0][0] is not None:
@@ -3988,7 +3988,7 @@ class Viff(QtGui.QMainWindow):
 
 
 def main():
-
+    #historic reasons!
     import argparse
 
     parser = argparse.ArgumentParser(
@@ -4007,10 +4007,17 @@ def main():
     parser.add_argument('-l', action='store_true', default=False,
                         dest='linked', help='Set linked views to true')
 
+
+    parser.add_argument("files",nargs="*") 
+    
     args = parser.parse_args()
     
     
     filenames = args.input
+    #override if no "-in " is being used...
+    if filenames is None:
+        filenames = args.files
+        
     z_filenames = args.zmap
     func_filenames = args.func
     is_linked = args.linked
