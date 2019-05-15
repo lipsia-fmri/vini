@@ -27,8 +27,11 @@ def resample_image(data, affine, shape, interpolation):
     shape = tuple(np.asarray(shape).astype(int))
 
     result = np.empty(shape,  dtype=float)
-    ndimage.affine_transform(
-        data, A, b, output_shape=shape, output=result, order=interpolation)
+    
+    
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", UserWarning)
+        ndimage.affine_transform(data, A, b, output_shape=shape, output=result, order=interpolation)
 
     return result
 
