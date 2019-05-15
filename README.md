@@ -4,15 +4,9 @@
 
 Currently, the following file formats are supported:
 
-*.nii,
+.nii, .nii.gz,.img/.hdr, .v (lipsia's vista format)
 
-*.nii.gz,
-
-*.img/.hdr and
-
-*.v (lipsia's vista format)
-
-*.npy (numpy arrays on disk)
+Furthermore, numpy arrays are *.npy (numpy arrays on disk)
 
 The viewer is written in python and does not have any external dependencies.
 
@@ -40,9 +34,9 @@ Alternatively, you can also use *vini -in data.nii* or just run *vini*  and clic
 You can open any 2D/3D/4D numpy arrays from within python
 
         import vini
-	import numpy as np
-	array_one = np.random.rand(20,20,20,20)
-	vini.show(array_one)
+        import numpy as np
+        array_one = np.random.rand(20,20,20,20)
+        vini.show(array_one)
 
 Note that you can view as many arrays as you want, just call *vini.show(array_one, array_two, ...)*.
 
@@ -62,8 +56,9 @@ You can overlay multiple images on top of each others. Add another image by clic
 ## Colormaps
 ### Basics
 ![vini_color](https://github.com/lipsia-fmri/vini/blob/master/docs/vini_color.png)
+
 Images are displayed by a means of a colormap, which assigns a color to the given values. By default, we use a gray-scale colormap, assigning black to the smallest value in your image and white to the largest, everything in between will be a shade of gray. You can manipulate the color mapping with the slider **(a)**. Pulling down the upper handle will change maximum value which is shown in *white*. The given maximum value for white is shown **(b)**. For example, let us say that the default maximum value for white is 500 (because it is the maximum in your image). Now, instead of drawing the value 500 as white, you may pull the upper handle to 250. Thus, the value 250 will be shown as white, and all values above 250 will also be shown as white too (per default, this behaviour can be changed, see clipping behaviour later). Effectively, the overall brightness of the image increases, as the middle gray color now will be shown for a value of 125 (instead of 250 as before). Similarly, if you pull the lower handle of the slider **(c)**, the value assigned to *black* is changed **(d)**. For instance, pulling the value from 0 to 100 means that the value 100 is now assigned to black. Values below 100 are *not drawn* anymore and are *invisible*. This behaviour can be changed, see clipping behaviour.
-=======
+
 ![vini_main](https://github.com/lipsia-fmri/vini/blob/master/docs/vini_multi.png)
 You can overlay multiple images on top of each others. Add another image by clicking the button **(A)**. Remove them with **(B)**. The order of images can be changed with the buttons **(C)**, the most top image is drawn on top all other ones, overlaying whatever is below. If you want to turn an image invisible, click on the checkmark **(D)** next to the image name. 
 
