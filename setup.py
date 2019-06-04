@@ -22,7 +22,7 @@ VERSION = "0.0.5"
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    'IPython', 'nibabel', 'numpy', 'scipy', 'matplotlib', 'PyQt5', "sip"
+    'IPython', 'nibabel', 'numpy', 'scipy', 'matplotlib', 'PyQt5==5.10.1', "sip"
 ]
 
 # What packages are optional?

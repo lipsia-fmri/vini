@@ -570,7 +570,7 @@ class Viff(QtGui.QMainWindow):
         self.intensity_value.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
         row_intensity.addWidget(self.intensity_value,1)
         
-        self.intensity_image_name= QtGui.QLabel('baba')
+        self.intensity_image_name= QtGui.QLabel('')
         self.intensity_image_name.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
         row_intensity.addWidget(self.intensity_image_name,1)
         
@@ -2422,15 +2422,18 @@ class Viff(QtGui.QMainWindow):
             # actions for all images
             self.images[index].pos_gradient.show()
             self.slider_pos.setEnabled(True)
-            self.slider_pos.setSpan(
-                self.images[index].getPosSldValueLow(),
-                self.images[index].getPosSldValueHigh())
+
             if self.images[index].type() is "one":
                 self.slider_neg.setSpan(0,1000)
                 self.disableSliderNeg()
                 self.min_neg.setHidden(True)
                 self.max_neg.setHidden(True)
                 self.slider_neg.setHidden(True)
+                self.slider_pos.setSpan(
+                    self.images[index].getPosSldValueLow(),
+                    self.images[index].getPosSldValueHigh())
+                
+                
             if self.images[index].type() is "two":
                 self.enableSliderNeg()
                 self.min_neg.setHidden(False)
@@ -2440,6 +2443,9 @@ class Viff(QtGui.QMainWindow):
                     self.images[index].getNegSldValueHigh(),
                     self.images[index].getNegSldValueLow())
                 self.images[index].neg_gradient.show()
+                self.slider_pos.setSpan(
+                    self.images[index].getPosSldValueLow(),
+                    self.images[index].getPosSldValueHigh())
 
             self.updateCrossIntensityLabel()
             self.updateDisplayCoordinates()
@@ -3120,8 +3126,7 @@ class Viff(QtGui.QMainWindow):
         """
         index = self.imagelist.currentRow()
         if index >= 0 and self.threshold_write_block != True:
-            self.images[index].setPosThresholdsFromSlider(
-                self.slider_pos.lowerValue, self.slider_pos.upperValue)
+            self.images[index].setPosThresholdsFromSlider(self.slider_pos.lowerValue, self.slider_pos.upperValue)
             self.threshold_write_block = True
             self.setThresholdsToBoxes()
             self.setThresholdsToHistogram()
