@@ -16,6 +16,7 @@ from .pyqtgraph_vini.python2_3 import cmp
 __all__ = ['TickSliderItem', 'ColorMapItem']
 
 #random colormap... inject below
+np.random.seed(0)
 rcmap = []
 for i in range(50):
     rcmap.append((i/50.0, (np.random.randint(255), np.random.randint(255), np.random.randint(255),255)))
